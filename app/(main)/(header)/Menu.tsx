@@ -19,7 +19,6 @@ export default function Menu() {
     useState(false);
   const [isSubMenuInformaticsOpen, setIsSubMenuInformaticsOpen] =
     useState(false);
-
   const NavSidebar = ({ onClose }: { onClose: any }) => {
     const handleSidebarClose = () => {
       setIsSidebarOpen(false);
@@ -44,7 +43,7 @@ export default function Menu() {
     const Electronics = () => {
       return (
         <li>
-          <div className="flex  p-2 -mx-2  rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75">
+          <div className="flex  p-2 mx-2  rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75">
             <button
               type="button"
               className="flex"
@@ -53,21 +52,22 @@ export default function Menu() {
               <span className="text-start mr-5">
                 Grandi e piccoli elettrodomestici
               </span>
-              {isSubMenuElectronicsOpen && (
-                <ChevronDownIcon height={16}  />
+              {isSubMenuElectronicsOpen ? (
+                <ChevronUpIcon height={16} />
+              ) : (
+                <ChevronDownIcon height={16} />
               )}
-              {!isSubMenuElectronicsOpen && <ChevronUpIcon height={16} />}
             </button>
           </div>
           <ul
             className={`ml-3 mt-3 space-y-2 z-40  ${
-              isSubMenuElectronicsOpen ? "hidden" : "flex-col"
+              isSubMenuElectronicsOpen ? "flex-col" : "hidden"
             }`}
           >
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Frigoriferi</span>
               </Link>
@@ -75,7 +75,7 @@ export default function Menu() {
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Condizionatori</span>
               </Link>
@@ -83,7 +83,7 @@ export default function Menu() {
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Lavatrici</span>
               </Link>
@@ -91,7 +91,7 @@ export default function Menu() {
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Lavastoviglie</span>
               </Link>
@@ -104,7 +104,7 @@ export default function Menu() {
     const Informatics = () => {
       return (
         <li>
-          <div className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75">
+          <div className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75">
             <button
               type="button"
               className="flex"
@@ -113,22 +113,23 @@ export default function Menu() {
               <span className="text-start">
                 Computer, informatica e periferiche
               </span>
-              {isSubMenuInformaticsOpen && (
-                <ChevronDownIcon height={16}  />
+              {isSubMenuInformaticsOpen ? (
+                <ChevronUpIcon height={16} />
+              ) : (
+                <ChevronDownIcon height={16} />
               )}
-              {!isSubMenuInformaticsOpen && <ChevronUpIcon height={16} />}
             </button>
           </div>
 
           <ul
             className={`ml-3 mt-3 space-y-2 z-40 ${
-              isSubMenuInformaticsOpen ? "hidden" : "flex-col"
+              isSubMenuInformaticsOpen ? "flex-col" : "hidden"
             }`}
           >
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Portatili</span>
               </Link>
@@ -136,7 +137,7 @@ export default function Menu() {
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Fissi</span>
               </Link>
@@ -144,7 +145,7 @@ export default function Menu() {
             <li>
               <Link
                 href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
               >
                 <span className="flex">Monitor</span>
               </Link>
@@ -156,42 +157,57 @@ export default function Menu() {
 
     return (
       <div
-        className={`top-0 right-0 fixed h-full w-64 bg-multistore_green shadow-xl shadow-green-500/50 z-40  ${
+        className={`top-0 right-0 fixed max-h-screen w-64 bg-multistore_green shadow-xl shadow-green-500/50 z-40  ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }  ease-in-out duration-300`}
       >
-        <button className="absolute top-7 right-7" onClick={handleSidebarClose}>
-          <XMarkIcon height={24} className="stroke-white" />
-        </button>
-        <nav className="mx-5 mt-20 text-white">
-          <ul className="space-y-2">
-            <li>
-              <Link
-                href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
-              >
-                <span className="flex">Chi siamo</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
-              >
-                <span className="flex">Dove trovarci</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="#"
-                className="flex items-center p-2 -mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
-              >
-                <span className="flex">Contatti</span>
-              </Link>
-            </li>
-            <Electronics />
-            <Informatics />
-          </ul>
+        <nav className="mx-3 text-white">
+          <div className="h-screen overflow-y-scroll">
+            <div className="h-20 mx-3 flex justify-end">
+              <button onClick={handleSidebarClose}>
+                <XMarkIcon
+                  height={24}
+                  className="stroke-white justify-items-end "
+                />
+              </button>
+            </div>
+            <ul className="space-y-2 max-w-full">
+              <li>
+                <Link
+                  href="#"
+                  className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                >
+                  <span className="flex">Chi siamo</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                >
+                  <span className="flex">Dove trovarci</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#"
+                  className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                >
+                  <span className="flex">Contatti</span>
+                </Link>
+              </li>
+              <Electronics />
+              <Informatics />
+              <li>
+                <Link
+                  href="/auth/signin"
+                  className="flex items-center p-2 mx-2 rounded-md transition ease-in-out hover:bg-multistore_green-light duration-75"
+                >
+                  <span className="flex">Accesso admin</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
         </nav>
       </div>
     );

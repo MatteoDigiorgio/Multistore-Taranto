@@ -6,7 +6,7 @@ import Contacts from "./Contacts";
 import Menu from "./Menu";
 import Image from "next/image";
 
-export const AmazonLogo = () => {
+export const MultistoreLogo = () => {
   return (
     <div className="flex  items-center my-2 mx-4 sm:flex-grow-0">
       <Link title="Home" passHref href="/">
@@ -46,8 +46,8 @@ function Header() {
   return (
     <header>
       {/* Top nav */}
-      <div className="flex items-center flex-grow justify-between px-1 py-2 max-h-20 bg-multistore_green">
-        <AmazonLogo />
+      <div className="flex items-center flex-grow justify-between px-1 py-2 h-20 bg-multistore_green">
+        <MultistoreLogo />
         <div className="flex xs:flex-grow sm:flex-none items-center text-xs mx-6 space-x-6">
           <SearchBar />
           <Menu />

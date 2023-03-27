@@ -12,7 +12,7 @@ export default function RootLayout({
       <head>
         <title>Multistore Taranto</title>
       </head>
-      <body>
+      <body className="flex flex-col h-screen">
         <ProvidersWrapper>
           <Header />
           {children}
