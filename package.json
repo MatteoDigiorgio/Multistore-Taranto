@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@heroicons/react": "^2.0.16",
+    "@material-ui/icons": "^4.11.3",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/material": "^5.11.15",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/node": "18.15.5",
     "@types/react": "18.0.28",
@@ -17,6 +22,7 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "firebase": "^9.18.0",
+    "framer-motion": "^10.9.2",
     "heroicons": "^2.0.16",
     "next": "13.2.4",
     "next-auth": "^4.20.1",
