@@ -8,11 +8,11 @@ import Image from "next/image";
 
 export const MultistoreLogo = () => {
   return (
-    <div className="flex  items-center my-2 mx-4 sm:flex-grow-0">
+    <div className="flex justify-center items-center my-2 mx-4 sm:flex-grow-0 md:justify-start">
       <Link title="Home" passHref href="/">
         <Image
           alt="Multistore Taranto Logo"
-          src="/multistore_big.png"
+          src="/multistore_logo.png"
           width={100}
           height={50}
           className="object-contain cursor-pointer "
@@ -25,16 +25,17 @@ export const MultistoreLogo = () => {
 export const SearchBar = () => {
   return (
     <>
-      <div className="flex xs:flex-grow sm:flex-none sm:w-96 items-center h-10 rounded-md cursor-pointer bg-multistore_blue-light ">
+      <div className="flex flex-grow  items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md">
         <input
-          className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-md focus: outline-none px-4"
+          className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-full focus: outline-none px-4 placeholder:italic placeholder:text-slate-400"
           type="text"
+          placeholder="Cerca Prodotto, Modello, Brand"
         />
-        <div className="flex-none h-10 px-4 py-2 hover:bg-multistore_blue rounded-r-md">
+        <div className="flex-none h-10 px-4 py-2 bg-white rounded-r-full">
           <MagnifyingGlassIcon
             width={20}
             height={20}
-            className="stroke-white"
+            className="stroke-multistore_blue-light stroke-[2px]"
           />
         </div>
       </div>
@@ -46,12 +47,12 @@ function Header() {
   return (
     <header>
       {/* Top nav */}
-      <div className="flex items-center flex-grow justify-between px-1 py-2 h-20 bg-multistore_green">
+      <div className="grid grid-rows-2 grid-flow-col gap-4 items-center px-1 py-2 h-32 bg-[#F9F9F9] md:grid-rows-1 md:grid-cols-3 md:h-20 md:px-5">
         <MultistoreLogo />
-        <div className="flex xs:flex-grow sm:flex-none items-center text-xs mx-6 space-x-6">
-          <SearchBar />
+        <div className="absolute right-10 top-5 md:top-7 md:items-center md:order-last">
           <Menu />
         </div>
+        <SearchBar />
       </div>
     </header>
   );

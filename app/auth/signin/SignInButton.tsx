@@ -30,7 +30,7 @@ function SignInButton() {
   }, []);
 
   if (session) {
-    redirect("/");
+    redirect("/admin");
   }
   return (
     <>
