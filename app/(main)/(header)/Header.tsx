@@ -8,12 +8,12 @@ import Image from "next/image";
 
 export const MultistoreLogo = () => {
   return (
-    <div className="flex justify-center items-center my-2 mx-4 sm:flex-grow-0 md:justify-start">
+    <div className="flex justify-center items-center mx-4 sm:flex-grow-0 md:justify-start">
       <Link title="Home" passHref href="/">
         <Image
           alt="Multistore Taranto Logo"
           src="/multistore_logo.png"
-          width={100}
+          width={120}
           height={50}
           className="object-contain cursor-pointer "
         />
@@ -45,9 +45,9 @@ export const SearchBar = () => {
 
 function Header() {
   return (
-    <header>
+    <header className="z-50">
       {/* Top nav */}
-      <div className="grid grid-rows-2 grid-flow-col gap-4 items-center px-1 py-2 h-32 bg-[#F9F9F9] md:grid-rows-1 md:grid-cols-3 md:h-20 md:px-5">
+      <div className="grid grid-rows-2 grid-flow-col gap-4 items-center mx-1 my-2 h-32 bg-[#F9F9F9] md:grid-rows-1 md:grid-cols-3 md:h-20 md:px-5 shadow-lg z-50">
         <MultistoreLogo />
         <div className="absolute right-10 top-5 md:top-7 md:items-center md:order-last">
           <Menu />
