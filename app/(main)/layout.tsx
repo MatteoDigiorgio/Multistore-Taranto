@@ -1,6 +1,7 @@
 import React from "react";
 import ProvidersWrapper from "./ProvidersWrapper";
 import Header from "./(header)/Header";
+import Head from "next/head";
 
 export default function RootLayout({
   children,
@@ -9,9 +10,11 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <head>
+      <Head>
         <title>Multistore Taranto</title>
-      </head>
+        <meta name="description" content="Showcase site" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <body className="flex flex-col h-screen">
         <ProvidersWrapper>
           <Header />
