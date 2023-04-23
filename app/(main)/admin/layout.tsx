@@ -1,4 +1,5 @@
-import Header from "../(main)/(header)/Header";
+import React from "react";
+import SubHeader from "./SubHeader";
 
 export default function RootLayout({
   children,
@@ -8,7 +9,7 @@ export default function RootLayout({
   return (
     <html>
       <body className="flex flex-col h-screen">
-        <Header />
+        <SubHeader />
         {children}
       </body>
     </html>
