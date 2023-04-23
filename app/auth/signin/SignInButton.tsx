@@ -38,9 +38,10 @@ function SignInButton() {
         Object.values(providers).map((provider) => (
           <div key={provider.name}>
             <button
-              className="inline-block shadow-md border border-[#888] rounded w-full bg-multistore_blue-light h-8 cursor-pointer text-black"
+              className="flex items-center justify-center p-2 gap-2 shadow-md border border-[#888] rounded w-full  cursor-pointer text-black hover:bg-gray-100"
               onClick={() => signIn(provider.id)}
             >
+              <img src="/google.svg" alt="Google icon" className="h-8 w-8"/>
               Sign in with {provider.name}
             </button>
           </div>

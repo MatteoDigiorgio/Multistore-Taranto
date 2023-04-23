@@ -18,6 +18,9 @@ import GamepadIcon from "@mui/icons-material/Gamepad";
 import ElectricScooterIcon from "@mui/icons-material/ElectricScooter";
 import PrintIcon from "@mui/icons-material/Print";
 import SellIcon from "@mui/icons-material/Sell";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+
+import { redirect } from "next/navigation";
 
 const everything: Array<any> = [
   { page: "/", text: "Frigoriferi" },
@@ -125,7 +128,7 @@ const mainMenu: Array<MainMenu> = [
     subMenu: null,
   },
   {
-    page: "/",
+    page: "",
     text: "Marche",
     color: "bg-yellow-500",
     icon: <SellIcon />,
@@ -137,6 +140,13 @@ const mainMenu: Array<MainMenu> = [
       { page: "/", text: "Nokia" },
       { page: "/", text: "Sony" },
     ],
+  },
+  {
+    page: "/auth/signin",
+    text: "Admin",
+    color: "bg-gray-300",
+    icon: <AdminPanelSettingsIcon />,
+    subMenu: null,
   },
 ];
 
@@ -230,61 +240,68 @@ function Menu() {
                 {mainMenu.map((item) => (
                   <>
                     <div className="h-24 justify-items-center">
-                      <button
-                        onClick={() => {
-                          setIsSubMenuOpen(true), setWhichMenu(item.text);
-                        }}
-                        className="flex flex-col items-center"
-                      >
-                        {/* Circular button */}
-                        <div
-                          className={`rounded-full ${item.color} h-16 w-16 drop-shadow-xl flex items-center justify-center`}
+                      {/* TODO: Distinguere tra link e submenu */}
+                      <Link title="Menu" passHref href={item.page}>
+                        <button
+                          onClick={() => {
+                            if (item.subMenu === null) {
+                              redirect(item.page);
+                            } else {
+                              setIsSubMenuOpen(true), setWhichMenu(item.text);
+                            }
+                          }}
+                          className="flex flex-col items-center"
                         >
-                          {item.icon}
-                        </div>
-                        <li className="w-18 text-sm text-center list-none">
-                          {item.text}
-                        </li>
-                        {/* Sub Menu for each category */}
-                        {item.subMenu && item.text === thisWhichMenu && (
-                          <motion.div
-                            key={`submenu-${item.text}`}
-                            variants={subMenuVariants}
-                            initial="hidden"
-                            animate={isSubMenuOpen ? "visible" : {}}
-                            className={`fixed top-24 right-0 left-0 bottom-0 h-screen w-full p-6 text-left bg-white z-50 rounded-t-xl cursor-default shadow-[0_4px_24px_15px_rgba(32,33,36,.05)]`}
+                          {/* Circular button */}
+                          <div
+                            className={`rounded-full ${item.color} h-16 w-16 drop-shadow-xl flex items-center justify-center`}
                           >
-                            {/* List for the Sub Menu */}
-                            <h1 className="text-xl font-semibold">
-                              {item.text}
-                            </h1>
-                            <ul className="divide-y">
-                              {item.subMenu &&
-                                item.subMenu.map((subMenuItem) => (
-                                  <>
-                                    <li
-                                      className="text-sm p-4"
-                                      onClick={void 0}
-                                    >
-                                      <Link
-                                        title={`${subMenuItem.text}`}
-                                        passHref
-                                        href={`${subMenuItem.page}`}
-                                        className="flex justify-between items-center"
+                            {item.icon}
+                          </div>
+                          <li className="w-18 text-sm text-center list-none">
+                            {item.text}
+                          </li>
+                          {/* Sub Menu for each category */}
+                          {item.subMenu && item.text === thisWhichMenu && (
+                            <motion.div
+                              key={`submenu-${item.text}`}
+                              variants={subMenuVariants}
+                              initial="hidden"
+                              animate={isSubMenuOpen ? "visible" : {}}
+                              className={`fixed top-24 right-0 left-0 bottom-0 h-screen w-full p-6 text-left bg-white z-50 rounded-t-xl cursor-default shadow-[0_4px_24px_15px_rgba(32,33,36,.05)]`}
+                            >
+                              {/* List for the Sub Menu */}
+                              <h1 className="text-xl font-semibold">
+                                {item.text}
+                              </h1>
+                              <ul className="divide-y">
+                                {item.subMenu &&
+                                  item.subMenu.map((subMenuItem) => (
+                                    <>
+                                      <li
+                                        className="text-sm p-4"
+                                        onClick={void 0}
                                       >
-                                        {subMenuItem.text}
-                                        <ChevronRightIcon
-                                          height={24}
-                                          className="stroke-blue-500 justify-item-end"
-                                        />
-                                      </Link>
-                                    </li>
-                                  </>
-                                ))}
-                            </ul>
-                          </motion.div>
-                        )}
-                      </button>
+                                        <Link
+                                          title={`${subMenuItem.text}`}
+                                          passHref
+                                          href={`${subMenuItem.page}`}
+                                          className="flex justify-between items-center"
+                                        >
+                                          {subMenuItem.text}
+                                          <ChevronRightIcon
+                                            height={24}
+                                            className="stroke-blue-500 justify-item-end"
+                                          />
+                                        </Link>
+                                      </li>
+                                    </>
+                                  ))}
+                              </ul>
+                            </motion.div>
+                          )}
+                        </button>
+                      </Link>
                     </div>
                   </>
                 ))}
