@@ -10,7 +10,7 @@ data.sort((a, b) => a.nome.localeCompare(b.nome));
 
 function Gestisci() {
   return (
-    <div className="relative mx-auto h-screen flex flex-col justify-around">
+    <div className="relative m-auto flex flex-col gap-4">
       <div className="mb-2">
         <input
           type="text"
