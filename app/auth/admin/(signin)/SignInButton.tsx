@@ -30,7 +30,7 @@ function SignInButton() {
   }, []);
 
   if (session) {
-    redirect("/admin");
+    redirect("/auth/admin");
   }
   return (
     <>
@@ -41,8 +41,8 @@ function SignInButton() {
               className="flex items-center justify-center p-2 gap-2 shadow-md border border-[#888] rounded w-full  cursor-pointer text-black hover:bg-gray-100"
               onClick={() => signIn(provider.id)}
             >
-              <img src="/google.svg" alt="Google icon" className="h-8 w-8"/>
-              Sign in with {provider.name}
+              <img src="/google.svg" alt="Google icon" className="h-8 w-8" />
+              Accedi con {provider.name}
             </button>
           </div>
         ))}

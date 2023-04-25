@@ -142,7 +142,7 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/auth/signin",
+    page: "/auth/admin",
     text: "Admin",
     color: "bg-gray-300",
     icon: <AdminPanelSettingsIcon />,
