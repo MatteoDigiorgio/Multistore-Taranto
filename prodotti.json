@@ -1,0 +1,63 @@
+[
+  {
+    "nome": "Apple iPhone 14 Pro (128 GB) - Nero siderale",
+    "immagine": "https://m.media-amazon.com/images/I/61XO4bORHUL._AC_SX522_.jpg",
+    "descrione": "Un bel telefono potente",
+    "memoria": "128GB",
+    "prezzo": "1299"
+  },
+  {
+    "nome": "Apple 2022 PC Portatile MacBook Air con chip M2: display Liquid Retina 13.6 , 8GB di RAM, 256GB di archiviazione​​​​​​​ SSD storage, tastiera retroilluminata; color​​​​​​​ Mezzanotte",
+    "immagine": "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/macbook-air-midnight-select-20220606?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1653084303665",
+    "descrione": "Portatile Apple",
+    "memoria": "128GB",
+    "prezzo": "1699"
+  },
+  {
+    "nome": "Xiaomi Mi Essential Monopattino Elettrico, 20 Km di Autonomia, Velocità Fino a 25 Km/h, Peso massimo 100 kg, Nero",
+    "immagine": "https://m.media-amazon.com/images/I/51UuqFC7TuL._AC_SX450_.jpg",
+    "descrione": "Veloce xiami",
+    "dimensioni": "120 x 100 x 45",
+    "prezzo": "899"
+  },
+  {
+    "nome": "Micronde",
+    "immagine": "https://m.media-amazon.com/images/I/61PuJbu4PIL._AC_SS450_.jpg",
+    "descrione": "Candy",
+    "prezzo": "200"
+  },
+  {
+    "nome": "Frigorifero",
+    "immagine": "https://m.media-amazon.com/images/I/71TMYcG0zhL._AC_SY879_.jpg",
+    "descrione": "Frigo Samsung",
+    "memoria": "128GB",
+    "prezzo": "789"
+  },
+  {
+    "nome": "Drone",
+    "immagine": "https://m.media-amazon.com/images/I/81U7zKn3htL._AC_SX425_.jpg",
+    "descrione": "Vola alto",
+    "dimensioni": "25 x 75 x 45",
+    "prezzo": "899"
+  },
+  {
+    "nome": "Climatizzatore",
+    "immagine": "https://m.media-amazon.com/images/W/IMAGERENDERING_521856-T1/images/I/31f3wGud-xL._SR600%2C315_PIWhiteStrip%2CBottomLeft%2C0%2C35_SCLZZZZZZZ_FMpng_BG255%2C255%2C255.jpg",
+    "descrione": "Brrrrrrrrrr",
+    "prezzo": "679"
+  },
+  {
+    "nome": "Samsung S20",
+    "immagine": "https://m.media-amazon.com/images/I/71pztG2BpUL._AC_SY450_.jpg",
+    "descrione": "Fa belle foto",
+    "memoria": "256GB",
+    "prezzo": "1399"
+  },
+  {
+    "nome": "iPad Mini",
+    "immagine": "https://m.media-amazon.com/images/I/71uoSV96ToL._AC_SX522_.jpg",
+    "descrione": "Ci puoi disegnare",
+    "memoria": "256GB",
+    "prezzo": "599"
+  }
+]

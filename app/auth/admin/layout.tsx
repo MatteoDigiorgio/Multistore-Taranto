@@ -1,5 +1,6 @@
 import React from "react";
-import SubHeader from "./SubHeader";
+import SubHeader from "./(adminHeader)/SubHeader";
+import ProvidersWrapper from "@/app/(main)/ProvidersWrapper";
 
 export default function RootLayout({
   children,
@@ -9,8 +10,10 @@ export default function RootLayout({
   return (
     <html>
       <body className="flex flex-col h-screen">
-        <SubHeader />
-        {children}
+        <ProvidersWrapper>
+          <SubHeader />
+          {children}
+        </ProvidersWrapper>
       </body>
     </html>
   );
