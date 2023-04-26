@@ -50,7 +50,7 @@ function Gestisci() {
                 height={64}
               />
               <div className="items-center">
-                <p className="mx-2 line-clamp-2 justify-center">
+                <p className="mx-2 line-clamp-2 justify-center text-center">
                   {product.nome}
                 </p>
               </div>
@@ -63,9 +63,12 @@ function Gestisci() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <button className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-green-400 rounded-full ring-2 ring-green-500 shadow-lg hover:ring-2 hover:ring-green-700 hover:bg-green-500">
+        <Link
+          href="/auth/admin/gestisci/aggiungi"
+          className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-green-400 rounded-full ring-2 ring-green-500 shadow-lg hover:ring-2 hover:ring-green-700 hover:bg-green-500"
+        >
           <AddIcon />
-        </button>
+        </Link>
         <p className="font-light">Aggiungi prodotto</p>
       </div>
     </div>
