@@ -1,14 +1,30 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Gestisci.module.css";
 import Image from "next/image";
-import data from "../../../../prodotti.json";
 import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
-
-data.sort((a, b) => a.nome.localeCompare(b.nome));
+import { getProducts } from "@/pages/api/auth/getProducts";
+import { Prodotto } from "@/types";
 
 function Gestisci() {
+  const [prodotti, setProdotti] = useState<Prodotto[]>([
+    {
+      id: "",
+      nome: "",
+      immagine: "",
+      descrizione: "",
+      prezzo: "",
+    },
+  ]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const prodottiData = await getProducts();
+      setProdotti(prodottiData);
+    }
+    fetchData();
+  }, []);
   return (
     <div className="relative m-auto flex flex-col gap-4">
       <div className="mb-2">
@@ -20,10 +36,10 @@ function Gestisci() {
       </div>
 
       <div className={styles.card}>
-        {data.map((product) => (
+        {prodotti.map((product) => (
           <>
             <Link
-              href="/auth/admin/"
+              href={`/auth/admin/gestisci/${product.id}`}
               className="flex flex-row items-center h-16 justify-between mx-8 my-4 hover:bg-gray-300 hover:rounded-lg hover:cursor-pointer"
             >
               <img
