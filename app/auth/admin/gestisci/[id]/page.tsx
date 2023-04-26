@@ -7,6 +7,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getProduct } from "@/pages/api/auth/getProducts";
 import styles from "./Prodotto.module.css";
 import Link from "next/link";
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function Product({ params }: any) {
   const [prodotto, setProdotto] = useState<Partial<Prodotto>>({
@@ -40,33 +42,40 @@ function Product({ params }: any) {
         <img
           src={prodotto.immagine}
           alt="Prodotto"
-          className="h-16 w-16 rounded-full mb-1 shadow-lg shrink-0"
+          className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
           width={64}
           height={64}
         />
 
-        <input
+        <TextField
+          label="Nome"
+          id="outlined-start-adornment"
+          type="text"
           value={prodotto.nome}
-          className="block rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        ></input>
+          sx={{ m: 1, width: "20ch" }}
+          size="small"
+        />
 
-        <input
+        <TextField
+          label="Descrizione"
+          id="outlined-start-adornment"
+          type="text"
           value={prodotto.descrizione}
-          className="block rounded-md border-0  py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        ></input>
+          sx={{ m: 1, width: "20ch" }}
+          size="small"
+        />
 
-        <div className="relative rounded-md shadow-sm">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <span className="text-gray-500 sm:text-sm">€</span>
-          </div>
-          <input
-            type="text"
-            name="price"
-            id="price"
-            className="block w-full rounded-md border-0 py-1.5 pl-7 pr-2 placeholder:text-right text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            value={prodotto.prezzo}
-          />
-        </div>
+        <TextField
+          label="Prezzo"
+          id="outlined-start-adornment"
+          type="number"
+          value={prodotto.prezzo}
+          sx={{ m: 1, width: "20ch" }}
+          size="small"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+          }}
+        />
       </div>
 
       <div className="flex flex-row items-center justify-center gap-2">
