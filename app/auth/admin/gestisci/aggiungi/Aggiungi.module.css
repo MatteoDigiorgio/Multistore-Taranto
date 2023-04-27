@@ -24,40 +24,16 @@
   scrollbar-width: none; /* Firefox */
 }
 
-.form {
-  background-color: #fff;
-  box-shadow: 0 10px 60px rgb(218, 229, 255);
-  border: 1px solid rgb(159, 159, 160);
-  border-radius: 20px;
-  padding: 2rem 0.7rem 0.7rem 0.7rem;
-  text-align: center;
-  font-size: 1.125rem;
-  max-width: 320px;
-}
-
-.form_title {
-  color: #000000;
-  font-size: 1.8rem;
-  font-weight: 500;
-}
-
-.form_paragraph {
-  margin-top: 10px;
-  font-size: 0.9375rem;
-  color: rgb(105, 105, 105);
-}
-
 .drop_container {
   background-color: #d4e5ff;
   position: relative;
   display: flex;
-  gap: 10px;
-  flex-direction: column;
-  justify-content: center;
+  gap: 5px;
   align-items: center;
-  padding: 10px;
+  justify-content: center;
+  padding: 8px;
   margin-top: 2rem;
-  border-radius: 30px;
+  border-radius: 20px;
   border: 2px dashed #a4c8fe;
   color: #444;
   cursor: pointer;
@@ -75,7 +51,7 @@
 
 .drop_title {
   color: #444;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: bold;
   text-align: center;
   transition: color 0.2s ease-in-out;
