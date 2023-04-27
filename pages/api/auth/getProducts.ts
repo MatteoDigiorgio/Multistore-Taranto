@@ -16,6 +16,8 @@ export async function getProducts() {
       return myObject;
     })
   );
+
+  prodotti.sort((a, b) => a.nome.localeCompare(b.nome));
   return prodotti;
 }
 
