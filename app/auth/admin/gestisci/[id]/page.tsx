@@ -26,8 +26,9 @@ const Field = ({
           label={productKey}
           id="outlined-start-adornment"
           type="text"
+          multiline
           value={value}
-          sx={{ m: 1, width: "20ch" }}
+          sx={{ m: 1, width: "60%" }}
           size="small"
         />
       ) : (
@@ -36,8 +37,9 @@ const Field = ({
           id="outlined-start-adornment"
           type="number"
           value={value}
-          sx={{ m: 1, width: "20ch" }}
+          sx={{ m: 1, width: "60%" }}
           size="small"
+          className="mb-10"
           InputProps={{
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
           }}
@@ -111,12 +113,10 @@ function Product({ params }: any) {
           </>
         ))}
 
-        <div className="mb-10">
-          <Field
-            productKey="Prezzo"
-            value={prodotto.prezzo ? prodotto.prezzo : ""}
-          />
-        </div>
+        <Field
+          productKey="Prezzo"
+          value={prodotto.prezzo ? prodotto.prezzo : ""}
+        />
       </div>
 
       <div className="flex flex-row items-center justify-center gap-2">
