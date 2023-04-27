@@ -31,8 +31,8 @@ function AddProduct() {
       <div
         className={`${styles.card} flex flex-col items-center gap-1 mx-8 my-4`}
       >
-        <div className="w-3/4 px-4">
-          <label className={styles.drop_container}>
+        <div className="w-3/5">
+          <label className={`flex flex-row ${styles.drop_container}`}>
             <span className={styles.drop_title}>Carica una foto</span>
             <IconButton
               color="primary"
@@ -49,11 +49,11 @@ function AddProduct() {
           label="Nome"
           id="outlined-start-adornment"
           type="text"
-          sx={{ m: 1, width: "20ch" }}
+          sx={{ m: 1, width: "60%" }}
           size="small"
         />
 
-        <FormControl sx={{ m: 1, minWidth: "20ch" }} size="small">
+        <FormControl sx={{ m: 1, minWidth: "60%" }} size="small">
           <InputLabel id="demo-select-small-label">Categoria</InputLabel>
           <Select
             labelId="demo-select-small-label"
@@ -75,7 +75,7 @@ function AddProduct() {
           label="Descrizione"
           id="outlined-start-adornment"
           type="text"
-          sx={{ m: 1, width: "20ch" }}
+          sx={{ m: 1, width: "60%" }}
           size="small"
         />
 
@@ -83,12 +83,16 @@ function AddProduct() {
           label="Prezzo"
           id="outlined-start-adornment"
           type="number"
-          sx={{ m: 1, width: "20ch" }}
+          sx={{ m: 1, width: "60%" }}
           size="small"
           InputProps={{
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
           }}
         />
+
+        <button className="w-3/5 my-2 bg-[#d6e7ff] p-2 rounded-full ring ring-[#a4c8fe]">
+          Aggiungi dettagli
+        </button>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Link

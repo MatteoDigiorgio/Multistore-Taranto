@@ -10,14 +10,60 @@ import Link from "next/link";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 
+const Field = ({
+  productKey,
+  value,
+}: {
+  productKey: string;
+  value: string;
+}) => {
+  productKey = productKey.charAt(0).toUpperCase() + productKey.slice(1);
+
+  return (
+    <>
+      {productKey !== "Prezzo" ? (
+        <TextField
+          label={productKey}
+          id="outlined-start-adornment"
+          type="text"
+          value={value}
+          sx={{ m: 1, width: "20ch" }}
+          size="small"
+        />
+      ) : (
+        <TextField
+          label={productKey}
+          id="outlined-start-adornment"
+          type="number"
+          value={value}
+          sx={{ m: 1, width: "20ch" }}
+          size="small"
+          InputProps={{
+            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+          }}
+        />
+      )}
+    </>
+  );
+};
+
 function Product({ params }: any) {
   const [prodotto, setProdotto] = useState<Partial<Prodotto>>({
     id: "",
     nome: "",
-    immagine: "",
+    categoria: "",
     descrizione: "",
+    immagine: "",
     prezzo: "",
   });
+
+  const excludeKeys = [
+    "nome",
+    "categoria",
+    "descrizione",
+    "immagine",
+    "prezzo",
+  ];
 
   useEffect(() => {
     async function fetchData(params: any) {
@@ -47,35 +93,30 @@ function Product({ params }: any) {
           height={64}
         />
 
-        <TextField
-          label="Nome"
-          id="outlined-start-adornment"
-          type="text"
-          value={prodotto.nome}
-          sx={{ m: 1, width: "20ch" }}
-          size="small"
+        <Field productKey="Nome" value={prodotto.nome ? prodotto.nome : ""} />
+        <Field
+          productKey="Categoria"
+          value={prodotto.categoria ? prodotto.categoria : ""}
+        />
+        <Field
+          productKey="Descrizione"
+          value={prodotto.descrizione ? prodotto.descrizione : ""}
         />
 
-        <TextField
-          label="Descrizione"
-          id="outlined-start-adornment"
-          type="text"
-          value={prodotto.descrizione}
-          sx={{ m: 1, width: "20ch" }}
-          size="small"
-        />
+        {Object.entries(prodotto).map(([key, value], i) => (
+          <>
+            {!excludeKeys.includes(key) ? (
+              <Field productKey={key} value={value} key={i} />
+            ) : null}
+          </>
+        ))}
 
-        <TextField
-          label="Prezzo"
-          id="outlined-start-adornment"
-          type="number"
-          value={prodotto.prezzo}
-          sx={{ m: 1, width: "20ch" }}
-          size="small"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">€</InputAdornment>,
-          }}
-        />
+        <div className="mb-10">
+          <Field
+            productKey="Prezzo"
+            value={prodotto.prezzo ? prodotto.prezzo : ""}
+          />
+        </div>
       </div>
 
       <div className="flex flex-row items-center justify-center gap-2">

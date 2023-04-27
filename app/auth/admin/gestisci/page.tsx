@@ -12,8 +12,9 @@ function Gestisci() {
     {
       id: "",
       nome: "",
-      immagine: "",
+      categoria: "",
       descrizione: "",
+      immagine: "",
       prezzo: "",
     },
   ]);
