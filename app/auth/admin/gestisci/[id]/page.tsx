@@ -12,6 +12,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import db from "@/firebase";
 import { doc, deleteDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
 
 const Field = ({
   productKey,
@@ -134,11 +137,64 @@ function Product({ params }: any) {
             value={prodotto.nome ? prodotto.nome : ""}
             handleChange={handleChange}
           />
-          <Field
-            productKey="Categoria"
-            value={prodotto.categoria ? prodotto.categoria : ""}
-            handleChange={handleChange}
-          />
+          <FormControl sx={{ m: 1, maxWidth: "60%" }} size="small">
+            <InputLabel htmlFor="grouped-native-select">Categoria</InputLabel>
+            <Select
+              native
+              value={prodotto.categoria ? prodotto.categoria : ""}
+              multiline
+              id="grouped-native-select"
+              label="Categoria"
+              name="Categoria"
+              onChange={handleChange}
+            >
+              <option aria-label="None" value="" />
+              <optgroup label="Elettrodomestici">
+                <option value={"Frigoriferi"}>Frigoriferi</option>
+                <option value={"Congelatori"}>Congelatori</option>
+                <option value={"Lavatrici"}>Lavatrici</option>
+                <option value={"Asciugatrici"}>Asciugatrici</option>
+                <option value={"Lavastoviglie"}>Lavastoviglie</option>
+                <option value={"Forni"}>Forni</option>
+                <option value={"Climatizzatori"}>Climatizzatori</option>
+                <option value={"Ventilatori"}>Ventilatori</option>
+                <option value={"Stufe"}>Stufe</option>
+                <option value={"Asciugatrici"}>Asciugatrici</option>
+              </optgroup>
+
+              <optgroup label="Telefonia">
+                <option value={"Smarthphone e Cellulari"}>
+                  Smarthphone e Cellulari
+                </option>
+                <option value={"Cordless"}>Cordless</option>
+                <option value={"Accessori Telefonia"}>
+                  Accessori Telefonia
+                </option>
+              </optgroup>
+              <optgroup label="Televisori">
+                <option value={"Televisori"}>Televisori</option>
+                <option value={"DVD e Blu-ray"}>DVD e Blu-ray</option>
+                <option value={"Accessori Televisori"}>
+                  Accessori Televisori
+                </option>
+              </optgroup>
+              <optgroup label="Informatica">
+                <option value={"Notebook"}>Notebook</option>
+                <option value={"Tablet"}>Tablet</option>
+                <option value={"Accessori Informatica"}>
+                  Accessori Informatica
+                </option>
+              </optgroup>
+              <optgroup label="Console e Videogiochi">
+                <option value={"Console"}>Console</option>
+                <option value={"Videogiochi"}>Videogiochi</option>
+              </optgroup>
+              <optgroup label="Monopattini">
+                <option value={"Monopattini"}>Monopattini</option>
+              </optgroup>
+            </Select>
+          </FormControl>
+
           <Field
             productKey="Descrizione"
             value={prodotto.descrizione ? prodotto.descrizione : ""}
