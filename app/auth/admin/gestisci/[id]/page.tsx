@@ -9,13 +9,18 @@ import styles from "./Prodotto.module.css";
 import Link from "next/link";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
+import db from "@/firebase";
+import { doc, deleteDoc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 const Field = ({
   productKey,
   value,
+  handleChange,
 }: {
   productKey: string;
   value: string;
+  handleChange: any;
 }) => {
   productKey = productKey.charAt(0).toUpperCase() + productKey.slice(1);
 
@@ -23,6 +28,8 @@ const Field = ({
     <>
       {productKey !== "Prezzo" ? (
         <TextField
+          required
+          name={productKey}
           label={productKey}
           id="outlined-start-adornment"
           type="text"
@@ -30,15 +37,19 @@ const Field = ({
           value={value}
           sx={{ m: 1, width: "60%" }}
           size="small"
+          onChange={handleChange}
         />
       ) : (
         <TextField
+          required
+          name={productKey}
           label={productKey}
           id="outlined-start-adornment"
           type="number"
           value={value}
           sx={{ m: 1, width: "60%" }}
           size="small"
+          onChange={handleChange}
           className="mb-10"
           InputProps={{
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
@@ -67,6 +78,8 @@ function Product({ params }: any) {
     "prezzo",
   ];
 
+  const router = useRouter();
+
   useEffect(() => {
     async function fetchData(params: any) {
       const prodottiData = await getProduct(params.id);
@@ -75,64 +88,108 @@ function Product({ params }: any) {
     fetchData(params);
   }, []);
 
+  const handleChange = (e: any) => {
+    setProdotto((prevState) => ({
+      ...prevState,
+      [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
+        e.target.value,
+    }));
+  };
+
+  const handleDeleteProduct = async (e: any) => {
+    e.preventDefault();
+    await deleteDoc(doc(db, "prodotti", `${params.id}`));
+    router.push("/auth/admin/gestisci");
+  };
+
+  const handleEditProduct = async (e: any) => {
+    e.preventDefault();
+    await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
+    router.push("/auth/admin/gestisci");
+  };
+
   return (
     <div className="relative m-auto flex flex-col">
-      <Link
-        href="/auth/admin/gestisci"
-        className="flex absolute left-12 top-10 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
-      >
-        <ArrowBackIcon />
-      </Link>
+      <form onSubmit={handleEditProduct}>
+        <Link
+          href="/auth/admin/gestisci"
+          className="flex absolute left-12 top-10 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
+        >
+          <ArrowBackIcon />
+        </Link>
 
-      <div
-        className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
-      >
-        <img
-          src={prodotto.immagine}
-          alt="Prodotto"
-          className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
-          width={64}
-          height={64}
-        />
+        <div
+          className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
+        >
+          <img
+            src={prodotto.immagine}
+            alt="Prodotto"
+            className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
+            width={64}
+            height={64}
+          />
 
-        <Field productKey="Nome" value={prodotto.nome ? prodotto.nome : ""} />
-        <Field
-          productKey="Categoria"
-          value={prodotto.categoria ? prodotto.categoria : ""}
-        />
-        <Field
-          productKey="Descrizione"
-          value={prodotto.descrizione ? prodotto.descrizione : ""}
-        />
+          <Field
+            productKey="Nome"
+            value={prodotto.nome ? prodotto.nome : ""}
+            handleChange={handleChange}
+          />
+          <Field
+            productKey="Categoria"
+            value={prodotto.categoria ? prodotto.categoria : ""}
+            handleChange={handleChange}
+          />
+          <Field
+            productKey="Descrizione"
+            value={prodotto.descrizione ? prodotto.descrizione : ""}
+            handleChange={handleChange}
+          />
 
-        {Object.entries(prodotto).map(([key, value], i) => (
-          <>
-            {!excludeKeys.includes(key) ? (
-              <Field productKey={key} value={value} key={i} />
-            ) : null}
-          </>
-        ))}
+          {Object.entries(prodotto).map(([key, value], i) => (
+            <>
+              {!excludeKeys.includes(key) ? (
+                <Field
+                  productKey={key}
+                  value={value}
+                  key={i}
+                  handleChange={handleChange}
+                />
+              ) : null}
+            </>
+          ))}
 
-        <Field
-          productKey="Prezzo"
-          value={prodotto.prezzo ? prodotto.prezzo : ""}
-        />
-      </div>
-
-      <div className="flex flex-row items-center justify-center gap-2">
-        <div>
-          <button className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-red-400 rounded-full ring-2 ring-red-500 shadow-lg hover:ring-2 hover:ring-red-700 hover:bg-red-500">
-            <ClearIcon />
-          </button>
-          <p className="font-light w-20 text-center mt-2">Cancella prodotto</p>
+          <Field
+            productKey="Prezzo"
+            value={prodotto.prezzo ? prodotto.prezzo : ""}
+            handleChange={handleChange}
+          />
         </div>
-        <div>
-          <button className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-yellow-400 rounded-full ring-2 ring-yellow-500 shadow-lg hover:ring-2 hover:ring-yellow-700 hover:bg-yellow-500">
-            <SendIcon />
-          </button>
-          <p className="font-light w-20 text-center mt-2">Aggiorna prodotto</p>
+
+        <div className="flex flex-row items-center justify-center gap-2">
+          <div>
+            <button
+              onClick={handleDeleteProduct}
+              className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-red-400 rounded-full ring-2 ring-red-500 shadow-lg hover:ring-2 hover:ring-red-700 hover:bg-red-500"
+            >
+              <ClearIcon />
+            </button>
+            <p className="font-light w-20 text-center mt-2">
+              Cancella prodotto
+            </p>
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-yellow-400 rounded-full ring-2 ring-yellow-500 shadow-lg hover:ring-2 hover:ring-yellow-700 hover:bg-yellow-500"
+            >
+              <SendIcon />
+            </button>
+            <p className="font-light w-20 text-center mt-2">
+              Aggiorna prodotto
+            </p>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
