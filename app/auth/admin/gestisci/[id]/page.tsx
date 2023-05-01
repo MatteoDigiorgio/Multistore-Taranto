@@ -9,12 +9,13 @@ import styles from "./Prodotto.module.css";
 import Link from "next/link";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import db from "@/firebase";
+import db, { storage } from "@/firebase";
 import { doc, deleteDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
+import { getDownloadURL, listAll, ref } from "firebase/storage";
 
 const Field = ({
   productKey,
@@ -73,6 +74,8 @@ function Product({ params }: any) {
     prezzo: "",
   });
 
+  const [imgurl, setImgurl] = useState({ immagine: "" });
+
   const excludeKeys = [
     "nome",
     "categoria",
@@ -100,12 +103,14 @@ function Product({ params }: any) {
   };
 
   const handleDeleteProduct = async (e: any) => {
+    console.log("delete");
     e.preventDefault();
     await deleteDoc(doc(db, "prodotti", `${params.id}`));
     router.push("/auth/admin/gestisci");
   };
 
   const handleEditProduct = async (e: any) => {
+    console.log("edit");
     e.preventDefault();
     await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
     router.push("/auth/admin/gestisci");
@@ -125,7 +130,7 @@ function Product({ params }: any) {
           className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
         >
           <img
-            src={prodotto.immagine}
+            src={imgurl.immagine}
             alt="Prodotto"
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
             width={64}
@@ -224,6 +229,7 @@ function Product({ params }: any) {
         <div className="flex flex-row items-center justify-center gap-2">
           <div>
             <button
+              type="button"
               onClick={handleDeleteProduct}
               className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-red-400 rounded-full ring-2 ring-red-500 shadow-lg hover:ring-2 hover:ring-red-700 hover:bg-red-500"
             >

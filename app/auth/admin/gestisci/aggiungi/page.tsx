@@ -16,7 +16,9 @@ import Checkbox from "@mui/material/Checkbox";
 import db from "@/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
+import { storage } from "../../../../../firebase";
 
 const Field = ({
   productKey,
@@ -61,6 +63,7 @@ const Field = ({
 
 function AddProduct() {
   const [inputs, setInputs] = useState({});
+  const [image, setImage] = useState();
   const router = useRouter();
 
   const handleChange = (e: any) => {
@@ -71,12 +74,19 @@ function AddProduct() {
           ? e.target.checked === true
             ? e.target.checked
             : null
+          : e.target.type === "file"
+          ? e.target.files[0].name
           : e.target.value,
     }));
+    e.target.type === "file" ? setImage(e.target.files[0]) : null;
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    const imgref = ref(storage, `immagini/${inputs.immagine}`);
+    uploadBytes(imgref, image).then((snapshot) => {
+      console.log("Uploaded a blob or file!");
+    });
 
     let adjustedInputs = Object.fromEntries(
       Object.entries(inputs)
@@ -86,7 +96,7 @@ function AddProduct() {
         )
         .map(([key, value]) => [key, (value as string).trim()])
     );
-
+    console.log(adjustedInputs);
     await setDoc(doc(db, "prodotti", `${uuidv4()}`), adjustedInputs);
 
     router.push("/auth/admin/gestisci");
@@ -112,7 +122,13 @@ function AddProduct() {
                 aria-label="upload picture"
                 component="label"
               >
-                <input hidden accept="image/*" type="file" />
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  name="immagine"
+                  onChange={handleChange}
+                />
                 <PhotoCamera />
               </IconButton>
             </label>
