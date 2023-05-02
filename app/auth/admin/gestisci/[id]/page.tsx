@@ -103,14 +103,12 @@ function Product({ params }: any) {
   };
 
   const handleDeleteProduct = async (e: any) => {
-    console.log("delete");
     e.preventDefault();
     await deleteDoc(doc(db, "prodotti", `${params.id}`));
     router.push("/auth/admin/gestisci");
   };
 
   const handleEditProduct = async (e: any) => {
-    console.log("edit");
     e.preventDefault();
     await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
     router.push("/auth/admin/gestisci");
@@ -130,7 +128,7 @@ function Product({ params }: any) {
           className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
         >
           <img
-            src={imgurl.immagine}
+            src={prodotto.immagine}
             alt="Prodotto"
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
             width={64}

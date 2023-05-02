@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { storage } from "../../../../../firebase";
+import { Prodotto } from "@/types";
 
 const Field = ({
   productKey,
@@ -62,12 +63,12 @@ const Field = ({
 };
 
 function AddProduct() {
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState<Partial<Prodotto>>({});
   const [image, setImage] = useState();
   const router = useRouter();
 
   const handleChange = (e: any) => {
-    setInputs((prevState) => ({
+    setInputs((prevState: any) => ({
       ...prevState,
       [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
         e.target.type === "checkbox"
@@ -78,15 +79,16 @@ function AddProduct() {
           ? e.target.files[0].name
           : e.target.value,
     }));
-    e.target.type === "file" ? setImage(e.target.files[0]) : null;
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     const imgref = ref(storage, `immagini/${inputs.immagine}`);
-    uploadBytes(imgref, image).then((snapshot) => {
-      console.log("Uploaded a blob or file!");
-    });
+
+    image && (await uploadBytes(imgref, image));
 
     let adjustedInputs = Object.fromEntries(
       Object.entries(inputs)
@@ -96,7 +98,6 @@ function AddProduct() {
         )
         .map(([key, value]) => [key, (value as string).trim()])
     );
-    console.log(adjustedInputs);
     await setDoc(doc(db, "prodotti", `${uuidv4()}`), adjustedInputs);
 
     router.push("/auth/admin/gestisci");
@@ -123,6 +124,7 @@ function AddProduct() {
                 component="label"
               >
                 <input
+                  required
                   hidden
                   accept="image/*"
                   type="file"

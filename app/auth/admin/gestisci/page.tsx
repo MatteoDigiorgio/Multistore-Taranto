@@ -22,7 +22,6 @@ function Gestisci() {
   useEffect(() => {
     async function fetchData() {
       const prodottiData = await getProducts();
-      console.log(prodottiData);
       setProdotti(prodottiData);
     }
     fetchData();
