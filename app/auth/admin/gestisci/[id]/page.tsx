@@ -16,6 +16,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import { getDownloadURL, listAll, ref } from "firebase/storage";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
 const Field = ({
   productKey,
@@ -65,7 +67,11 @@ const Field = ({
 };
 
 function Product({ params }: any) {
-  const [prodotto, setProdotto] = useState<Partial<Prodotto>>({
+  interface Product {
+    [key: string]: string | boolean;
+  }
+
+  const [prodotto, setProdotto] = useState<Product>({
     id: "",
     nome: "",
     categoria: "",
@@ -74,7 +80,7 @@ function Product({ params }: any) {
     prezzo: "",
   });
 
-  const [imgurl, setImgurl] = useState({ immagine: "" });
+  const [immagineUrl, setImmagineUrl] = useState();
 
   const excludeKeys = [
     "nome",
@@ -89,6 +95,8 @@ function Product({ params }: any) {
   useEffect(() => {
     async function fetchData(params: any) {
       const prodottiData = await getProduct(params.id);
+      prodottiData ? setImmagineUrl(prodottiData.immagineUrl) : null;
+      delete prodottiData.immagineUrl;
       prodottiData ? setProdotto(prodottiData) : null;
     }
     fetchData(params);
@@ -98,7 +106,11 @@ function Product({ params }: any) {
     setProdotto((prevState) => ({
       ...prevState,
       [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
-        e.target.value,
+        e.target.type === "checkbox"
+          ? e.target.checked === true
+            ? e.target.checked
+            : false
+          : e.target.value,
     }));
   };
 
@@ -128,7 +140,7 @@ function Product({ params }: any) {
           className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
         >
           <img
-            src={prodotto.immagine}
+            src={typeof immagineUrl === "string" ? immagineUrl : ""}
             alt="Prodotto"
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
             width={64}
@@ -137,7 +149,7 @@ function Product({ params }: any) {
 
           <Field
             productKey="Nome"
-            value={prodotto.nome ? prodotto.nome : ""}
+            value={typeof prodotto.nome === "string" ? prodotto.nome : ""}
             handleChange={handleChange}
           />
           <FormControl sx={{ m: 1, maxWidth: "60%" }} size="small">
@@ -200,26 +212,46 @@ function Product({ params }: any) {
 
           <Field
             productKey="Descrizione"
-            value={prodotto.descrizione ? prodotto.descrizione : ""}
+            value={
+              typeof prodotto.descrizione === "string"
+                ? prodotto.descrizione
+                : ""
+            }
             handleChange={handleChange}
           />
 
           {Object.entries(prodotto).map(([key, value], i) => (
             <>
               {!excludeKeys.includes(key) ? (
-                <Field
-                  productKey={key}
-                  value={value}
-                  key={i}
-                  handleChange={handleChange}
-                />
+                typeof value === "string" ? (
+                  <Field
+                    productKey={key}
+                    value={value}
+                    key={i}
+                    handleChange={handleChange}
+                  />
+                ) : (
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    checked={value}
+                    label={key
+                      .replace("_", " ")
+                      .split(" ")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                    name={key}
+                    onChange={handleChange}
+                  />
+                )
               ) : null}
             </>
           ))}
 
           <Field
             productKey="Prezzo"
-            value={prodotto.prezzo ? prodotto.prezzo : ""}
+            value={typeof prodotto.prezzo === "string" ? prodotto.prezzo : ""}
             handleChange={handleChange}
           />
         </div>

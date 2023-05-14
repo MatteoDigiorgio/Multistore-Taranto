@@ -63,7 +63,14 @@ const Field = ({
 };
 
 function AddProduct() {
-  const [inputs, setInputs] = useState<Partial<Prodotto>>({});
+  interface Product {
+    [key: string]: string | boolean;
+  }
+  const [inputs, setInputs] = useState<Product>({
+    dual_Sim: false,
+    _5G: false,
+    nFC: false,
+  });
   const [image, setImage] = useState();
   const router = useRouter();
 
@@ -74,7 +81,7 @@ function AddProduct() {
         e.target.type === "checkbox"
           ? e.target.checked === true
             ? e.target.checked
-            : null
+            : false
           : e.target.type === "file"
           ? e.target.files[0].name
           : e.target.value,
@@ -89,17 +96,19 @@ function AddProduct() {
     const imgref = ref(storage, `immagini/${inputs.immagine}`);
 
     image && (await uploadBytes(imgref, image));
-
     let adjustedInputs = Object.fromEntries(
       Object.entries(inputs)
-        .filter(
-          ([_, value]) =>
-            typeof value === "string" && (value as string).trim() !== ""
+        .filter(([_, value]) =>
+          typeof value === "string"
+            ? (value as string).trim() !== ""
+            : typeof value === "boolean"
         )
-        .map(([key, value]) => [key, (value as string).trim()])
+        .map(([key, value]) => [
+          key.startsWith("_") ? key.slice(1) : key,
+          typeof value === "string" ? (value as string).trim() : value,
+        ])
     );
     await setDoc(doc(db, "prodotti", `${uuidv4()}`), adjustedInputs);
-
     router.push("/auth/admin/gestisci");
   };
   return (
@@ -203,20 +212,23 @@ function AddProduct() {
           <div className="flex flex-col justify-left">
             <FormControlLabel
               control={<Checkbox />}
+              defaultChecked={false}
               label="Dual sim"
-              name="Dual sim"
+              name="dual_Sim"
               onChange={handleChange}
             />
             <FormControlLabel
               control={<Checkbox />}
+              defaultChecked={false}
               label="5G"
-              name="5G"
+              name="_5G"
               onChange={handleChange}
             />
             <FormControlLabel
               control={<Checkbox />}
+              defaultChecked={false}
               label="NFC"
-              name="NFC"
+              name="nFC"
               onChange={handleChange}
             />
           </div>
@@ -252,5 +264,3 @@ function AddProduct() {
 }
 
 export default AddProduct;
-
-// iPhone non è in ordine
