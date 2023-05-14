@@ -47,7 +47,7 @@ export async function getProduct(id: any) {
           const downloadURL = await getDownloadURL(
             ref(storage, `immagini/${value}`)
           );
-          return { ...obj, [key]: downloadURL };
+          return { ...obj, [key]: value, immagineUrl: downloadURL };
         } else {
           return { ...obj, [key]: value };
         }
