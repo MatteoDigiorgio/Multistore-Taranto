@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SendIcon from "@mui/icons-material/Send";
 import styles from "./Aggiungi.module.css";
@@ -20,31 +20,80 @@ import { ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { storage } from "../../../../../firebase";
 import { Prodotto } from "@/types";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const Field = ({
   productKey,
   handleChange,
+  inputs,
 }: {
   productKey: string;
   handleChange: any;
+  inputs: any;
 }) => {
-  productKey = productKey.charAt(0).toUpperCase() + productKey.slice(1);
+  let productKeyLowerCase =
+    productKey.charAt(0).toLowerCase() + productKey.slice(1);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current !== null) {
+      inputRef.current.setCustomValidity(
+        inputs[productKeyLowerCase] === "" ||
+          inputs[productKeyLowerCase] === undefined ||
+          inputs[productKeyLowerCase] === null
+          ? "Campo necessario!"
+          : ""
+      );
+    }
+  }, [inputs, productKeyLowerCase]);
 
   return (
     <>
       {productKey !== "Prezzo" ? (
-        <TextField
-          name={productKey}
-          label={productKey}
-          id="outlined-start-adornment"
-          type="text"
-          multiline
-          sx={{ m: 1, width: "60%" }}
-          size="small"
-          onChange={handleChange}
-        />
+        productKey === "Nome" ||
+        productKey === "Descrizione" ||
+        productKey === "Marca" ? (
+          // Required field
+          <TextField
+            inputRef={inputRef}
+            error={inputs[productKeyLowerCase] === ""}
+            helperText={
+              inputs[productKeyLowerCase] === "" ? "Campo necessario!" : null
+            }
+            required
+            name={productKey}
+            label={productKey}
+            id="outlined-start-adornment"
+            type="text"
+            multiline
+            sx={{ m: 1, width: "60%" }}
+            size="small"
+            onChange={handleChange}
+          />
+        ) : (
+          // Optional field
+          <TextField
+            name={productKey}
+            label={productKey}
+            id="outlined-start-adornment"
+            type="text"
+            multiline
+            sx={{ m: 1, width: "60%" }}
+            size="small"
+            onChange={handleChange}
+          />
+        )
       ) : (
+        // Price
         <TextField
+          inputRef={inputRef}
+          error={inputs[productKeyLowerCase] === ""}
+          helperText={
+            inputs[productKeyLowerCase] === "" ? "Campo necessario!" : null
+          }
+          required
           label={productKey}
           name={productKey}
           id="outlined-start-adornment"
@@ -63,17 +112,62 @@ const Field = ({
 };
 
 function AddProduct() {
-  interface Product {
-    [key: string]: string | boolean;
-  }
-  const [inputs, setInputs] = useState<Product>({
+  const [inputs, setInputs] = useState({
+    nome: null,
+    marca: null,
+    categoria: null,
+    descrizione: null,
+    immagine: null,
     dual_Sim: false,
     _5G: false,
     nFC: false,
+    prezzo: null,
   });
   const [image, setImage] = useState();
+  const [imageUrl, setImageUrl] = useState("");
   const router = useRouter();
 
+  let inputRefCategory = useRef<HTMLInputElement | null>(null);
+  let inputRefImage = useRef<HTMLInputElement | null>(null);
+
+  let categoria = inputs.categoria;
+  let immagine = inputs.immagine;
+
+  useEffect(() => {
+    if (inputRefCategory.current !== null) {
+      inputRefCategory.current.setCustomValidity(
+        categoria === "" || categoria === undefined || categoria === null
+          ? "Campo necessario!"
+          : ""
+      );
+    }
+  }, [categoria]);
+
+  useEffect(() => {
+    if (inputRefImage.current !== null) {
+      inputRefImage.current.setCustomValidity(
+        immagine === "" || immagine === undefined || immagine === null
+          ? "Campo necessario!"
+          : ""
+      );
+    }
+  }, [immagine]);
+
+  // Snackbar
+  const [successOpen, setSuccessOpen] = React.useState(false);
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSuccessOpen(false);
+  };
+
+  // Inputs handler
   const handleChange = (e: any) => {
     setInputs((prevState: any) => ({
       ...prevState,
@@ -84,15 +178,20 @@ function AddProduct() {
             : false
           : e.target.type === "file"
           ? e.target.files[0].name
-          : e.target.value,
+          : e.target.value.replace(/\n/g, ""),
     }));
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
+      setImageUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
+  // Submit Handler
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    setSuccessOpen(true);
+
     const imgref = ref(storage, `immagini/${inputs.immagine}`);
 
     image && (await uploadBytes(imgref, image));
@@ -111,8 +210,10 @@ function AddProduct() {
     await setDoc(doc(db, "prodotti", `${uuidv4()}`), adjustedInputs);
     router.push("/auth/admin/gestisci");
   };
+
   return (
     <div className="relative m-auto flex flex-col">
+      {/* Go back */}
       <Link
         href="/auth/admin/gestisci"
         className="flex absolute left-12 top-10 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
@@ -120,37 +221,75 @@ function AddProduct() {
         <ArrowBackIcon />
       </Link>
 
+      {/* Form */}
       <form onSubmit={handleSubmit}>
         <div
           className={`${styles.card} flex flex-col items-center gap-1 mx-8 my-4`}
         >
-          <div className="w-3/5">
-            <label className={`flex flex-row ${styles.drop_container}`}>
-              <span className={styles.drop_title}>Carica una foto</span>
-              <IconButton
-                color="primary"
-                aria-label="upload picture"
-                component="label"
-              >
-                <input
-                  required
-                  hidden
-                  accept="image/*"
-                  type="file"
-                  name="immagine"
-                  onChange={handleChange}
+          {/* Image field */}
+          {!inputs.immagine ? (
+            <div className="w-3/5">
+              <label className={`flex flex-row ${styles.drop_container}`}>
+                <span className={styles.drop_title}>Carica una foto</span>
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="label"
+                >
+                  <input
+                    required
+                    ref={inputRefImage}
+                    accept="image/*"
+                    type="file"
+                    name="immagine"
+                    onChange={handleChange}
+                    style={{
+                      position: "absolute",
+                      clip: "rect(1px, 1px, 1px, 1px)",
+                      padding: 0,
+                      border: 0,
+                      height: "1px",
+                      width: "1px",
+                      overflow: "hidden",
+                    }}
+                  />
+                  <PhotoCamera />
+                </IconButton>
+              </label>
+            </div>
+          ) : (
+            <>
+              {
+                <img
+                  src={imageUrl}
+                  alt=""
+                  className="rounded-xl mb-1 mt-10 shadow-lg shrink-0"
+                  width={128}
+                  height={128}
                 />
-                <PhotoCamera />
-              </IconButton>
-            </label>
-          </div>
+              }
+            </>
+          )}
 
-          <Field productKey="Nome" handleChange={handleChange} />
-          <Field productKey="Marca" handleChange={handleChange} />
+          {/* Name field */}
+          <Field
+            productKey="Nome"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          {/* Brand field */}
+          <Field
+            productKey="Marca"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
 
+          {/* Category field */}
           <FormControl sx={{ m: 1, maxWidth: "60%" }} size="small">
             <InputLabel htmlFor="grouped-native-select">Categoria</InputLabel>
             <Select
+              required
+              inputRef={inputRefCategory}
               native
               defaultValue=""
               multiline
@@ -172,7 +311,6 @@ function AddProduct() {
                 <option value={"Stufe"}>Stufe</option>
                 <option value={"Asciugatrici"}>Asciugatrici</option>
               </optgroup>
-
               <optgroup label="Telefonia">
                 <option value={"Smarthphone e Cellulari"}>
                   Smarthphone e Cellulari
@@ -206,9 +344,14 @@ function AddProduct() {
             </Select>
           </FormControl>
 
-          <Field productKey="Descrizione" handleChange={handleChange} />
+          {/* Description field */}
+          <Field
+            productKey="Descrizione"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
 
-          {/* Informatica */}
+          {/* Checkboxes */}
           <div className="flex flex-col justify-left">
             <FormControlLabel
               control={<Checkbox />}
@@ -232,23 +375,79 @@ function AddProduct() {
               onChange={handleChange}
             />
           </div>
-          <Field productKey="Processore" handleChange={handleChange} />
-          <Field productKey="Display" handleChange={handleChange} />
-          <Field productKey="Fotocamera" handleChange={handleChange} />
-          <Field productKey="Webcam" handleChange={handleChange} />
-          <Field productKey="Sistema Operativo" handleChange={handleChange} />
-          <Field productKey="RAM" handleChange={handleChange} />
-          <Field productKey="ROM" handleChange={handleChange} />
-          <Field productKey="Batteria" handleChange={handleChange} />
-          <Field productKey="Memoria" handleChange={handleChange} />
-          <Field productKey="Scheda Video" handleChange={handleChange} />
-          <Field productKey="Colore" handleChange={handleChange} />
-          <Field productKey="Peso" handleChange={handleChange} />
-          <Field productKey="Dimensioni" handleChange={handleChange} />
-          <Field productKey="Giri" handleChange={handleChange} />
 
-          <Field productKey="Prezzo" handleChange={handleChange} />
+          {/* Optional fields */}
+          <Field
+            productKey="Processore"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Display"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Fotocamera"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Webcam"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Sistema Operativo"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field productKey="RAM" handleChange={handleChange} inputs={inputs} />
+          <Field productKey="ROM" handleChange={handleChange} inputs={inputs} />
+          <Field
+            productKey="Batteria"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Memoria"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Scheda Video"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Colore"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Peso"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Dimensioni"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Giri"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+
+          <Field
+            productKey="Prezzo"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
         </div>
+
+        {/* Add product button */}
         <div className="flex flex-col items-center gap-2">
           <button
             type="submit"
@@ -259,6 +458,18 @@ function AddProduct() {
           <p className="font-light">Aggiungi prodotto</p>
         </div>
       </form>
+
+      {/* Snackbar for success */}
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={successOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          Prodotto aggiunto
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
