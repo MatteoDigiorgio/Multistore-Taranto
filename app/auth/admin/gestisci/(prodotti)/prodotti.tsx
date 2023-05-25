@@ -15,7 +15,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
             <Image
               src={product.immagine}
               alt="Prodotto"
-              className="h-16 w-16 rounded-full mb-1 shadow-lg shrink-0"
+              className="h-16 w-16 rounded-full mb-1 shadow-lg"
               width={64}
               height={64}
             />
