@@ -6,18 +6,10 @@ import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 import { getProducts } from "@/pages/api/auth/getProducts";
 import { Prodotto } from "@/types";
+import Prodotti from "./(prodotti)/prodotti";
 
 function Gestisci() {
-  const [prodotti, setProdotti] = useState<Prodotto[]>([
-    {
-      id: "",
-      nome: "",
-      categoria: "",
-      descrizione: "",
-      immagine: "",
-      prezzo: "",
-    },
-  ]);
+  const [prodotti, setProdotti] = useState<Prodotto[]>();
 
   useEffect(() => {
     async function fetchData() {
@@ -26,6 +18,7 @@ function Gestisci() {
     }
     fetchData();
   }, []);
+
   return (
     <div className="relative m-auto flex flex-col gap-4">
       <div className="mb-2">
@@ -37,30 +30,7 @@ function Gestisci() {
       </div>
 
       <div className={styles.card}>
-        {prodotti.map((product) => (
-          <>
-            <Link
-              href={`/auth/admin/gestisci/${product.id}`}
-              className="flex flex-row items-center h-16 justify-between mx-8 my-4 hover:bg-gray-300 hover:rounded-lg hover:cursor-pointer"
-            >
-              <img
-                src={product.immagine}
-                alt="Prodotto"
-                className="h-16 w-16 rounded-full mb-1 shadow-lg shrink-0"
-                width={64}
-                height={64}
-              />
-              <div className="items-center">
-                <p className="mx-2 line-clamp-2 justify-center text-center">
-                  {product.nome}
-                </p>
-              </div>
-              <p className="shrink-0 italic font-bold text-xs">
-                {product.prezzo} €
-              </p>
-            </Link>
-          </>
-        ))}
+        <Prodotti prodotti={prodotti} />
       </div>
 
       <div className="flex flex-col items-center gap-2">

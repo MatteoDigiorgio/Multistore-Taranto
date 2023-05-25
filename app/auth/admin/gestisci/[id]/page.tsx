@@ -18,6 +18,9 @@ import InputLabel from "@mui/material/InputLabel";
 import { getDownloadURL, listAll, ref } from "firebase/storage";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import Snackbar from "@mui/material/Snackbar";
+import Alert, { AlertColor } from "@mui/material/Alert";
+import Image from "next/image";
 
 const Field = ({
   productKey,
@@ -70,7 +73,7 @@ function Product({ params }: any) {
   interface Product {
     [key: string]: string | boolean;
   }
-
+  const [initialProdotto, setInitialProdotto] = useState();
   const [prodotto, setProdotto] = useState<Product>({
     id: "",
     nome: "",
@@ -98,6 +101,7 @@ function Product({ params }: any) {
       prodottiData ? setImmagineUrl(prodottiData.immagineUrl) : null;
       delete prodottiData.immagineUrl;
       prodottiData ? setProdotto(prodottiData) : null;
+      prodottiData ? setInitialProdotto(prodottiData) : null;
     }
     fetchData(params);
   }, []);
@@ -115,15 +119,50 @@ function Product({ params }: any) {
   };
 
   const handleDeleteProduct = async (e: any) => {
+    setMessage("Prodotto eliminato.");
+    setSeverity("success");
+    setOpen(true);
     e.preventDefault();
     await deleteDoc(doc(db, "prodotti", `${params.id}`));
-    router.push("/auth/admin/gestisci");
+    setTimeout(() => {
+      router.push("/auth/admin/gestisci");
+    }, 1000);
   };
 
   const handleEditProduct = async (e: any) => {
     e.preventDefault();
-    await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
-    router.push("/auth/admin/gestisci");
+    const hasChanged =
+      JSON.stringify(prodotto) !== JSON.stringify(initialProdotto);
+
+    if (hasChanged) {
+      setMessage("Prodotto modificato");
+      setSeverity("success");
+      setOpen(true);
+      await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
+      setTimeout(() => {
+        router.push("/auth/admin/gestisci");
+      }, 1000);
+    } else {
+      setMessage("Nessuna modifica");
+      setSeverity("warning");
+      setOpen(true);
+    }
+  };
+
+  // Snackbar
+  const [open, setOpen] = React.useState(false);
+  const [severity, setSeverity] = useState<AlertColor>("success");
+  const [message, setMessage] = useState("");
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -139,7 +178,7 @@ function Product({ params }: any) {
         <div
           className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
         >
-          <img
+          <Image
             src={typeof immagineUrl === "string" ? immagineUrl : ""}
             alt="Prodotto"
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
@@ -282,6 +321,18 @@ function Product({ params }: any) {
           </div>
         </div>
       </form>
+
+      {/* Snackbar for delete */}
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity={severity} sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

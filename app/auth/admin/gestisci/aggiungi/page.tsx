@@ -22,6 +22,7 @@ import { storage } from "../../../../../firebase";
 import { Prodotto } from "@/types";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Image from "next/image";
 
 const Field = ({
   productKey,
@@ -260,7 +261,7 @@ function AddProduct() {
           ) : (
             <>
               {
-                <img
+                <Image
                   src={imageUrl}
                   alt=""
                   className="rounded-xl mb-1 mt-10 shadow-lg shrink-0"
