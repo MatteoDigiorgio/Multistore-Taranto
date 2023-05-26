@@ -8,13 +8,16 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
   return (
     <>
       {products?.map((product) => (
-        <div className={`${styles.card} h-80 w-64 rounded-md`} key={product.id}>
+        <div
+          className={`${styles.card} h-80 w-44 sm:w-64 rounded-md`}
+          key={product.id}
+        >
           <div className="flex justify-center">
             <Link href={`/${product.id}`}>
               <Image
                 src={product.immagine}
                 alt=""
-                className={`rounded-xl shadow-lg aspect-auto h-36 w-auto ${styles.card_img} cursor-pointer`}
+                className={`rounded-xl shadow-xl aspect-auto object-contain h-36 w-auto ${styles.card_img} cursor-pointer`}
                 width={128}
                 height={80}
               />
@@ -22,7 +25,7 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
           </div>
           <div className={styles.card_info}>
             <p
-              className={`${styles.text_title} line-clamp-2`}
+              className={`${styles.text_title} font-bold leading-normal text-sm md:text-md line-clamp-3`}
               title={product.nome}
             >
               {product.nome}

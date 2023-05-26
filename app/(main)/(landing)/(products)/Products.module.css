@@ -7,7 +7,9 @@
 }
 
 .card_img {
-  background-color: #ffffff00;
+  padding: 10px;
+  background: #ffffff;
+  box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
   border-radius: 0.5rem;
   transition: 0.3s ease;
 }
@@ -30,12 +32,6 @@
 }
 
 /*Text*/
-.text_title {
-  font-weight: 900;
-  font-size: 1.2em;
-  line-height: 1.5;
-}
-
 .text_body {
   font-size: 0.9em;
   padding-bottom: 10px;
