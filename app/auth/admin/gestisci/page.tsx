@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import styles from "./Gestisci.module.css";
-import Image from "next/image";
 import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 import { getProducts } from "@/pages/api/auth/getProducts";

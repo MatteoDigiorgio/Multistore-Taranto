@@ -34,8 +34,8 @@ export async function getProducts() {
 }
 
 export async function getProduct(id: any) {
-  const prodottoE = await db.collection("prodotti").doc(id).get();
-  const data = prodottoE.data();
+  const prodotto = await db.collection("prodotti").doc(id).get();
+  const data = prodotto.data();
 
   if (data) {
     const myarray = Object.entries(data);

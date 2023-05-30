@@ -18,6 +18,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
               className="h-16 w-16 rounded-full mb-1 shadow-lg"
               width={64}
               height={64}
+              unoptimized={true}
             />
             <div className="items-center">
               <p className="mx-2 line-clamp-2 justify-center text-center">

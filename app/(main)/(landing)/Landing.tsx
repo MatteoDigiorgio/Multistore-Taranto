@@ -29,7 +29,7 @@ function Landing() {
       setTimeout(() => {
         setProducts(productsData);
         setIsLoading(0);
-      }, 1000);
+      }, 500);
     }
     fetchData();
   }, []);
@@ -37,7 +37,7 @@ function Landing() {
   return (
     <>
       {products ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-2 gap-y-4 sm:gap-x-8 sm:gap-y-6 my-4 mx-4 sm:my-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-2 gap-y-4 sm:gap-x-8 sm:gap-y-6 mx-4 mt-40 mb-4 sm:mt-28">
           <Products products={products} />
         </div>
       ) : (
