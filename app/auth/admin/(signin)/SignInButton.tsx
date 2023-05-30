@@ -48,6 +48,7 @@ function SignInButton() {
                 className="h-8 w-8"
                 width={64}
                 height={64}
+                unoptimized={true}
               />
               Accedi con {provider.name}
             </button>

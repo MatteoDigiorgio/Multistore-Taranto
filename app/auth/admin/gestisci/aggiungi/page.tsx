@@ -267,6 +267,7 @@ function AddProduct() {
                   className="rounded-xl mb-1 mt-10 shadow-lg shrink-0"
                   width={128}
                   height={128}
+                  unoptimized={true}
                 />
               }
             </>

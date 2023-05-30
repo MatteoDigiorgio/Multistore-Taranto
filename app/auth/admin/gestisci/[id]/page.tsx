@@ -184,6 +184,7 @@ function Product({ params }: any) {
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
             width={64}
             height={64}
+            unoptimized={true}
           />
 
           <Field

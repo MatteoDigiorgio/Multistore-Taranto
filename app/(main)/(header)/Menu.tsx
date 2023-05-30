@@ -176,6 +176,7 @@ export const MultistoreLogo = () => {
         width={120}
         height={50}
         className="object-contain cursor-pointer "
+        unoptimized={true}
       />
     </Link>
   );
@@ -316,7 +317,7 @@ function Menu() {
   return (
     <>
       <button
-        className="md:justify-items-end"
+        className="md:flex md:justify-items-end "
         onClick={() => setIsMenuOpen(true)}
       >
         <Bars3Icon height={24} className="stroke-black" />
