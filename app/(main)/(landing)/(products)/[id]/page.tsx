@@ -10,6 +10,7 @@ import {
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
+import styles from "./Product.module.css";
 
 function Product({ params }: any) {
   interface Product {
@@ -61,10 +62,13 @@ function Product({ params }: any) {
   return (
     <>
       {product ? (
-        <div className="bg-white flex items-center z-0 mb-10 mt-32 md:mt-6">
+        <div className="bg-white flex mb-10 mt-32 md:mt-6 z-0">
+          <div
+            className={`hidden md:flex fixed -z-10 top-20 bottom-0 rounded-l-[50px] shadow-2xl w-1/2 right-0 ${styles.background}`}
+          />
           <div className="w-full">
             <div className="flex flex-col md:flex-row justify-center md:justify-end md:mt-20">
-              <div className="p-5 md:pr-10 md:justify-center md:flex md:flex-col md:w-1/2">
+              <div className="p-5 md:pr-10 md:justify-center md:flex md:flex-col md:w-1/2 ">
                 {/* Head */}
                 <span className="flex items-center gap-1">
                   <p className="text-gray-500 text-xs">{product.categoria}</p>•
@@ -72,7 +76,7 @@ function Product({ params }: any) {
                 </span>
                 {/* Name */}
                 <p
-                  className="font-bold text-2xl leading-normal md:text-md"
+                  className="font-bold text-3xl leading-normal md:text-md"
                   title={
                     typeof product.nome === "string" ? product.nome : "Prodotto"
                   }
@@ -136,7 +140,7 @@ function Product({ params }: any) {
               </div>
             </div>
             {/* Price (Mobile View) */}
-            <div className="flex md:hidden font-medium text-2xl justify-center items-center p-5 w-full">
+            <div className="flex md:hidden font-medium text-2xl justify-center items-center p-5 w-full ">
               € {product.prezzo}
               <div className="hidden">
                 <svg viewBox="0 0 20 20">
@@ -147,7 +151,7 @@ function Product({ params }: any) {
               </div>
             </div>
 
-            <div className="md:flex md:justify-end">
+            <div className="md:flex md:justify-end ">
               <div className="flex flex-col items-start w-full md:w-1/2 ">
                 <div className="border-t-[1px] w-full px-5 py-2 text-lg">
                   <Disclosure
