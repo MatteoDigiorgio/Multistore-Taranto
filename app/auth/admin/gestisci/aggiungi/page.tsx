@@ -35,24 +35,43 @@ const Field = ({
 }) => {
   let productKeyLowerCase =
     productKey.charAt(0).toLowerCase() + productKey.slice(1);
+  let value = inputs[productKeyLowerCase];
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (inputRef.current !== null) {
       inputRef.current.setCustomValidity(
-        inputs[productKeyLowerCase] === "" ||
-          inputs[productKeyLowerCase] === undefined ||
-          inputs[productKeyLowerCase] === null
-          ? "Campo necessario!"
+        value === "" || value === undefined || value === null
+          ? productKey === "Sconto"
+            ? ""
+            : productKey === "Percentuale"
+            ? ""
+            : "Campo necessario!"
           : ""
       );
     }
-  }, [inputs, productKeyLowerCase]);
+    if (productKey === "Prezzo" || productKey === "Sconto") {
+      if (
+        inputRef.current !== null &&
+        value !== "" &&
+        value !== null &&
+        value !== undefined
+      ) {
+        const pattern = /^[0-9]+,[0-9]+$/;
+        const inputValue = inputRef.current.value;
+        inputRef.current.setCustomValidity(
+          !pattern.test(inputValue) ? "Deve seguire il formato 123,45" : ""
+        );
+      }
+    }
+  }, [value, productKey, productKeyLowerCase]);
 
   return (
     <>
-      {productKey !== "Prezzo" ? (
+      {productKey !== "Prezzo" &&
+      productKey !== "Sconto" &&
+      productKey !== "Percentuale" ? (
         productKey === "Nome" ||
         productKey === "Descrizione" ||
         productKey === "Marca" ? (
@@ -90,22 +109,44 @@ const Field = ({
         // Price
         <TextField
           inputRef={inputRef}
-          error={inputs[productKeyLowerCase] === ""}
-          helperText={
-            inputs[productKeyLowerCase] === "" ? "Campo necessario!" : null
-          }
-          required
-          label={productKey}
+          required={productKey === "Prezzo" ? true : false}
           name={productKey}
+          label={
+            productKey === "Prezzo"
+              ? "Prezzo di listino"
+              : productKey === "Sconto"
+              ? "Prezzo scontato"
+              : "Percentuale sconto"
+          }
+          helperText={
+            productKey === "Sconto"
+              ? "Non aggiungere il prezzo scontato se hai aggiunto la percentuale di sconto"
+              : productKey === "Percentuale"
+              ? "Non aggiungere la percentuale di sconto se hai aggiunto il prezzo scontato"
+              : null
+          }
           id="outlined-start-adornment"
-          type="number"
           sx={{ m: 1, width: "60%" }}
           size="small"
-          onChange={handleChange}
-          className="mb-10"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+          inputProps={{
+            pattern: "[0-9]+(,[0-9]+)?",
+            type: "text",
+            inputMode: "decimal",
           }}
+          onChange={handleChange}
+          InputProps={
+            productKey === "Percentuale"
+              ? {
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                }
+              : {
+                  startAdornment: (
+                    <InputAdornment position="start">€</InputAdornment>
+                  ),
+                }
+          }
         />
       )}
     </>
@@ -123,6 +164,8 @@ function AddProduct() {
     _5G: false,
     nFC: false,
     prezzo: null,
+    sconto: null,
+    percentuale: null,
   });
   const [image, setImage] = useState();
   const [imageUrl, setImageUrl] = useState("");
@@ -444,6 +487,16 @@ function AddProduct() {
 
           <Field
             productKey="Prezzo"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Sconto"
+            handleChange={handleChange}
+            inputs={inputs}
+          />
+          <Field
+            productKey="Percentuale"
             handleChange={handleChange}
             inputs={inputs}
           />

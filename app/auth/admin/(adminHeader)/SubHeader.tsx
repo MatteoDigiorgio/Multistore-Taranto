@@ -4,6 +4,8 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import PersonIcon from "@mui/icons-material/Person";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Image from "next/image";
 
 type SubMenu = {
   page: string;
@@ -13,14 +15,27 @@ type SubMenu = {
 
 const subMenu: Array<SubMenu> = [
   {
-    page: "/auth/admin",
-    text: "Profilo",
-    icon: <PersonIcon />,
+    page: "/",
+    text: "",
+    icon: (
+      <Image
+        src="/multistore_icon.png"
+        alt="Multistore Icon"
+        width={21}
+        height={21}
+        unoptimized={true}
+      />
+    ),
   },
   {
     page: "/auth/admin/gestisci",
-    text: "Gestisci Prodotti",
+    text: "Prodotti",
     icon: <InventoryIcon />,
+  },
+  {
+    page: "/auth/admin",
+    text: "Profilo",
+    icon: <PersonIcon />,
   },
 ];
 
@@ -28,12 +43,12 @@ function SubHeader() {
   const pathname = usePathname();
   return (
     <div>
-      <ul className="flex flex-row items-center justify-center gap-8">
+      <ul className="flex flex-row items-center justify-center gap-2">
         {subMenu.map((menu) => (
           <li key={menu.text} className="p-2">
             <Link
               href={menu.page}
-              className={`flex items-center gap-1 p-2 my-4 rounded-full ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-gray-400 ${
+              className={`flex items-center gap-1 p-2 px-4 my-4 rounded-full ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-gray-400 ${
                 pathname === menu.page ? "bg-gray-400" : null
               }`}
             >

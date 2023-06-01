@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Prodotto } from "@/types";
 import SendIcon from "@mui/icons-material/Send";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -33,10 +33,35 @@ const Field = ({
 }) => {
   productKey = productKey.charAt(0).toUpperCase() + productKey.slice(1);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current !== null) {
+      inputRef.current.setCustomValidity(
+        value === "" && productKey !== "Sconto" && productKey !== "Percentuale"
+          ? "Campo necessario!"
+          : ""
+      );
+    }
+    if (productKey === "Prezzo" || productKey === "Sconto") {
+      if (inputRef.current !== null && value !== "") {
+        const pattern = /^[0-9]+,[0-9]+$/;
+        const inputValue = inputRef.current.value;
+
+        inputRef.current.setCustomValidity(
+          !pattern.test(inputValue) ? "Deve seguire il formato 123,45" : ""
+        );
+      }
+    }
+  }, [value, productKey]);
+
   return (
     <>
-      {productKey !== "Prezzo" ? (
+      {productKey !== "Prezzo" &&
+      productKey !== "Sconto" &&
+      productKey !== "Percentuale" ? (
         <TextField
+          inputRef={inputRef}
           required
           name={productKey}
           label={productKey}
@@ -50,19 +75,46 @@ const Field = ({
         />
       ) : (
         <TextField
-          required
+          inputRef={inputRef}
+          required={productKey === "Prezzo" ? true : false}
           name={productKey}
-          label={productKey}
+          label={
+            productKey === "Prezzo"
+              ? "Prezzo di listino"
+              : productKey === "Sconto"
+              ? "Prezzo scontato"
+              : "Percentuale sconto"
+          }
+          helperText={
+            productKey === "Sconto"
+              ? "Non aggiungere il prezzo scontato se hai aggiunto la percentuale di sconto"
+              : productKey === "Percentuale"
+              ? "Non aggiungere la percentuale di sconto se hai aggiunto il prezzo scontato"
+              : null
+          }
           id="outlined-start-adornment"
-          type="number"
           value={value}
           sx={{ m: 1, width: "60%" }}
           size="small"
-          onChange={handleChange}
-          className="mb-10"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+          inputProps={{
+            pattern: "[0-9]+(,[0-9]+)?",
+            type: "text",
+            inputMode: "decimal",
           }}
+          onChange={handleChange}
+          InputProps={
+            productKey === "Percentuale"
+              ? {
+                  endAdornment: (
+                    <InputAdornment position="end">%</InputAdornment>
+                  ),
+                }
+              : {
+                  startAdornment: (
+                    <InputAdornment position="start">€</InputAdornment>
+                  ),
+                }
+          }
         />
       )}
     </>
@@ -91,6 +143,8 @@ function Product({ params }: any) {
     "descrizione",
     "immagine",
     "prezzo",
+    "sconto",
+    "percentuale",
   ];
 
   const router = useRouter();
@@ -138,7 +192,20 @@ function Product({ params }: any) {
       setMessage("Prodotto modificato");
       setSeverity("success");
       setOpen(true);
-      await setDoc(doc(db, "prodotti", `${params.id}`), prodotto);
+      let adjustedInputs = Object.fromEntries(
+        Object.entries(prodotto)
+          .filter(([_, value]) =>
+            typeof value === "string"
+              ? (value as string).trim() !== ""
+              : typeof value === "boolean"
+          )
+          .map(([key, value]) => [
+            key.startsWith("_") ? key.slice(1) : key,
+            typeof value === "string" ? (value as string).trim() : value,
+          ])
+      );
+
+      await setDoc(doc(db, "prodotti", `${params.id}`), adjustedInputs);
       setTimeout(() => {
         router.push("/auth/admin/gestisci");
       }, 1000);
@@ -292,6 +359,22 @@ function Product({ params }: any) {
           <Field
             productKey="Prezzo"
             value={typeof prodotto.prezzo === "string" ? prodotto.prezzo : ""}
+            handleChange={handleChange}
+          />
+
+          <Field
+            productKey="Sconto"
+            value={typeof prodotto.sconto === "string" ? prodotto.sconto : ""}
+            handleChange={handleChange}
+          />
+
+          <Field
+            productKey="Percentuale"
+            value={
+              typeof prodotto.percentuale === "string"
+                ? prodotto.percentuale
+                : ""
+            }
             handleChange={handleChange}
           />
         </div>

@@ -9,7 +9,6 @@ import {
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Variants, motion } from "framer-motion";
 import SmartphoneIcon from "@mui/icons-material/Smartphone";
 import MicrowaveIcon from "@mui/icons-material/Microwave";
 import LiveTvIcon from "@mui/icons-material/LiveTv";
@@ -21,6 +20,7 @@ import SellIcon from "@mui/icons-material/Sell";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 import { redirect } from "next/navigation";
+import { Transition } from "@headlessui/react";
 
 const everything: Array<any> = [
   { page: "/", text: "Frigoriferi" },
@@ -150,23 +150,6 @@ const mainMenu: Array<MainMenu> = [
   },
 ];
 
-const menuVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.5, when: "beforeChildren" },
-  },
-};
-
-const subMenuVariants: Variants = {
-  hidden: { opacity: 0, y: "+100vw" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.2 },
-  },
-};
-
 export const MultistoreLogo = () => {
   return (
     <Link title="Home" passHref href="/">
@@ -185,16 +168,16 @@ export const MultistoreLogo = () => {
 export const TopNavMenu = ({
   isSubMenuOpen,
   setIsSubMenuOpen,
-  setIsSubMenuOpenAndisMenuOpen,
+  setIsSubMenuOpenAndIsMenuOpen,
 }: {
   isSubMenuOpen: boolean;
   setIsSubMenuOpen: any;
-  setIsSubMenuOpenAndisMenuOpen: any;
+  setIsSubMenuOpenAndIsMenuOpen: any;
 }) => {
   return (
     <div className="h-24 mx-3">
       {isSubMenuOpen && (
-        <button onClick={setIsSubMenuOpen} className="absolute left-10 top-5">
+        <button onClick={setIsSubMenuOpen} className="absolute left-6 top-7">
           <ArrowLeftIcon height={24} className="stroke-black" />
         </button>
       )}
@@ -202,8 +185,8 @@ export const TopNavMenu = ({
         <MultistoreLogo />
       </div>
       <button
-        onClick={setIsSubMenuOpenAndisMenuOpen}
-        className="absolute right-10 top-5"
+        onClick={setIsSubMenuOpenAndIsMenuOpen}
+        className="absolute right-6 top-7"
       >
         <XMarkIcon height={24} className="stroke-black" />
       </button>
@@ -220,18 +203,15 @@ function Menu() {
     return (
       <>
         {isMenuOpen && (
-          <motion.div
+          <div
             key={"menu"}
-            variants={menuVariants}
-            initial="hidden"
-            animate={isMenuOpen ? "visible" : {}}
-            className="top-0 right-0 fixed h-screen w-full bg-[#F9F9F9] z-50"
+            className="top-0 right-0 fixed h-screen w-full bg-[#F9F9F9] z-50 md:top-28 md:right-8 md:h-auto md:w-[470px] md:rounded-md md:shadow-md"
           >
-            <nav className="mx-3 text-black">
+            <nav className="m-3 text-black">
               <TopNavMenu
                 isSubMenuOpen={isSubMenuOpen}
                 setIsSubMenuOpen={() => setIsSubMenuOpen(false)}
-                setIsSubMenuOpenAndisMenuOpen={() => {
+                setIsSubMenuOpenAndIsMenuOpen={() => {
                   setIsMenuOpen(false);
                   setIsSubMenuOpen(false);
                 }}
@@ -242,7 +222,7 @@ function Menu() {
                   <>
                     <div className="h-24 justify-items-center">
                       {/* TODO: Distinguere tra link e submenu */}
-                      <Link title="Menu" passHref href={item.page}>
+                      <Link passHref href={item.page}>
                         <button
                           onClick={() => {
                             if (item.subMenu === null) {
@@ -255,7 +235,7 @@ function Menu() {
                         >
                           {/* Circular button */}
                           <div
-                            className={`rounded-full ${item.color} h-16 w-16 drop-shadow-xl flex items-center justify-center`}
+                            className={`rounded-full ${item.color} h-16 w-16 drop-shadow-xl flex items-center justify-center hover:-translate-y-2 hover:scale-110 hover:duration-300`}
                           >
                             {item.icon}
                           </div>
@@ -263,44 +243,43 @@ function Menu() {
                             {item.text}
                           </li>
                           {/* Sub Menu for each category */}
-                          {item.subMenu && item.text === thisWhichMenu && (
-                            <motion.div
-                              key={`submenu-${item.text}`}
-                              variants={subMenuVariants}
-                              initial="hidden"
-                              animate={isSubMenuOpen ? "visible" : {}}
-                              className={`fixed top-24 right-0 left-0 bottom-0 h-screen w-full p-6 text-left bg-white z-50 rounded-t-xl cursor-default shadow-[0_4px_24px_15px_rgba(32,33,36,.05)]`}
-                            >
-                              {/* List for the Sub Menu */}
-                              <h1 className="text-xl font-semibold">
-                                {item.text}
-                              </h1>
-                              <ul className="divide-y">
-                                {item.subMenu &&
-                                  item.subMenu.map((subMenuItem) => (
-                                    <>
-                                      <li
-                                        className="text-sm p-4"
-                                        onClick={void 0}
-                                      >
-                                        <Link
-                                          title={`${subMenuItem.text}`}
-                                          passHref
-                                          href={`${subMenuItem.page}`}
-                                          className="flex justify-between items-center"
+                          {isSubMenuOpen &&
+                            item.subMenu &&
+                            item.text === thisWhichMenu && (
+                              <div
+                                key={`submenu-${item.text}`}
+                                className={`absolute top-24 left-0 right-0 bottom-0 overflow-auto overscroll-contain p-6 text-left bg-white z-50 rounded-t-xl rounded-b-md cursor-default shadow-[0_4px_24px_15px_rgba(32,33,36,.05)]`}
+                              >
+                                {/* List for the Sub Menu */}
+                                <h1 className="text-xl font-semibold">
+                                  {item.text}
+                                </h1>
+                                <ul className="divide-y">
+                                  {item.subMenu &&
+                                    item.subMenu.map((subMenuItem) => (
+                                      <>
+                                        <li
+                                          className="text-sm p-4"
+                                          onClick={void 0}
                                         >
-                                          {subMenuItem.text}
-                                          <ChevronRightIcon
-                                            height={24}
-                                            className="stroke-blue-500 justify-item-end"
-                                          />
-                                        </Link>
-                                      </li>
-                                    </>
-                                  ))}
-                              </ul>
-                            </motion.div>
-                          )}
+                                          <Link
+                                            title={`${subMenuItem.text}`}
+                                            passHref
+                                            href={`${subMenuItem.page}`}
+                                            className="flex justify-between items-center"
+                                          >
+                                            {subMenuItem.text}
+                                            <ChevronRightIcon
+                                              height={24}
+                                              className="stroke-blue-500 justify-item-end"
+                                            />
+                                          </Link>
+                                        </li>
+                                      </>
+                                    ))}
+                                </ul>
+                              </div>
+                            )}
                         </button>
                       </Link>
                     </div>
@@ -308,7 +287,7 @@ function Menu() {
                 ))}
               </div>
             </nav>
-          </motion.div>
+          </div>
         )}
       </>
     );
@@ -316,13 +295,29 @@ function Menu() {
 
   return (
     <>
+      <div
+        className={`hidden ${
+          isMenuOpen && "md:flex"
+        } fixed top-0 left-0 right-0 bottom-0 h-screen w-screen bg-gray-500 opacity-25`}
+        onClick={() => setIsMenuOpen(false)}
+      />
       <button
         className="md:flex md:justify-items-end "
         onClick={() => setIsMenuOpen(true)}
       >
         <Bars3Icon height={24} className="stroke-black" />
       </button>
-      <NavMenu />
+      <Transition
+        show={isMenuOpen}
+        enter="transition-opacity duration-[200ms]"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-[200ms]"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <NavMenu />
+      </Transition>
     </>
   );
 }
