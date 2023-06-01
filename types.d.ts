@@ -6,4 +6,6 @@ export interface Prodotto {
   descrizione: string;
   immagine: string;
   prezzo: string;
+  sconto?: string;
+  percentuale?: string;
 }
