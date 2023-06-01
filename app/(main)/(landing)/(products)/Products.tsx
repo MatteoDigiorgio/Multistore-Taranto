@@ -33,16 +33,20 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
           </div>
 
           <div
-            className={`${styles.card_footer} flex bottom-0 inset-x-0 absolute p-4 w-full`}
+            className={`${styles.card_footer} flex bottom-0 inset-x-0 absolute px-4 h-14 w-full`}
           >
             {product.sconto !== undefined ? (
-              <div className="flex gap-2 items-center">
-                <span className="font-semibold">€{product.sconto}</span>
-                <span className="text-sm text-gray-500 line-through">
-                  €{product.prezzo}
-                </span>
+              <div className="flex flex-row gap-2 items-center py-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                  <span className="tex-sm font-semibold">
+                    €{product.sconto}
+                  </span>
+                  <span className="text-xs text-gray-500 line-through">
+                    €{product.prezzo}
+                  </span>
+                </div>
 
-                <p className="text-lg font-bold text-[#f99417]">
+                <p className="text-xl font-bold text-[#f99417]">
                   -
                   {Math.round(
                     ((Number(product.prezzo.replace(",", ".")) -
@@ -54,20 +58,22 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
                 </p>
               </div>
             ) : product.percentuale !== undefined ? (
-              <div className="flex gap-2 items-center">
-                <span className="font-semibold">
-                  €
-                  {Math.round(
-                    Number(product.prezzo.replace(",", ".")) -
-                      (Number(product.prezzo.replace(",", ".")) *
-                        Number(product.percentuale.replace(",", "."))) /
-                        100
-                  )}
-                </span>
-                <span className="text-sm text-gray-500 line-through">
-                  €{product.prezzo}
-                </span>
-                <p className="text-lg font-bold text-[#f99417]">
+              <div className="flex flex-row gap-2 items-center py-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                  <span className="tex-sm font-semibold">
+                    €
+                    {Math.round(
+                      Number(product.prezzo.replace(",", ".")) -
+                        (Number(product.prezzo.replace(",", ".")) *
+                          Number(product.percentuale.replace(",", "."))) /
+                          100
+                    )}
+                  </span>
+                  <span className="text-sm text-gray-500 line-through">
+                    €{product.prezzo}
+                  </span>
+                </div>
+                <p className="text-xl font-bold text-[#f99417]">
                   -{product.percentuale}%
                 </p>
               </div>
