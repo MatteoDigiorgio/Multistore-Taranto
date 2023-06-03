@@ -7,7 +7,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
   return (
     <>
       {prodotti?.map((product) => (
-        <>
+        <div key={product.id}>
           <Link
             href={`/auth/admin/gestisci/${product.id}`}
             className="flex flex-row items-center h-16 justify-between mx-8 my-4 hover:bg-gray-300 hover:rounded-lg hover:cursor-pointer"
@@ -29,7 +29,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
               {product.prezzo} €
             </p>
           </Link>
-        </>
+        </div>
       ))}
     </>
   );

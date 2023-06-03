@@ -1,24 +1,29 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Profile.module.css";
 import Image from "next/image";
-import Link from "next/link";
 import SignInButton from "./(signin)/SignInButton";
-import {
-  ArrowLeftOnRectangleIcon,
-  ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { User, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/firebase";
 
 function Admin() {
-  const { data: session } = useSession();
+  const [loggedUser, setLoggedUser] = useState<User>();
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setLoggedUser(user);
+    } else {
+      setLoggedUser(undefined);
+    }
+  });
 
   return (
     <>
       <div className="relative m-auto">
         <div className={styles.card}>
           <Image
-            src={session?.user?.image ? session?.user?.image : "/Admin.png"}
+            src={loggedUser?.photoURL ? loggedUser?.photoURL : "/Admin.png"}
             alt="Profile"
             className="h-16 w-16 rounded-full mb-1 shadow-lg"
             width={64}
@@ -27,15 +32,15 @@ function Admin() {
           />
 
           <div className="">
-            {session?.user?.email ? (
+            {loggedUser?.email ? (
               <>
                 <div className="flex flex-col justify-center items-center">
                   <p className="text-gray-400 text-xs italic font-light mb-4">
-                    {session?.user?.email}
+                    {loggedUser?.email}
                   </p>
                   <p className="gray-500 text-2xl font-light">Ciao,</p>
                   <p className="gray-500 text-lg font-medium mb-8 drop-shadow-xl">
-                    {session?.user?.name}
+                    {loggedUser?.displayName}
                   </p>
                 </div>
               </>
@@ -45,9 +50,9 @@ function Admin() {
               </div>
             )}
           </div>
-          {session && (
+          {loggedUser && (
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut(auth)}
               className="flex flex-row px-4 py-2 gap-2 items-center border-solid border-2 hover:border-red-600 hover:bg-red-400 hover:text-white rounded-md shadow-lg"
             >
               <p className="ml-1">Esci</p>
