@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
-import { getDownloadURL, listAll, ref } from "firebase/storage";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Snackbar from "@mui/material/Snackbar";
@@ -126,14 +125,7 @@ function Product({ params }: any) {
     [key: string]: string | boolean;
   }
   const [initialProdotto, setInitialProdotto] = useState();
-  const [prodotto, setProdotto] = useState<Product>({
-    id: "",
-    nome: "",
-    categoria: "",
-    descrizione: "",
-    immagine: "",
-    prezzo: "",
-  });
+  const [prodotto, setProdotto] = useState<Product>();
 
   const [immagineUrl, setImmagineUrl] = useState();
 
@@ -192,23 +184,25 @@ function Product({ params }: any) {
       setMessage("Prodotto modificato");
       setSeverity("success");
       setOpen(true);
-      let adjustedInputs = Object.fromEntries(
-        Object.entries(prodotto)
-          .filter(([_, value]) =>
-            typeof value === "string"
-              ? (value as string).trim() !== ""
-              : typeof value === "boolean"
-          )
-          .map(([key, value]) => [
-            key.startsWith("_") ? key.slice(1) : key,
-            typeof value === "string" ? (value as string).trim() : value,
-          ])
-      );
+      if (prodotto) {
+        let adjustedInputs = Object.fromEntries(
+          Object.entries(prodotto)
+            .filter(([_, value]) =>
+              typeof value === "string"
+                ? (value as string).trim() !== ""
+                : typeof value === "boolean"
+            )
+            .map(([key, value]) => [
+              key.startsWith("_") ? key.slice(1) : key,
+              typeof value === "string" ? (value as string).trim() : value,
+            ])
+        );
 
-      await setDoc(doc(db, "prodotti", `${params.id}`), adjustedInputs);
-      setTimeout(() => {
-        router.push("/auth/admin/gestisci");
-      }, 1000);
+        await setDoc(doc(db, "prodotti", `${params.id}`), adjustedInputs);
+        setTimeout(() => {
+          router.push("/auth/admin/gestisci");
+        }, 1000);
+      }
     } else {
       setMessage("Nessuna modifica");
       setSeverity("warning");
@@ -236,6 +230,7 @@ function Product({ params }: any) {
     <div className="relative m-auto flex flex-col">
       <form onSubmit={handleEditProduct}>
         <Link
+          key={"Back"}
           href="/auth/admin/gestisci"
           className="flex absolute left-12 top-10 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
         >
@@ -246,6 +241,7 @@ function Product({ params }: any) {
           className={`${styles.card} flex flex-col items-center gap-4 mx-8 my-4`}
         >
           <Image
+            key={"Image"}
             src={typeof immagineUrl === "string" ? immagineUrl : ""}
             alt="Prodotto"
             className="h-16 w-16 rounded-full mb-1 mt-10 shadow-lg shrink-0"
@@ -255,15 +251,20 @@ function Product({ params }: any) {
           />
 
           <Field
+            key={"Nome"}
             productKey="Nome"
-            value={typeof prodotto.nome === "string" ? prodotto.nome : ""}
+            value={typeof prodotto?.nome === "string" ? prodotto.nome : ""}
             handleChange={handleChange}
           />
-          <FormControl sx={{ m: 1, maxWidth: "60%" }} size="small">
+          <FormControl
+            key={"Categoria"}
+            sx={{ m: 1, maxWidth: "60%" }}
+            size="small"
+          >
             <InputLabel htmlFor="grouped-native-select">Categoria</InputLabel>
             <Select
               native
-              value={prodotto.categoria ? prodotto.categoria : ""}
+              value={prodotto?.categoria ? prodotto.categoria : ""}
               multiline
               id="grouped-native-select"
               label="Categoria"
@@ -318,60 +319,65 @@ function Product({ params }: any) {
           </FormControl>
 
           <Field
+            key={"Descrizione"}
             productKey="Descrizione"
             value={
-              typeof prodotto.descrizione === "string"
+              typeof prodotto?.descrizione === "string"
                 ? prodotto.descrizione
                 : ""
             }
             handleChange={handleChange}
           />
 
-          {Object.entries(prodotto).map(([key, value], i) => (
-            <>
-              {!excludeKeys.includes(key) ? (
-                typeof value === "string" ? (
-                  <Field
-                    productKey={key}
-                    value={value}
-                    key={i}
-                    handleChange={handleChange}
-                  />
-                ) : (
-                  <FormControlLabel
-                    control={<Checkbox />}
-                    checked={value}
-                    label={key
-                      .replace("_", " ")
-                      .split(" ")
-                      .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                      )
-                      .join(" ")}
-                    name={key}
-                    onChange={handleChange}
-                  />
-                )
-              ) : null}
-            </>
-          ))}
+          {prodotto &&
+            Object.entries(prodotto).map(([key, value], i) => (
+              <>
+                {!excludeKeys.includes(key) ? (
+                  typeof value === "string" ? (
+                    <Field
+                      productKey={key}
+                      value={value}
+                      key={i}
+                      handleChange={handleChange}
+                    />
+                  ) : (
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      checked={value}
+                      label={key
+                        .replace("_", " ")
+                        .split(" ")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                      name={key}
+                      onChange={handleChange}
+                    />
+                  )
+                ) : null}
+              </>
+            ))}
 
           <Field
+            key={"Prezzo"}
             productKey="Prezzo"
-            value={typeof prodotto.prezzo === "string" ? prodotto.prezzo : ""}
+            value={typeof prodotto?.prezzo === "string" ? prodotto.prezzo : ""}
             handleChange={handleChange}
           />
 
           <Field
+            key={"Sconto"}
             productKey="Sconto"
-            value={typeof prodotto.sconto === "string" ? prodotto.sconto : ""}
+            value={typeof prodotto?.sconto === "string" ? prodotto.sconto : ""}
             handleChange={handleChange}
           />
 
           <Field
+            key={"Percentuale"}
             productKey="Percentuale"
             value={
-              typeof prodotto.percentuale === "string"
+              typeof prodotto?.percentuale === "string"
                 ? prodotto.percentuale
                 : ""
             }
@@ -379,25 +385,28 @@ function Product({ params }: any) {
           />
         </div>
 
-        <div className="flex flex-row items-center justify-center gap-2">
+        <div
+          key={"Buttons"}
+          className="flex flex-row items-center justify-center gap-2"
+        >
           <div>
             <button
               type="button"
               onClick={handleDeleteProduct}
               className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-red-400 rounded-full ring-2 ring-red-500 shadow-lg hover:ring-2 hover:ring-red-700 hover:bg-red-500"
             >
-              <ClearIcon />
+              <ClearIcon key={"Delete"} />
             </button>
             <p className="font-light w-20 text-center mt-2">
               Cancella prodotto
             </p>
           </div>
-          <div>
+          <div key={"Update"}>
             <button
               type="submit"
               className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-yellow-400 rounded-full ring-2 ring-yellow-500 shadow-lg hover:ring-2 hover:ring-yellow-700 hover:bg-yellow-500"
             >
-              <SendIcon />
+              <SendIcon key={"Update"} />
             </button>
             <p className="font-light w-20 text-center mt-2">
               Aggiorna prodotto
@@ -408,6 +417,7 @@ function Product({ params }: any) {
 
       {/* Snackbar for delete */}
       <Snackbar
+        key={"Snackbar"}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         open={open}
         autoHideDuration={6000}

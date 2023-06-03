@@ -3,9 +3,7 @@ import React from "react";
 import {
   ClientSafeProvider,
   getProviders,
-  getSession,
   LiteralUnion,
-  signIn,
 } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers";
 import { useEffect, useState } from "react";
@@ -13,9 +11,10 @@ import { Session } from "next-auth";
 import { redirect } from "next/navigation";
 import "app/(main)/global.css";
 import Image from "next/image";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "@/firebase";
 
 function SignInButton() {
-  const [session, setSession] = useState<Session | null>();
   const [providers, setProviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
@@ -23,16 +22,19 @@ function SignInButton() {
 
   useEffect(() => {
     (async () => {
-      const session = await getSession();
       const res = await getProviders();
       setProviders(res);
-      setSession(session);
     })();
   }, []);
 
-  if (session) {
-    redirect("/auth/admin");
-  }
+  const signIn = () => {
+    signInWithPopup(auth, provider).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      console.log(errorCode);
+    });
+  };
+
   return (
     <>
       {providers &&
@@ -40,7 +42,7 @@ function SignInButton() {
           <div key={provider.name}>
             <button
               className="flex items-center justify-center p-2 gap-2 shadow-md border border-[#888] rounded w-full  cursor-pointer text-black hover:bg-gray-100"
-              onClick={() => signIn(provider.id)}
+              onClick={() => signIn()}
             >
               <Image
                 src="/google.svg"
