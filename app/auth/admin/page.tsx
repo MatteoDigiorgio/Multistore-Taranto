@@ -4,14 +4,19 @@ import styles from "./Profile.module.css";
 import Image from "next/image";
 import SignInButton from "./(signin)/SignInButton";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import { User, onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  User,
+  onAuthStateChanged,
+  signInAnonymously,
+  signOut,
+} from "firebase/auth";
 import { auth } from "@/firebase";
 
 function Admin() {
   const [loggedUser, setLoggedUser] = useState<User>();
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user?.email) {
       setLoggedUser(user);
     } else {
       setLoggedUser(undefined);

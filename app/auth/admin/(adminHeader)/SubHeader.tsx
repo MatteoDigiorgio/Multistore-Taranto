@@ -46,7 +46,7 @@ function SubHeader() {
   const [loggedUser, setLoggedUser] = useState<User>();
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user?.email) {
       setLoggedUser(user);
     } else {
       setLoggedUser(undefined);
