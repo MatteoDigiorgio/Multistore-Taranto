@@ -9,10 +9,6 @@ import {
 } from "@heroicons/react/24/outline";
 import styles from "./Product.module.css";
 
-interface Product {
-  [key: string]: string | boolean;
-}
-
 const excludeKeys = [
   "nome",
   "marca",
@@ -24,32 +20,23 @@ const excludeKeys = [
   "percentuale",
 ];
 
-function Product({ productData }: any) {
-  const [immagineUrl, setImmagineUrl] = useState();
+function Product({ product }: any) {
   const [percentuale, setPercentuale] = useState(0);
   const [sconto, setSconto] = useState(0);
-  const [product, setProduct] = useState<Product>();
 
   useEffect(() => {
-    if (productData) {
-      setImmagineUrl(productData.immagineUrl);
-      delete productData.immagineUrl;
-      setProduct(productData);
+    if (product) {
+      const convertedPrice = product.prezzo?.replace(",", ".");
+      const convertedDiscount = product.sconto?.replace(",", ".");
 
-      const convertedPrice = productData.prezzo?.replace(",", ".");
-      const convertedDiscount = productData.sconto?.replace(",", ".");
-
-      if (
-        productData.sconto !== undefined ||
-        productData.percentuale !== undefined
-      ) {
-        if (productData.sconto !== undefined) {
-          const scontoValue = productData.sconto?.replace(",", ".");
+      if (product.sconto !== undefined || product.percentuale !== undefined) {
+        if (product.sconto !== undefined) {
+          const scontoValue = product.sconto?.replace(",", ".");
           setSconto(Number(scontoValue));
         } else {
-          const prezzoValue = Number(productData.prezzo?.replace(",", "."));
+          const prezzoValue = Number(product.prezzo?.replace(",", "."));
           const percentualeValue = Number(
-            productData.percentuale?.replace(",", ".")
+            product.percentuale?.replace(",", ".")
           );
           const scontoValue = (
             prezzoValue -
@@ -58,8 +45,8 @@ function Product({ productData }: any) {
           setSconto(Number(scontoValue));
         }
 
-        productData.percentuale !== undefined
-          ? setPercentuale(productData.percentuale)
+        product.percentuale !== undefined
+          ? setPercentuale(product.percentuale)
           : setPercentuale(
               Math.round(
                 ((convertedPrice - convertedDiscount) / convertedPrice) * 100
@@ -160,6 +147,7 @@ function Product({ productData }: any) {
                       height={12}
                       unoptimized={true}
                       className="z-10"
+                      priority={true}
                     />
                   </div>
                 ) : (
@@ -179,12 +167,13 @@ function Product({ productData }: any) {
           {/* Image */}
           <div className="flex justify-center p-5 md:pl-10 md:w-1/2 md:fixed md:left-0 md:top-20">
             <Image
-              src={typeof immagineUrl === "string" ? immagineUrl : ""}
+              src={product.immagineUrl}
               alt=""
               className={`rounded-xl shadow-xl md:shadow-none aspect-auto object-contain h-64 md:h-96 w-auto p-2`}
               width={128}
               height={80}
               unoptimized={true}
+              priority={true}
             />
           </div>
         </div>
@@ -209,6 +198,7 @@ function Product({ productData }: any) {
                           height={12}
                           unoptimized={true}
                           className="z-10"
+                          priority={true}
                         />
                       </div>
                     ) : (
