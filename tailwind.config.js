@@ -7,12 +7,13 @@ module.exports = {
     extend: {
       colors: {
         multistore_blue: {
-          light: "#5AA1CF",
-          DEFAULT: "#4E8CB6",
+          DEFAULT: "#336eb2",
+        },
+        multistore_blue_green: {
+          DEFAULT: "#4a9f99",
         },
         multistore_green: {
-          light: "#26863C",
-          DEFAULT: "#265D33",
+          DEFAULT: "#26863C",
         },
         multistore_gray: {
           DEFAULT: "#D8E1E0",
@@ -21,6 +22,25 @@ module.exports = {
       screens: {
         xs: "300px",
         ...defaultTheme.screens,
+      },
+      animation: {
+        blob: "blob 5s infinite",
+      },
+      keyframes: {
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(30px, -50px) scale(1.1)",
+          },
+          "66%": {
+            transform: "translate(-20px, 20px) scale(0.9)",
+          },
+          "100%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+        },
       },
     },
   },
