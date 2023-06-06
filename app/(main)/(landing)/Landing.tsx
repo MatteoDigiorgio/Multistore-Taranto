@@ -4,32 +4,23 @@ import Products from "./(products)/Products";
 import { Prodotto } from "@/types";
 import { getProducts } from "@/pages/api/auth/getProducts";
 import MyLoading from "../MyLoading";
+import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
+import { auth } from "@/firebase";
 
 function Landing() {
   const [products, setProducts] = useState<Prodotto[]>();
 
-  const getRandomNumber = () => {
-    const min = 1;
-    const max = 4;
-    // Generate a random decimal between 0 (inclusive) and 1 (exclusive)
-    const randomDecimal = Math.random();
-    // Scale the random decimal to be between 0 (inclusive) and (max - min) exclusive
-    const scaledDecimal = randomDecimal * (max - min);
-    // Round down the scaled decimal to the nearest integer
-    const randomNumber = Math.floor(scaledDecimal) + min;
-    return randomNumber;
-  };
-
-  let random = getRandomNumber();
-  const [isLoading, setIsLoading] = useState(random);
-
   useEffect(() => {
     async function fetchData() {
-      const productsData = await getProducts();
-      setTimeout(() => {
-        setProducts(productsData);
-        setIsLoading(0);
-      }, 500);
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          signInAnonymously(auth);
+        }
+        if (user) {
+          const productsData = await getProducts();
+          setProducts(productsData);
+        }
+      });
     }
     fetchData();
   }, []);
@@ -42,7 +33,7 @@ function Landing() {
         </div>
       ) : (
         <>
-          <MyLoading isLoading={isLoading} />
+          <MyLoading />
         </>
       )}
     </>

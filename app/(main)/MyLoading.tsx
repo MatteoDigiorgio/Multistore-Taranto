@@ -1,8 +1,27 @@
-"use effect";
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import styles from "./Loading.module.css";
 
-function MyLoading({ isLoading }: { isLoading: number }) {
+function MyLoading() {
+  const getRandomNumber = () => {
+    const min = 1;
+    const max = 4;
+    // Generate a random decimal between 0 (inclusive) and 1 (exclusive)
+    const randomDecimal = Math.random();
+    // Scale the random decimal to be between 0 (inclusive) and (max - min) exclusive
+    const scaledDecimal = randomDecimal * (max - min);
+    // Round down the scaled decimal to the nearest integer
+    const randomNumber = Math.floor(scaledDecimal) + min;
+    return randomNumber;
+  };
+
+  let random = getRandomNumber();
+
+  const [isLoading, setIsLoading] = useState(random);
+
+  setTimeout(() => {
+    setIsLoading(0);
+  }, 500);
   return (
     <>
       {/* Tech */}

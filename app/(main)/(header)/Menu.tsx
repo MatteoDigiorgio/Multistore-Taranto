@@ -19,7 +19,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import SellIcon from "@mui/icons-material/Sell";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { Transition } from "@headlessui/react";
 
 const everything: Array<any> = [
@@ -44,7 +44,7 @@ const everything: Array<any> = [
 ];
 
 type MainMenu = {
-  page: string;
+  page: string | null;
   text: string;
   color: string;
   icon: any;
@@ -53,7 +53,7 @@ type MainMenu = {
 
 const mainMenu: Array<MainMenu> = [
   {
-    page: "/",
+    page: null,
     text: "Elettrodomestici",
     color: "bg-rose-500",
     icon: <MicrowaveIcon />,
@@ -70,7 +70,7 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/",
+    page: null,
     text: "Telefonia",
     color: "bg-sky-400",
     icon: <SmartphoneIcon />,
@@ -81,7 +81,7 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/",
+    page: null,
     text: "Televisori",
     color: "bg-purple-400",
     icon: <LiveTvIcon />,
@@ -92,7 +92,7 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/",
+    page: null,
     text: "Informatica",
     color: "bg-orange-500",
     icon: <ComputerIcon />,
@@ -103,7 +103,7 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/",
+    page: null,
     text: "Console e Videogiochi",
     color: "bg-lime-500",
     icon: <GamepadIcon />,
@@ -114,21 +114,21 @@ const mainMenu: Array<MainMenu> = [
     ],
   },
   {
-    page: "/",
+    page: "/monopattini",
     text: "Monopattini",
     color: "bg-zinc-400",
     icon: <ElectricScooterIcon />,
     subMenu: null,
   },
   {
-    page: "/",
+    page: "/fotocopiefax",
     text: "Fotocopie e Fax",
     color: "bg-red-500",
     icon: <PrintIcon />,
     subMenu: null,
   },
   {
-    page: "",
+    page: null,
     text: "Marche",
     color: "bg-yellow-500",
     icon: <SellIcon />,
@@ -198,6 +198,7 @@ function Menu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [thisWhichMenu, setWhichMenu] = useState("");
+  const router = useRouter();
 
   const NavMenu = () => {
     return (
@@ -221,12 +222,12 @@ function Menu() {
                 {mainMenu.map((item) => (
                   <>
                     <div className="h-24 justify-items-center">
-                      {/* TODO: Distinguere tra link e submenu */}
-                      <Link passHref href={item.page}>
+                      <div>
                         <button
                           onClick={() => {
-                            if (item.subMenu === null) {
-                              redirect(item.page);
+                            if (item.subMenu === null && item.page) {
+                              setIsMenuOpen(false);
+                              router.push(item.page);
                             } else {
                               setIsSubMenuOpen(true), setWhichMenu(item.text);
                             }
@@ -263,6 +264,10 @@ function Menu() {
                                           onClick={void 0}
                                         >
                                           <Link
+                                            onClick={() => {
+                                              setIsMenuOpen(false);
+                                              setIsSubMenuOpen(false);
+                                            }}
                                             title={`${subMenuItem.text}`}
                                             passHref
                                             href={`${subMenuItem.page}`}
@@ -281,7 +286,7 @@ function Menu() {
                               </div>
                             )}
                         </button>
-                      </Link>
+                      </div>
                     </div>
                   </>
                 ))}
