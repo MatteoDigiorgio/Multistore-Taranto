@@ -226,6 +226,7 @@ function Menu() {
                         <button
                           onClick={() => {
                             if (item.subMenu === null && item.page) {
+                              setIsMenuOpen(false);
                               router.push(item.page);
                             } else {
                               setIsSubMenuOpen(true), setWhichMenu(item.text);
@@ -263,6 +264,10 @@ function Menu() {
                                           onClick={void 0}
                                         >
                                           <Link
+                                            onClick={() => {
+                                              setIsMenuOpen(false);
+                                              setIsSubMenuOpen(false);
+                                            }}
                                             title={`${subMenuItem.text}`}
                                             passHref
                                             href={`${subMenuItem.page}`}
