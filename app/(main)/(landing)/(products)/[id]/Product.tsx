@@ -15,6 +15,7 @@ const excludeKeys = [
   "categoria",
   "descrizione",
   "immagine",
+  "immagineUrl",
   "prezzo",
   "sconto",
   "percentuale",
