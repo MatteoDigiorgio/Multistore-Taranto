@@ -49,13 +49,12 @@ function Landing() {
         <>
           {inputValue && (
             <div className="mt-40 md:mt-28 w-full flex justify-center">
-              <h1 className="flex items-center pl-4 pr-2 p-2 gap-1 rounded-full bg-zinc-300 border border-gray-400 font-medium text-xl">
+              <h1
+                onClick={clearInputValue}
+                className="flex items-center pl-4 pr-2 p-2 gap-1 rounded-full bg-zinc-300 border border-gray-400 font-medium text-xl cursor-pointer"
+              >
                 {inputValue}
-                <XMarkIcon
-                  height={24}
-                  className="cursor-pointer"
-                  onClick={clearInputValue}
-                />
+                <XMarkIcon height={24} />
               </h1>
             </div>
           )}
