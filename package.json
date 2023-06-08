@@ -30,7 +30,7 @@
     "next-auth": "^4.20.1",
     "react": "latest",
     "react-dom": "latest",
-    "react-redux": "^8.0.5",
+    "react-redux": "^8.0.7",
     "react-router-dom": "^6.9.0",
     "typescript": "5.0.2",
     "uuid": "^9.0.0"

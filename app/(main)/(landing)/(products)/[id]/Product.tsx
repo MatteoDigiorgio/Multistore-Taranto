@@ -228,7 +228,13 @@ function Product({ product }: any) {
         <div className="md:flex md:justify-end ">
           <div className="flex flex-col items-start w-full md:w-1/2 ">
             <div className="border-t-[1px] w-full px-5 py-2 text-lg">
-              <Disclosure defaultOpen={window.innerWidth > 768 ? true : false}>
+              <Disclosure
+                defaultOpen={
+                  typeof window !== "undefined" && window.innerWidth > 768
+                    ? true
+                    : false
+                }
+              >
                 {({ open }) => (
                   <>
                     <Disclosure.Button className="flex flex-row justify-between w-full py-2">
@@ -265,7 +271,11 @@ function Product({ product }: any) {
             ) && (
               <div className="border-t-[1px] w-full px-5 py-2 text-lg">
                 <Disclosure
-                  defaultOpen={window.innerWidth > 768 ? true : false}
+                  defaultOpen={
+                    typeof window !== "undefined" && window.innerWidth > 768
+                      ? true
+                      : false
+                  }
                 >
                   {({ open }) => (
                     <>

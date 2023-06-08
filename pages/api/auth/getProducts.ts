@@ -60,3 +60,43 @@ export async function getProduct(id: any) {
     return null;
   }
 }
+
+export async function getFilterProducts(filter: any) {
+  // Convert the filter string to lowercase
+  const lowercaseFilter = filter.toLowerCase();
+
+  // Construct a reference to the "prodotti" collection
+  const prodottiRef = db.collection("prodotti");
+
+  // Perform the query
+  const querySnapshot = await prodottiRef.orderBy("nome").get();
+
+  const prodotti = await Promise.all(
+    querySnapshot.docs.map(async (doc) => {
+      const prodotto = doc.data();
+      const myObject: any = {};
+
+      // Process each field of the product
+      for (const [key, value] of Object.entries(prodotto)) {
+        if (key === "immagine") {
+          const downloadURL = await getDownloadURL(
+            ref(storage, `immagini/${value}`)
+          );
+          myObject[key] = downloadURL;
+        } else {
+          myObject[key] = value;
+        }
+      }
+
+      myObject.id = doc.id;
+      return myObject;
+    })
+  );
+
+  // Filter the products based on the partial match
+  const filteredProdotti = prodotti.filter((prodotto) =>
+    prodotto.nome.toLowerCase().includes(lowercaseFilter)
+  );
+
+  return filteredProdotti;
+}
