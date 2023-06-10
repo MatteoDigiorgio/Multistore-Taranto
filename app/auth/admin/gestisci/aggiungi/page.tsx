@@ -357,8 +357,8 @@ function AddProduct() {
                 <option value={"Asciugatrici"}>Asciugatrici</option>
               </optgroup>
               <optgroup label="Telefonia">
-                <option value={"Smarthphone e Cellulari"}>
-                  Smarthphone e Cellulari
+                <option value={"Smartphone e Cellulari"}>
+                  Smartphone e Cellulari
                 </option>
                 <option value={"Cordless"}>Cordless</option>
                 <option value={"Accessori Telefonia"}>

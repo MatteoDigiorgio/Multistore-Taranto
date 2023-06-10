@@ -97,7 +97,7 @@ export async function getFilterProducts(filter: any) {
   const highestScore = Math.max(...prodotti.map((product) => product.score));
 
   // Define the threshold score as half of the highest score
-  const thresholdScore = highestScore / 2;
+  const thresholdScore = highestScore / 3;
 
   // Filter the products based on the threshold score
   const filteredProducts = prodotti.filter(
@@ -106,44 +106,60 @@ export async function getFilterProducts(filter: any) {
 
   // Exclude products with a score always below 5
   const finalProducts = filteredProducts.filter(
-    (product) => product.score >= 5
+    (product) => product.score >= 20
   );
 
   // Sort the filtered products based on the score in descending order
   const sortedProducts = finalProducts.sort((a, b) => b.score - a.score);
-
   return sortedProducts;
 }
 
-function calculateSearchScore(filter: string, object: any): number {
+function calculateSearchScore(
+  filter: string,
+  object: { [key: string]: string }
+): number {
   let score = 0;
   let matchedFields = 0;
-  const objectValues = Object.values(object);
+  const objectEntries = Object.entries(object);
   const keywords = filter.split(" "); // Split the search term into keywords
 
-  for (const value of objectValues) {
+  for (const entries of objectEntries) {
     if (
-      typeof value === "string" &&
-      value !== "id" &&
-      value !== "immagine" &&
-      value !== "prezzo" &&
-      value !== "sconto" &&
-      value !== "percentuale"
+      !["id", "immagine", "prezzo", "sconto", "percentuale"].includes(
+        entries[0]
+      )
     ) {
-      const lowercasedValue = value.toLowerCase();
+      const value = entries[1];
+      const lowercasedValue =
+        typeof value === "string" ? value.toLowerCase() : "";
 
       for (const keyword of keywords) {
-        const distance = levenshteinDistance(keyword, lowercasedValue);
+        const keywordWords = keyword.split(" "); // Split the keyword into individual words
 
-        if (lowercasedValue.includes(keyword) || distance <= 1) {
-          score += 100; // Increase score if keyword is found in the value or is very close
-        } else {
-          score += 1 / (distance + 1); // Assign higher score for closer matches
+        for (const keywordWord of keywordWords) {
+          const keywordDistance = calculateLevenshteinDistance(
+            keywordWord,
+            lowercasedValue
+          );
+
+          if (lowercasedValue.includes(keywordWord) || keywordDistance <= 1) {
+            score += 100 * keyword.length; // Increase score if keyword word is found in the value or is very close
+          } else {
+            score += (1 / (keywordDistance + 1)) * keywordWord.length; // Assign higher score for closer matches
+            // console.log(lowercasedValue, keywordDistance);
+          }
         }
       }
 
-      if (keywords.some((keyword) => lowercasedValue.includes(keyword))) {
-        matchedFields++; // Increment the count of matched fields if any keyword is found
+      if (
+        keywords.some((keyword) => {
+          const keywordWords = keyword.split(" "); // Split the keyword into individual words
+          return keywordWords.some((keywordWord) =>
+            lowercasedValue.includes(keywordWord)
+          );
+        })
+      ) {
+        matchedFields++; // Increment the count of matched fields if any keyword word is found
       }
     }
   }
@@ -154,29 +170,33 @@ function calculateSearchScore(filter: string, object: any): number {
   return score;
 }
 
-function levenshteinDistance(a: string, b: string): number {
-  const m = a.length;
-  const n = b.length;
-  const dp = [];
+function calculateLevenshteinDistance(a: string, b: string): number {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
 
-  for (let i = 0; i <= m; i++) {
-    dp.push([i]);
+  const matrix: number[][] = [];
+
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i];
   }
 
-  for (let j = 1; j <= n; j++) {
-    dp[0][j] = j;
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j;
   }
 
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(
-        dp[i - 1][j] + 1, // deletion
-        dp[i][j - 1] + 1, // insertion
-        dp[i - 1][j - 1] + cost // substitution
-      );
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1,
+          matrix[i][j - 1] + 1,
+          matrix[i - 1][j] + 1
+        );
+      }
     }
   }
 
-  return dp[m][n];
+  return matrix[b.length][a.length];
 }
