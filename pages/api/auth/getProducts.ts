@@ -1,6 +1,5 @@
 import { getDownloadURL, ref } from "firebase/storage";
 import db, { storage } from "../../../firebase";
-import { compareTwoStrings } from "string-similarity"; // Library for token-based matching
 
 export async function getProducts() {
   const dbProdotti = await db
@@ -61,6 +60,7 @@ export async function getProduct(id: any) {
     return null;
   }
 }
+
 export async function getFilterProducts(filter: any) {
   // Convert the filter string to lowercase
   const lowercaseFilter = filter.toLowerCase();
@@ -87,7 +87,6 @@ export async function getFilterProducts(filter: any) {
           myObject[key] = value;
         }
       }
-      console.log(myObject);
       myObject.id = doc.id;
       myObject.score = calculateSearchScore(lowercaseFilter, myObject);
       return myObject;
