@@ -75,7 +75,7 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-sky-400",
     icon: <SmartphoneIcon />,
     subMenu: [
-      { page: "/", text: "Smarthphone e Cellulari" },
+      { page: "/", text: "Smartphone e Cellulari" },
       { page: "/", text: "Cordless" },
       { page: "/", text: "Accessori Telefonia" },
     ],

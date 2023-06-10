@@ -1,10 +1,14 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import Link from "next/link";
 import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import AboutUs from "./AboutUs";
 import Contacts from "./Contacts";
 import Menu from "./Menu";
 import Image from "next/image";
+import { connect } from "react-redux";
+import { updateInputValue } from "../../../slices/actions";
+import { useRouter } from "next/navigation";
 
 export const MultistoreLogo = () => {
   return (
@@ -22,26 +26,69 @@ export const MultistoreLogo = () => {
   );
 };
 
-export const SearchBar = () => {
+export const SearchBar = ({
+  inputValue,
+  updateInputValue,
+}: {
+  inputValue: any;
+  updateInputValue: any;
+}) => {
+  const [input, setInput] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    const trimmedValue = input.replace(/\s+/g, " ").trim();
+    updateInputValue(trimmedValue);
+    setInput("");
+    router.push("/");
+  };
+
+  const handleChange = (e: { target: { value: any } }) => {
+    setInput(e.target.value);
+  };
+
   return (
-    <>
-      <div className="flex flex-grow md:w-4/6 items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md">
-        <input
-          className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-full focus: outline-none px-4 placeholder:italic placeholder:text-slate-400"
-          type="text"
-          placeholder="Cerca Prodotto, Modello, Brand"
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-grow md:w-4/6 items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md"
+    >
+      <input
+        className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-full text-base focus:outline-none px-4 placeholder:italic placeholder:text-slate-400"
+        type="text"
+        name="search"
+        placeholder="Cerca Prodotto, Modello, Brand"
+        value={input}
+        onChange={handleChange}
+      />
+      <div
+        className="flex-none h-10 px-4 py-2 bg-white rounded-r-full"
+        onClick={handleSubmit}
+      >
+        <MagnifyingGlassIcon
+          width={20}
+          height={20}
+          className="stroke-multistore_blue-light stroke-[2px]"
         />
-        <div className="flex-none h-10 px-4 py-2 bg-white rounded-r-full">
-          <MagnifyingGlassIcon
-            width={20}
-            height={20}
-            className="stroke-multistore_blue-light stroke-[2px]"
-          />
-        </div>
       </div>
-    </>
+    </form>
   );
 };
+
+const mapStateToProps = (state: { inputValue: any }) => {
+  return {
+    inputValue: state.inputValue,
+  };
+};
+
+const mapDispatchToProps = {
+  updateInputValue,
+};
+
+const ConnectedSearchBar = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SearchBar);
 
 function Header() {
   return (
@@ -52,7 +99,7 @@ function Header() {
         <div className="absolute right-10 top-5 md:relative md:flex md:justify-end md:w-1/6 md:top-0 md:right-0 md:items-center md:order-last">
           <Menu />
         </div>
-        <SearchBar />
+        <ConnectedSearchBar />
       </div>
     </header>
   );
