@@ -61,7 +61,6 @@ export async function getProduct(id: any) {
     return null;
   }
 }
-
 export async function getFilterProducts(filter: any) {
   // Convert the filter string to lowercase
   const lowercaseFilter = filter.toLowerCase();
@@ -94,16 +93,25 @@ export async function getFilterProducts(filter: any) {
       return myObject;
     })
   );
-  // Define the threshold score
-  const thresholdScore = 20; // Adjust this value as needed
+
+  // Find the highest score among the products
+  const highestScore = Math.max(...prodotti.map((product) => product.score));
+
+  // Define the threshold score as half of the highest score
+  const thresholdScore = highestScore / 2;
 
   // Filter the products based on the threshold score
   const filteredProducts = prodotti.filter(
     (product) => product.score >= thresholdScore
   );
 
+  // Exclude products with a score always below 5
+  const finalProducts = filteredProducts.filter(
+    (product) => product.score >= 5
+  );
+
   // Sort the filtered products based on the score in descending order
-  const sortedProducts = filteredProducts.sort((a, b) => b.score - a.score);
+  const sortedProducts = finalProducts.sort((a, b) => b.score - a.score);
 
   return sortedProducts;
 }
@@ -112,6 +120,7 @@ function calculateSearchScore(filter: string, object: any): number {
   let score = 0;
   let matchedFields = 0;
   const objectValues = Object.values(object);
+  const keywords = filter.split(" "); // Split the search term into keywords
 
   for (const value of objectValues) {
     if (
@@ -122,15 +131,21 @@ function calculateSearchScore(filter: string, object: any): number {
       value !== "sconto" &&
       value !== "percentuale"
     ) {
-      const distance = levenshteinDistance(filter, value.toLowerCase());
-      score += 1 / (distance + 1); // Assign higher score for closer matches
-
       const lowercasedValue = value.toLowerCase();
-      if (lowercasedValue.includes(filter)) {
-        score += 50; // Increase score if filter is found in the value
+
+      for (const keyword of keywords) {
+        const distance = levenshteinDistance(keyword, lowercasedValue);
+
+        if (lowercasedValue.includes(keyword) || distance <= 1) {
+          score += 100; // Increase score if keyword is found in the value or is very close
+        } else {
+          score += 1 / (distance + 1); // Assign higher score for closer matches
+        }
       }
 
-      matchedFields++; // Increment the count of matched fields
+      if (keywords.some((keyword) => lowercasedValue.includes(keyword))) {
+        matchedFields++; // Increment the count of matched fields if any keyword is found
+      }
     }
   }
 
