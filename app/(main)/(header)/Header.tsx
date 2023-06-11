@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import AboutUs from "./AboutUs";
@@ -35,16 +35,20 @@ export const SearchBar = ({
 }) => {
   const [input, setInput] = useState("");
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedValue = input.replace(/\s+/g, " ").trim();
     updateInputValue(trimmedValue);
     setInput("");
     router.push("/");
+    if (inputRef.current) {
+      inputRef.current.blur(); // Hide the keyboard
+    }
   };
 
-  const handleChange = (e: { target: { value: any } }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
@@ -54,6 +58,7 @@ export const SearchBar = ({
       className="flex flex-grow md:w-4/6 items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md"
     >
       <input
+        ref={inputRef}
         className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-full text-base focus:outline-none px-4 placeholder:italic placeholder:text-slate-400"
         type="text"
         name="search"
@@ -63,7 +68,7 @@ export const SearchBar = ({
       />
       <div
         className="flex-none h-10 px-4 py-2 bg-white rounded-r-full"
-        onClick={handleSubmit}
+        onClick={() => handleSubmit}
       >
         <MagnifyingGlassIcon
           width={20}
