@@ -131,6 +131,7 @@ function Product({ params }: any) {
 
   const excludeKeys = [
     "nome",
+    "marca",
     "categoria",
     "descrizione",
     "immagine",
@@ -254,6 +255,12 @@ function Product({ params }: any) {
             key={"Nome"}
             productKey="Nome"
             value={typeof prodotto?.nome === "string" ? prodotto.nome : ""}
+            handleChange={handleChange}
+          />
+          <Field
+            key={"Marca"}
+            productKey="Marca"
+            value={typeof prodotto?.marca === "string" ? prodotto.marca : ""}
             handleChange={handleChange}
           />
           <FormControl

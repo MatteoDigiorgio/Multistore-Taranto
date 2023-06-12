@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Bars3Icon,
@@ -216,6 +216,13 @@ function Menu() {
   const router = useRouter();
 
   const NavMenu = () => {
+    //  When menu is open, the page in the background doesn't scroll
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
     return (
       <>
         {isMenuOpen && (
