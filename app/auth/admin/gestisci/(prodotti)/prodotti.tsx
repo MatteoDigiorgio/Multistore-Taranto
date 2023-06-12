@@ -7,7 +7,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
   return (
     <>
       {prodotti?.map((product) => (
-        <div key={product.id}>
+        <div key={product.id} className="border-[1px]">
           <Link
             href={`/auth/admin/gestisci/${product.id}`}
             className="flex flex-row items-center h-16 justify-between mx-6 my-4 hover:bg-gray-300 hover:rounded-xl hover:cursor-pointer"

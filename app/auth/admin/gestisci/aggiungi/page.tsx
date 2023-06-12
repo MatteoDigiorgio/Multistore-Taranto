@@ -128,6 +128,7 @@ const Field = ({
           id="outlined-start-adornment"
           sx={{ m: 1, width: "60%" }}
           size="small"
+          className={`${productKey === "Percentuale" && "mb-8"}`}
           inputProps={{
             pattern: "[0-9]+(,[0-9]+)?",
             type: "text",

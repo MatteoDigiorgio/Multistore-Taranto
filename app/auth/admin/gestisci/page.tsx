@@ -20,7 +20,7 @@ function Gestisci() {
 
   return (
     <div className="relative m-auto flex flex-col gap-4">
-      <div className="mb-2">
+      <div className="mb-2 mx-auto w-full md:w-5/6">
         <input
           type="text"
           placeholder="Cerca prodotto..."
@@ -28,7 +28,9 @@ function Gestisci() {
         ></input>
       </div>
 
-      <div className={styles.card}>
+      <div
+        className={`relative m-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-white h-96 w-80 md:w-5/6 md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
+      >
         <Prodotti prodotti={prodotti} />
       </div>
 
