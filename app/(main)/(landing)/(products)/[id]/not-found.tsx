@@ -17,8 +17,8 @@ export default function NotFound() {
               <p>Errore</p>
             </div>
           </div>
-          <p className=" text-neutral-600 font-light not-italic text-lg font-mono">
-            La pagina che cerchi non esiste.
+          <p className="text-neutral-600 font-light not-italic text-lg font-mono text-center">
+            Ops! La pagina che stai cercando non esiste.
           </p>
           <Link
             href={"/"}

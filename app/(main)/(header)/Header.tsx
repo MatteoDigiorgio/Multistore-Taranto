@@ -9,6 +9,7 @@ import Image from "next/image";
 import { connect } from "react-redux";
 import { updateInputValue } from "../../../slices/actions";
 import { useRouter } from "next/navigation";
+import styles from "./Header.module.css";
 
 export const MultistoreLogo = () => {
   return (
@@ -55,7 +56,7 @@ export const SearchBar = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-grow md:w-4/6 items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md"
+      className={`flex flex-grow md:w-4/6 items-center text-xs mx-6 rounded-full h-10 cursor-pointer shadow-md ${styles.searchbar}`}
     >
       <input
         ref={inputRef}
@@ -66,7 +67,7 @@ export const SearchBar = ({
         value={input}
         onChange={handleChange}
       />
-      <div
+      <button
         className="flex-none h-10 px-4 py-2 bg-white rounded-r-full"
         onClick={() => handleSubmit}
       >
@@ -75,7 +76,7 @@ export const SearchBar = ({
           height={20}
           className="stroke-multistore_blue-light stroke-[2px]"
         />
-      </div>
+      </button>
     </form>
   );
 };

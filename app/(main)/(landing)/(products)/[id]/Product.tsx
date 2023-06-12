@@ -237,7 +237,9 @@ function Product({ product }: any) {
               >
                 {({ open }) => (
                   <>
-                    <Disclosure.Button className="flex flex-row justify-between w-full py-2">
+                    <Disclosure.Button
+                      className={`flex flex-row justify-between w-full py-2 ${styles.disclosureButton}`}
+                    >
                       <div className="flex flex-row gap-2 items-center">
                         <ClipboardDocumentListIcon className="h-6 w-6" />
                         <p>Descrizione</p>
@@ -279,7 +281,9 @@ function Product({ product }: any) {
                 >
                   {({ open }) => (
                     <>
-                      <Disclosure.Button className="flex flex-row justify-between w-full py-2">
+                      <Disclosure.Button
+                        className={`flex flex-row justify-between w-full py-2 ${styles.disclosureButton}`}
+                      >
                         <div className="flex flex-row gap-2 items-center">
                           <Cog6ToothIcon className="h-6 w-6" />
                           <p>Specifiche</p>
