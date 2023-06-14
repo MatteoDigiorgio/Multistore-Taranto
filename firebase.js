@@ -22,7 +22,10 @@ export const app = !firebase.apps.length
   : firebase.app();
 
 export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
+
+export const provider = new GoogleAuthProvider().setCustomParameters({
+  prompt: "select_account",
+});
 
 const db = app.firestore();
 export const storage = getStorage(app);

@@ -76,78 +76,85 @@ const Field = ({
         productKey === "Descrizione" ||
         productKey === "Marca" ? (
           // Required field
-          <TextField
-            inputRef={inputRef}
-            error={inputs[productKeyLowerCase] === ""}
-            helperText={
-              inputs[productKeyLowerCase] === "" ? "Campo necessario!" : null
-            }
-            required
-            name={productKey}
-            label={productKey}
-            id="outlined-start-adornment"
-            type="text"
-            multiline
-            sx={{ m: 1, width: "60%" }}
-            size="small"
-            onChange={handleChange}
-          />
+          <div className="flex flex-row w-full items-center justify-center">
+            <TextField
+              inputRef={inputRef}
+              error={inputs[productKeyLowerCase] === ""}
+              helperText={
+                inputs[productKeyLowerCase] === "" ? "Campo necessario!" : null
+              }
+              required
+              name={productKey}
+              label={productKey}
+              id="outlined-start-adornment"
+              type="text"
+              multiline
+              sx={{ m: 1, width: "70%" }}
+              size="small"
+              onChange={handleChange}
+            />
+          </div>
         ) : (
           // Optional field
-          <TextField
-            name={productKey}
-            label={productKey}
-            id="outlined-start-adornment"
-            type="text"
-            multiline
-            sx={{ m: 1, width: "60%" }}
-            size="small"
-            onChange={handleChange}
-          />
+          <div className="flex flex-row w-full items-center justify-center">
+            <TextField
+              name={productKey}
+              label={productKey}
+              id="outlined-start-adornment"
+              type="text"
+              multiline
+              sx={{ m: 1, width: "70%" }}
+              size="small"
+              onChange={handleChange}
+            />
+          </div>
         )
       ) : (
         // Price
-        <TextField
-          inputRef={inputRef}
-          required={productKey === "Prezzo" ? true : false}
-          name={productKey}
-          label={
-            productKey === "Prezzo"
-              ? "Prezzo di listino"
-              : productKey === "Sconto"
-              ? "Prezzo scontato"
-              : "Percentuale sconto"
-          }
-          helperText={
-            productKey === "Sconto"
-              ? "Non aggiungere il prezzo scontato se hai aggiunto la percentuale di sconto"
-              : productKey === "Percentuale"
-              ? "Non aggiungere la percentuale di sconto se hai aggiunto il prezzo scontato"
-              : null
-          }
-          id="outlined-start-adornment"
-          sx={{ m: 1, width: "60%" }}
-          size="small"
-          inputProps={{
-            pattern: "[0-9]+(,[0-9]+)?",
-            type: "text",
-            inputMode: "decimal",
-          }}
-          onChange={handleChange}
-          InputProps={
-            productKey === "Percentuale"
-              ? {
-                  endAdornment: (
-                    <InputAdornment position="end">%</InputAdornment>
-                  ),
-                }
-              : {
-                  startAdornment: (
-                    <InputAdornment position="start">€</InputAdornment>
-                  ),
-                }
-          }
-        />
+        <div className="flex flex-row w-full items-center justify-center">
+          <TextField
+            inputRef={inputRef}
+            required={productKey === "Prezzo" ? true : false}
+            name={productKey}
+            label={
+              productKey === "Prezzo"
+                ? "Prezzo di listino"
+                : productKey === "Sconto"
+                ? "Prezzo scontato"
+                : "Percentuale sconto"
+            }
+            helperText={
+              productKey === "Sconto"
+                ? "Non aggiungere il prezzo scontato se hai aggiunto la percentuale di sconto"
+                : productKey === "Percentuale"
+                ? "Non aggiungere la percentuale di sconto se hai aggiunto il prezzo scontato"
+                : null
+            }
+            id="outlined-start-adornment"
+            sx={{ m: 1, width: "70%" }}
+            size="small"
+            className={`${productKey === "Percentuale" && "mb-8 md:mb-0"}`}
+            inputProps={{
+              pattern: "[0-9]+(,[0-9]+)?",
+              type: "text",
+              inputMode: "decimal",
+            }}
+            onChange={handleChange}
+            InputProps={
+              productKey === "Percentuale"
+                ? {
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
+                  }
+                : {
+                    startAdornment: (
+                      <InputAdornment position="start">€</InputAdornment>
+                    ),
+                  }
+            }
+          />
+        </div>
       )}
     </>
   );
@@ -257,61 +264,65 @@ function AddProduct() {
 
   return (
     <div className="relative m-auto flex flex-col">
-      {/* Go back */}
-      <Link
-        href="/auth/admin/gestisci"
-        className="flex absolute left-12 top-10 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
-      >
-        <ArrowBackIcon />
-      </Link>
-
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div
-          className={`${styles.card} flex flex-col items-center gap-1 mx-8 my-4`}
+          className={`relative m-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4 items-center justify-center bg-white h-[28rem] w-80 content-start md:w-5/6 md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
+          {/* Go back */}
+          <Link
+            key={"Back"}
+            href="/auth/admin/gestisci"
+            className="flex absolute left-4 top-4 p-1 items-center drop-shadow-lg rounded-full text-black hover:bg-gray-300 hover:shadow-lg "
+          >
+            <ArrowBackIcon />
+          </Link>
           {/* Image field */}
           {!inputs.immagine ? (
-            <div className="w-3/5">
-              <label className={`flex flex-row ${styles.drop_container}`}>
-                <span className={styles.drop_title}>Carica una foto</span>
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                >
-                  <input
-                    required
-                    ref={inputRefImage}
-                    accept="image/*"
-                    type="file"
-                    name="immagine"
-                    onChange={handleChange}
-                    style={{
-                      position: "absolute",
-                      clip: "rect(1px, 1px, 1px, 1px)",
-                      padding: 0,
-                      border: 0,
-                      height: "1px",
-                      width: "1px",
-                      overflow: "hidden",
-                    }}
-                  />
-                  <PhotoCamera />
-                </IconButton>
-              </label>
+            <div className="flex flex-row w-full items-center justify-center">
+              <div className="w-3/5">
+                <label className={`flex flex-row ${styles.drop_container}`}>
+                  <span className={styles.drop_title}>Carica una foto</span>
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="label"
+                  >
+                    <input
+                      required
+                      ref={inputRefImage}
+                      accept="image/*"
+                      type="file"
+                      name="immagine"
+                      onChange={handleChange}
+                      style={{
+                        position: "absolute",
+                        clip: "rect(1px, 1px, 1px, 1px)",
+                        padding: 0,
+                        border: 0,
+                        height: "1px",
+                        width: "1px",
+                        overflow: "hidden",
+                      }}
+                    />
+                    <PhotoCamera />
+                  </IconButton>
+                </label>
+              </div>
             </div>
           ) : (
             <>
               {
-                <Image
-                  src={imageUrl}
-                  alt=""
-                  className="rounded-xl mb-1 mt-10 shadow-lg shrink-0"
-                  width={128}
-                  height={128}
-                  unoptimized={true}
-                />
+                <div className="flex flex-row w-full items-center justify-center">
+                  <Image
+                    src={imageUrl}
+                    alt=""
+                    className="rounded-xl mb-1 mt-10 shadow-lg shrink-0"
+                    width={128}
+                    height={128}
+                    unoptimized={true}
+                  />
+                </div>
               }
             </>
           )}
@@ -322,6 +333,7 @@ function AddProduct() {
             handleChange={handleChange}
             inputs={inputs}
           />
+
           {/* Brand field */}
           <Field
             productKey="Marca"
@@ -330,64 +342,66 @@ function AddProduct() {
           />
 
           {/* Category field */}
-          <FormControl sx={{ m: 1, maxWidth: "60%" }} size="small">
-            <InputLabel htmlFor="grouped-native-select">Categoria</InputLabel>
-            <Select
-              required
-              inputRef={inputRefCategory}
-              native
-              defaultValue=""
-              multiline
-              id="grouped-native-select"
-              label="Categoria"
-              name="Categoria"
-              onChange={handleChange}
-            >
-              <option aria-label="None" value="" />
-              <optgroup label="Elettrodomestici">
-                <option value={"Frigoriferi"}>Frigoriferi</option>
-                <option value={"Congelatori"}>Congelatori</option>
-                <option value={"Lavatrici"}>Lavatrici</option>
-                <option value={"Asciugatrici"}>Asciugatrici</option>
-                <option value={"Lavastoviglie"}>Lavastoviglie</option>
-                <option value={"Forni"}>Forni</option>
-                <option value={"Climatizzatori"}>Climatizzatori</option>
-                <option value={"Ventilatori"}>Ventilatori</option>
-                <option value={"Stufe"}>Stufe</option>
-                <option value={"Asciugatrici"}>Asciugatrici</option>
-              </optgroup>
-              <optgroup label="Telefonia">
-                <option value={"Smartphone e Cellulari"}>
-                  Smartphone e Cellulari
-                </option>
-                <option value={"Cordless"}>Cordless</option>
-                <option value={"Accessori Telefonia"}>
-                  Accessori Telefonia
-                </option>
-              </optgroup>
-              <optgroup label="Televisori">
-                <option value={"Televisori"}>Televisori</option>
-                <option value={"DVD e Blu-ray"}>DVD e Blu-ray</option>
-                <option value={"Accessori Televisori"}>
-                  Accessori Televisori
-                </option>
-              </optgroup>
-              <optgroup label="Informatica">
-                <option value={"Notebook"}>Notebook</option>
-                <option value={"Tablet"}>Tablet</option>
-                <option value={"Accessori Informatica"}>
-                  Accessori Informatica
-                </option>
-              </optgroup>
-              <optgroup label="Console e Videogiochi">
-                <option value={"Console"}>Console</option>
-                <option value={"Videogiochi"}>Videogiochi</option>
-              </optgroup>
-              <optgroup label="Monopattini">
-                <option value={"Monopattini"}>Monopattini</option>
-              </optgroup>
-            </Select>
-          </FormControl>
+          <div className="flex flex-row w-full items-center justify-center">
+            <FormControl sx={{ m: 1, width: "70%" }} size="small">
+              <InputLabel htmlFor="grouped-native-select">Categoria</InputLabel>
+              <Select
+                required
+                inputRef={inputRefCategory}
+                native
+                defaultValue=""
+                multiline
+                id="grouped-native-select"
+                label="Categoria"
+                name="Categoria"
+                onChange={handleChange}
+              >
+                <option aria-label="None" value="" />
+                <optgroup label="Elettrodomestici">
+                  <option value={"Frigoriferi"}>Frigoriferi</option>
+                  <option value={"Congelatori"}>Congelatori</option>
+                  <option value={"Lavatrici"}>Lavatrici</option>
+                  <option value={"Asciugatrici"}>Asciugatrici</option>
+                  <option value={"Lavastoviglie"}>Lavastoviglie</option>
+                  <option value={"Forni"}>Forni</option>
+                  <option value={"Climatizzatori"}>Climatizzatori</option>
+                  <option value={"Ventilatori"}>Ventilatori</option>
+                  <option value={"Stufe"}>Stufe</option>
+                  <option value={"Asciugatrici"}>Asciugatrici</option>
+                </optgroup>
+                <optgroup label="Telefonia">
+                  <option value={"Smartphone e Cellulari"}>
+                    Smartphone e Cellulari
+                  </option>
+                  <option value={"Cordless"}>Cordless</option>
+                  <option value={"Accessori Telefonia"}>
+                    Accessori Telefonia
+                  </option>
+                </optgroup>
+                <optgroup label="Televisori">
+                  <option value={"Televisori"}>Televisori</option>
+                  <option value={"DVD e Blu-ray"}>DVD e Blu-ray</option>
+                  <option value={"Accessori Televisori"}>
+                    Accessori Televisori
+                  </option>
+                </optgroup>
+                <optgroup label="Informatica">
+                  <option value={"Notebook"}>Notebook</option>
+                  <option value={"Tablet"}>Tablet</option>
+                  <option value={"Accessori Informatica"}>
+                    Accessori Informatica
+                  </option>
+                </optgroup>
+                <optgroup label="Console e Videogiochi">
+                  <option value={"Console"}>Console</option>
+                  <option value={"Videogiochi"}>Videogiochi</option>
+                </optgroup>
+                <optgroup label="Monopattini">
+                  <option value={"Monopattini"}>Monopattini</option>
+                </optgroup>
+              </Select>
+            </FormControl>
+          </div>
 
           {/* Description field */}
           <Field
@@ -397,28 +411,30 @@ function AddProduct() {
           />
 
           {/* Checkboxes */}
-          <div className="flex flex-col justify-left">
-            <FormControlLabel
-              control={<Checkbox />}
-              defaultChecked={false}
-              label="Dual sim"
-              name="dual_Sim"
-              onChange={handleChange}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              defaultChecked={false}
-              label="5G"
-              name="_5G"
-              onChange={handleChange}
-            />
-            <FormControlLabel
-              control={<Checkbox />}
-              defaultChecked={false}
-              label="NFC"
-              name="nFC"
-              onChange={handleChange}
-            />
+          <div className="flex flex-row w-full items-center justify-center">
+            <div className="flex flex-col md:flex-row justify-left">
+              <FormControlLabel
+                control={<Checkbox />}
+                defaultChecked={false}
+                label="Dual sim"
+                name="dual_Sim"
+                onChange={handleChange}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                defaultChecked={false}
+                label="5G"
+                name="_5G"
+                onChange={handleChange}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                defaultChecked={false}
+                label="NFC"
+                name="nFC"
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           {/* Optional fields */}
@@ -427,58 +443,71 @@ function AddProduct() {
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Display"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Fotocamera"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Webcam"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Sistema Operativo"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field productKey="RAM" handleChange={handleChange} inputs={inputs} />
+
           <Field productKey="ROM" handleChange={handleChange} inputs={inputs} />
+
           <Field
             productKey="Batteria"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Memoria"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Scheda Video"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Colore"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Peso"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Dimensioni"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Giri"
             handleChange={handleChange}
@@ -490,11 +519,13 @@ function AddProduct() {
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Sconto"
             handleChange={handleChange}
             inputs={inputs}
           />
+
           <Field
             productKey="Percentuale"
             handleChange={handleChange}
@@ -503,7 +534,7 @@ function AddProduct() {
         </div>
 
         {/* Add product button */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col mt-4 items-center justify-center gap-2">
           <button
             type="submit"
             className="flex mx-auto p-4 items-center drop-shadow-lg text-white bg-green-400 rounded-full ring-2 ring-green-500 shadow-lg hover:ring-2 hover:ring-green-700 hover:bg-green-500"

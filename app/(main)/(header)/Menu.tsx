@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Bars3Icon,
@@ -18,6 +18,7 @@ import ElectricScooterIcon from "@mui/icons-material/ElectricScooter";
 import PrintIcon from "@mui/icons-material/Print";
 import SellIcon from "@mui/icons-material/Sell";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import styles from "./Header.module.css";
 
 import { redirect, useRouter } from "next/navigation";
 import { Transition } from "@headlessui/react";
@@ -150,9 +151,18 @@ const mainMenu: Array<MainMenu> = [
   },
 ];
 
-export const MultistoreLogo = () => {
+export const MultistoreLogo = ({
+  setIsSubMenuOpenAndIsMenuOpen,
+}: {
+  setIsSubMenuOpenAndIsMenuOpen: any;
+}) => {
   return (
-    <Link title="Home" passHref href="/">
+    <Link
+      title="Home"
+      passHref
+      href="/"
+      onClick={setIsSubMenuOpenAndIsMenuOpen}
+    >
       <Image
         alt="Multistore Taranto Logo"
         src="/multistore_logo.png"
@@ -177,16 +187,21 @@ export const TopNavMenu = ({
   return (
     <div className="h-24 mx-3">
       {isSubMenuOpen && (
-        <button onClick={setIsSubMenuOpen} className="absolute left-6 top-7">
+        <button
+          onClick={setIsSubMenuOpen}
+          className={`absolute left-6 top-7 ${styles.back}`}
+        >
           <ArrowLeftIcon height={24} className="stroke-black" />
         </button>
       )}
-      <div className="flex justify-center content-start mt-2 ">
-        <MultistoreLogo />
+      <div className="flex justify-center content-start mt-2">
+        <MultistoreLogo
+          setIsSubMenuOpenAndIsMenuOpen={setIsSubMenuOpenAndIsMenuOpen}
+        />
       </div>
       <button
         onClick={setIsSubMenuOpenAndIsMenuOpen}
-        className="absolute right-6 top-7"
+        className={`absolute right-6 top-7 ${styles.hamburger}`}
       >
         <XMarkIcon height={24} className="stroke-black" />
       </button>
@@ -201,6 +216,13 @@ function Menu() {
   const router = useRouter();
 
   const NavMenu = () => {
+    //  When menu is open, the page in the background doesn't scroll
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
     return (
       <>
         {isMenuOpen && (
@@ -232,7 +254,7 @@ function Menu() {
                               setIsSubMenuOpen(true), setWhichMenu(item.text);
                             }
                           }}
-                          className="flex flex-col items-center"
+                          className={`flex flex-col items-center ${styles.category}`}
                         >
                           {/* Circular button */}
                           <div
@@ -307,7 +329,7 @@ function Menu() {
         onClick={() => setIsMenuOpen(false)}
       />
       <button
-        className="md:flex md:justify-items-end "
+        className={`md:flex md:justify-items-end ${styles.hamburger}`}
         onClick={() => setIsMenuOpen(true)}
       >
         <Bars3Icon height={24} className="stroke-black" />

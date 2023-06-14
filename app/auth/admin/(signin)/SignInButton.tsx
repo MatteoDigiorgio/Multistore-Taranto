@@ -47,12 +47,12 @@ function SignInButton() {
               <Image
                 src="/google.svg"
                 alt="Google icon"
-                className="h-8 w-8"
+                className="h-6 w-6"
                 width={64}
                 height={64}
                 unoptimized={true}
               />
-              Accedi con {provider.name}
+              <p className="text-sm">Accedi con {provider.name}</p>
             </button>
           </div>
         ))}
