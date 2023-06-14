@@ -255,7 +255,7 @@ function Product({ params }: any) {
             />
           </div>
 
-          <div className="hidden md:flex md:col-span-2">
+          <div className="hidden md:flex lg:col-span-2">
             <Field
               key={"Descrizione"}
               productKey="Descrizione"

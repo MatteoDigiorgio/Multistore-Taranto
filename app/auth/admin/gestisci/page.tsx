@@ -29,7 +29,7 @@ function Gestisci() {
       </div>
 
       <div
-        className={`relative m-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 bg-white h-96 w-80 md:w-5/6 md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto items-center justify-center bg-white h-[28rem] w-80 content-start md:w-5/6 md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
       >
         <Prodotti prodotti={prodotti} />
       </div>
