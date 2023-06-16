@@ -13,13 +13,14 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
           key={product.id}
         >
           <div className="flex justify-center">
-            <Link href={`/${product.id}`}>
+            <Link href={`/prodotti/${product.id}`}>
               <Image
                 src={product.immagine}
                 alt=""
                 className={`rounded-xl shadow-xl aspect-auto object-contain h-36 w-auto ${styles.card_img} cursor-pointer`}
                 width={128}
                 height={80}
+                unoptimized={true}
               />
             </Link>
           </div>

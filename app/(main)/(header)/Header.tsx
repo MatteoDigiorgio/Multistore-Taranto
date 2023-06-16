@@ -14,13 +14,14 @@ import styles from "./Header.module.css";
 export const MultistoreLogo = () => {
   return (
     <div className="flex justify-center items-center mx-4 mt-4 md:w-1/6 md:mt-0 sm:flex-grow-0 md:justify-start">
-      <Link title="Home" passHref href="/">
+      <Link title="Home" passHref href="/prodotti">
         <Image
           alt="Multistore Taranto Logo"
           src="/multistore_logo.png"
           width={120}
           height={50}
-          className="object-contain cursor-pointer "
+          className="object-contain cursor-pointer"
+          unoptimized={true}
         />
       </Link>
     </div>

@@ -160,7 +160,7 @@ export const MultistoreLogo = ({
     <Link
       title="Home"
       passHref
-      href="/"
+      href="/prodotti"
       onClick={setIsSubMenuOpenAndIsMenuOpen}
     >
       <Image
