@@ -16,6 +16,7 @@
     "@material-ui/icons": "^4.11.3",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
+    "@react-google-maps/api": "^2.18.1",
     "@reduxjs/toolkit": "^1.9.3",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/node": "18.15.5",
