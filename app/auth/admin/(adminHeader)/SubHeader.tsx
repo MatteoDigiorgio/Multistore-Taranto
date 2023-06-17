@@ -17,7 +17,7 @@ type SubMenu = {
 
 const subMenu: Array<SubMenu> = [
   {
-    page: "/",
+    page: "/prodotti",
     text: "",
     icon: (
       <Image
