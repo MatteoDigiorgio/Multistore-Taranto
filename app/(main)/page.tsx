@@ -3,6 +3,7 @@ import { ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import GoogleMaps from "./(landing)/GoogleMaps";
+import Logo from "./(landing)/Logo";
 
 export default function Home(): ReactElement {
   return (
@@ -16,16 +17,7 @@ export default function Home(): ReactElement {
               <button>Dove Trovarci</button>
             </div>
             <div className="relative w-full">
-              <div className="absolute inset-0 flex justify-center items-center ">
-                <Image
-                  src={"/multistore_logo.png"}
-                  alt=""
-                  className={`z-10 w-2/3 md:w-1/2`}
-                  width={128}
-                  height={80}
-                  unoptimized={true}
-                />
-              </div>
+              <Logo />
               <div className="w-full">
                 <Image
                   src={"/waves_bottom.svg"}
@@ -34,6 +26,7 @@ export default function Home(): ReactElement {
                   width={128}
                   height={80}
                   unoptimized={true}
+                  priority={true}
                 />
               </div>
             </div>
@@ -54,7 +47,7 @@ export default function Home(): ReactElement {
               </div>
               <Link
                 href={"/prodotti"}
-                className="mx-auto px-4 py-2 rounded-lg bg-[#2DAAE1] text-white font-semibold text-sm md:text-lg shadow-md"
+                className="mx-auto px-5 py-2 rounded-full bg-[#2DAAE1] text-white font-semibold text-sm md:text-lg shadow-md"
               >
                 Visita il Catalogo
               </Link>
@@ -66,6 +59,7 @@ export default function Home(): ReactElement {
               width={128}
               height={80}
               unoptimized={true}
+              priority={true}
             />
             <div className="flex flex-col w-full gap-8 p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center">

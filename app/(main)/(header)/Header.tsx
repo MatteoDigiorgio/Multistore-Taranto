@@ -45,7 +45,7 @@ export const SearchBar = ({
     const trimmedValue = input.replace(/\s+/g, " ").trim();
     updateInputValue(trimmedValue);
     setInput("");
-    router.push("/");
+    router.push("/prodotti");
     if (inputRef.current) {
       inputRef.current.blur(); // Hide the keyboard
     }
@@ -111,10 +111,11 @@ function Header() {
           className={` ${
             pathname === "/prodotti"
               ? "hidden"
-              : "absolute left-7 top-[30px] md:relative md:flex md:top-0 md:left-0 cursor-pointer"
+              : "absolute left-7 top-[30px] md:relative md:flex md:flex-col md:gap-[2px] md:top-0 md:left-0 cursor-pointer"
           }`}
         >
           <HomeIcon height={24} />
+          <p className="hidden md:flex font-mono text-xs font-thin">Catalogo</p>
         </Link>
         <div className="absolute right-7 top-7 md:relative md:flex md:justify-end md:w-1/6 md:top-0 md:right-0 md:items-center md:order-last">
           <Menu />
