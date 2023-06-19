@@ -8,13 +8,14 @@ import Menu from "./Menu";
 import Image from "next/image";
 import { connect } from "react-redux";
 import { updateInputValue } from "../../../slices/actions";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./Header.module.css";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 export const MultistoreLogo = () => {
   return (
     <div className="flex justify-center items-center mx-4 mt-4 md:w-1/6 md:mt-0 sm:flex-grow-0 md:justify-start">
-      <Link title="Home" passHref href="/prodotti">
+      <Link title="Home" passHref href="/">
         <Image
           alt="Multistore Taranto Logo"
           src="/multistore_logo.png"
@@ -44,7 +45,7 @@ export const SearchBar = ({
     const trimmedValue = input.replace(/\s+/g, " ").trim();
     updateInputValue(trimmedValue);
     setInput("");
-    router.push("/");
+    router.push("/prodotti");
     if (inputRef.current) {
       inputRef.current.blur(); // Hide the keyboard
     }
@@ -98,15 +99,27 @@ const ConnectedSearchBar = connect(
 )(SearchBar);
 
 function Header() {
+  const pathname = usePathname();
   return (
     <header className="z-50 fixed w-full">
       {/* Top nav */}
       <div className="grid grid-rows-2 grid-flow-col gap-4 items-center mx-1 h-32 bg-[#F9F9F9] md:flex md:flex-row md:h-20 md:px-5 shadow-lg z-50">
         <MultistoreLogo />
-        <div className="absolute right-10 top-5 md:relative md:flex md:justify-end md:w-1/6 md:top-0 md:right-0 md:items-center md:order-last">
+        <ConnectedSearchBar />
+        <Link
+          href={"/prodotti"}
+          className={` ${
+            pathname === "/prodotti"
+              ? "hidden"
+              : "absolute left-7 top-[30px] md:relative md:flex md:flex-col md:gap-[2px] md:top-0 md:left-0 cursor-pointer"
+          } ${styles.home}`}
+        >
+          <HomeIcon height={24} />
+          <p className="hidden md:flex font-mono text-xs font-thin">Catalogo</p>
+        </Link>
+        <div className="absolute right-7 top-7 md:relative md:flex md:justify-end md:w-1/6 md:top-0 md:right-0 md:items-center md:order-last">
           <Menu />
         </div>
-        <ConnectedSearchBar />
       </div>
     </header>
   );
