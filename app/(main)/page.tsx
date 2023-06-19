@@ -58,7 +58,7 @@ export default function Home(): ReactElement {
       <div className="bg-white flex justify-center flex-grow z-0">
         <main className="w-full">
           <div className="flex flex-col w-full">
-            <div className="z-10 flex pt-2 justify-center items-center xs:gap-12 font-mono text-gray-400 font-thin text-sm md:text-base cursor-pointer text-center">
+            <div className="z-10 flex pt-2 justify-center items-center xs:gap-12 text-gray-400 font-light text-sm md:text-base cursor-pointer text-center">
               <button onClick={handleScrollToLocation}>La Nostra Storia</button>
               <button onClick={handleScrollToSocials}>Social</button>
               <button onClick={handleScrollToLocation}>Dove Trovarci</button>
