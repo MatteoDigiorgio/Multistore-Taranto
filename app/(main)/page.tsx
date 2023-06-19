@@ -11,7 +11,7 @@ export default function Home(): ReactElement {
       <div className="bg-white flex justify-center flex-grow z-0">
         <main className="w-full">
           <div className="flex flex-col w-full">
-            <div className="z-10 flex pt-2 justify-center items-center gap-2 md:gap-12 font-mono text-gray-400 font-thin text-sm md:text-base cursor-pointer text-center">
+            <div className="z-10 flex pt-2 justify-center items-center xs:gap-12 font-mono text-gray-400 font-thin text-sm md:text-base cursor-pointer text-center">
               <button>La Nostra Storia</button>
               <button>Prodotti & Servizi</button>
               <button>Dove Trovarci</button>
@@ -25,7 +25,7 @@ export default function Home(): ReactElement {
                   className={`w-full aspect-video`}
                   width={128}
                   height={80}
-                  unoptimized={true}
+                  loading="eager"
                   priority={true}
                 />
               </div>
@@ -58,7 +58,7 @@ export default function Home(): ReactElement {
               className={`w-full -translate-y-[1px] overflow-hidden border-0`}
               width={128}
               height={80}
-              unoptimized={true}
+              loading="eager"
               priority={true}
             />
             <div className="flex flex-col w-full gap-8 p-8">

@@ -112,7 +112,7 @@ function Header() {
             pathname === "/prodotti"
               ? "hidden"
               : "absolute left-7 top-[30px] md:relative md:flex md:flex-col md:gap-[2px] md:top-0 md:left-0 cursor-pointer"
-          }`}
+          } ${styles.home}`}
         >
           <HomeIcon height={24} />
           <p className="hidden md:flex font-mono text-xs font-thin">Catalogo</p>
