@@ -1,4 +1,5 @@
 import React from "react";
+import { Analytics } from "@vercel/analytics/react";
 import ProvidersWrapper from "../ProvidersWrapper";
 import Header from "../(header)/Header";
 import Head from "next/head";
@@ -20,6 +21,7 @@ export default function RootLayout({
           <Header />
           {children}
         </ProvidersWrapper>
+        <Analytics />
       </body>
     </html>
   );
