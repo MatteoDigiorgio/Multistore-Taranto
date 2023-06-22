@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
@@ -12,7 +12,10 @@ function Socials({ socialRef }: { socialRef: any }) {
     router.push(page);
   };
   return (
-    <div ref={socialRef} className="flex flex-col w-full gap-8 p-8">
+    <div
+      ref={socialRef}
+      className="flex flex-col w-full max-w-7xl mx-auto gap-8 p-8"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 items-center">
         <Lottie animationData={Social} className="flex w-3/4 -z-10 mx-auto" />
         <div className="flex flex-col md:max-w-md gap-4 items-center md:items-start">

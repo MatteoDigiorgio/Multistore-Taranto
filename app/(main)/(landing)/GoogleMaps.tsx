@@ -3,6 +3,8 @@ import React from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import styles from "./Maps.module.css";
 import { useRouter } from "next/navigation";
+import Lottie from "lottie-react";
+import Pin from "../../../public/Pin.json";
 
 function GoogleMaps({ locationRef }: { locationRef: any }) {
   const router = useRouter();
@@ -20,12 +22,18 @@ function GoogleMaps({ locationRef }: { locationRef: any }) {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-4 p-8" ref={locationRef}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center">
-          <h1 className="flex whitespace-pre justify-center md:justify-end items-start font-bold text-2xl md:text-4xl text-center">
-            Dove Siamo 📍
-          </h1>
-          <h2 className="flex justify-center md:justify-start items-center text-center text-sm md:text-xl whitespace-pre">
+      <div
+        className="flex flex-col w-full max-w-7xl mx-auto gap-4 p-8"
+        ref={locationRef}
+      >
+        <div className="grid grid-cols-1 md:h-20 md:grid-cols-2 gap-4 md:gap-8 items-center">
+          <div className="flex flex-col-reverse md:flex-row items-center justify-center md:justify-end md:items-end gap-2">
+            <h1 className="inline-block align-baseline items-end font-bold text-2xl md:text-4xl ">
+              Dove Siamo
+            </h1>
+            <Lottie animationData={Pin} className="flex w-8 items-start" />
+          </div>
+          <h2 className="flex justify-center md:justify-start items-end text-center text-sm md:text-xl whitespace-pre">
             Vienici a trovare in{"\n"}Viale Liguria 40 - Taranto
           </h2>
         </div>
