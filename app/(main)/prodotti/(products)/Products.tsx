@@ -9,7 +9,7 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
     <>
       {products?.map((product) => (
         <div
-          className={`${styles.card} h-80 w-44 sm:w-64 rounded-md`}
+          className={`relative flex flex-col h-80 w-44 sm:w-64 m-auto p-7 bg-white rounded-2xl shadow-lg bg-clip-padding bg-opacity-70 border border-gray-200`}
           key={product.id}
         >
           <div className="flex justify-center">

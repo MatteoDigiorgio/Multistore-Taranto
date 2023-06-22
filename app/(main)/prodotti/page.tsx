@@ -47,7 +47,8 @@ function ProductsPage() {
 
   return (
     <>
-      <div className="bg-white flex justify-center flex-grow z-0">
+      <div className="fixed bg-[url('/waves_bottom.svg')] bg-cover h-screen w-screen z-0"></div>
+      <div className="flex justify-center flex-grow z-10">
         <div className="mx-auto">
           {products ? (
             <>
