@@ -1,10 +1,9 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   Bars3Icon,
   XMarkIcon,
-  ChevronDownIcon,
   ChevronRightIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
@@ -20,8 +19,10 @@ import SellIcon from "@mui/icons-material/Sell";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import styles from "./Header.module.css";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Transition } from "@headlessui/react";
+import { connect } from "react-redux";
+import { updateInputValue } from "../../../slices/actions";
 
 const everything: Array<any> = [
   { page: "/", text: "Frigoriferi" },
@@ -59,15 +60,15 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-rose-500",
     icon: <MicrowaveIcon />,
     subMenu: [
-      { page: "/", text: "Frigoriferi" },
-      { page: "/", text: "Congelatori" },
-      { page: "/", text: "Lavatrici" },
-      { page: "/", text: "Asciugatrici" },
-      { page: "/", text: "Lavastoviglie" },
-      { page: "/", text: "Forni" },
-      { page: "/", text: "Climatizzatori" },
-      { page: "/", text: "Ventilatori" },
-      { page: "/", text: "Stufe" },
+      { page: "/prodotti", text: "Frigoriferi" },
+      { page: "/prodotti", text: "Congelatori" },
+      { page: "/prodotti", text: "Lavatrici" },
+      { page: "/prodotti", text: "Asciugatrici" },
+      { page: "/prodotti", text: "Lavastoviglie" },
+      { page: "/prodotti", text: "Forni" },
+      { page: "/prodotti", text: "Climatizzatori" },
+      { page: "/prodotti", text: "Ventilatori" },
+      { page: "/prodotti", text: "Stufe" },
     ],
   },
   {
@@ -76,9 +77,9 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-sky-400",
     icon: <SmartphoneIcon />,
     subMenu: [
-      { page: "/", text: "Smartphone e Cellulari" },
-      { page: "/", text: "Cordless" },
-      { page: "/", text: "Accessori Telefonia" },
+      { page: "/prodotti", text: "Smartphone e Cellulari" },
+      { page: "/prodotti", text: "Cordless" },
+      { page: "/prodotti", text: "Accessori Telefonia" },
     ],
   },
   {
@@ -87,9 +88,9 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-purple-400",
     icon: <LiveTvIcon />,
     subMenu: [
-      { page: "/", text: "Televisori" },
-      { page: "/", text: "DVD e Blu-ray" },
-      { page: "/", text: "Accessori Televisori" },
+      { page: "/prodotti", text: "Televisori" },
+      { page: "/prodotti", text: "DVD e Blu-ray" },
+      { page: "/prodotti", text: "Accessori Televisori" },
     ],
   },
   {
@@ -98,9 +99,9 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-orange-500",
     icon: <ComputerIcon />,
     subMenu: [
-      { page: "/", text: "Notebook" },
-      { page: "/", text: "Tablet" },
-      { page: "/", text: "Accessori Informatica" },
+      { page: "/prodotti", text: "Notebook" },
+      { page: "/prodotti", text: "Tablet" },
+      { page: "/prodotti", text: "Accessori Informatica" },
     ],
   },
   {
@@ -109,20 +110,20 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-lime-500",
     icon: <GamepadIcon />,
     subMenu: [
-      { page: "/", text: "Playstation 5" },
-      { page: "/", text: "Playstation 4" },
-      { page: "/", text: "Nintendo Switch" },
+      { page: "/prodotti", text: "Playstation 5" },
+      { page: "/prodotti", text: "Playstation 4" },
+      { page: "/prodotti", text: "Nintendo Switch" },
     ],
   },
   {
-    page: "/monopattini",
+    page: null,
     text: "Monopattini",
     color: "bg-zinc-400",
     icon: <ElectricScooterIcon />,
     subMenu: null,
   },
   {
-    page: "/fotocopiefax",
+    page: null,
     text: "Fotocopie e Fax",
     color: "bg-red-500",
     icon: <PrintIcon />,
@@ -134,12 +135,12 @@ const mainMenu: Array<MainMenu> = [
     color: "bg-yellow-500",
     icon: <SellIcon />,
     subMenu: [
-      { page: "/", text: "Acer" },
-      { page: "/", text: "Apple" },
-      { page: "/", text: "LG" },
-      { page: "/", text: "Samsung" },
-      { page: "/", text: "Nokia" },
-      { page: "/", text: "Sony" },
+      { page: "/prodotti", text: "Acer" },
+      { page: "/prodotti", text: "Apple" },
+      { page: "/prodotti", text: "LG" },
+      { page: "/prodotti", text: "Samsung" },
+      { page: "/prodotti", text: "Nokia" },
+      { page: "/prodotti", text: "Sony" },
     ],
   },
   {
@@ -215,13 +216,25 @@ function Menu() {
   const [thisWhichMenu, setWhichMenu] = useState("");
   const router = useRouter();
 
-  const NavMenu = () => {
+  const NavMenu = ({
+    inputValue,
+    updateInputValue,
+  }: {
+    inputValue: any;
+    updateInputValue: any;
+  }) => {
     //  When menu is open, the page in the background doesn't scroll
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
+
+    const setInputFromMenu = (input: string) => {
+      const trimmedValue = input.replace(/\s+/g, " ").trim();
+      updateInputValue(trimmedValue);
+      router.push("/prodotti");
+    };
 
     return (
       <>
@@ -289,6 +302,9 @@ function Menu() {
                                             onClick={() => {
                                               setIsMenuOpen(false);
                                               setIsSubMenuOpen(false);
+                                              setInputFromMenu(
+                                                `${subMenuItem.text}`
+                                              );
                                             }}
                                             title={`${subMenuItem.text}`}
                                             passHref
@@ -320,6 +336,21 @@ function Menu() {
     );
   };
 
+  const mapStateToProps = (state: { inputValue: any }) => {
+    return {
+      inputValue: state.inputValue,
+    };
+  };
+
+  const mapDispatchToProps = {
+    updateInputValue,
+  };
+
+  const ConnectedNavMenu = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(NavMenu);
+
   return (
     <>
       <div
@@ -343,7 +374,7 @@ function Menu() {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <NavMenu />
+        <ConnectedNavMenu />
       </Transition>
     </>
   );
