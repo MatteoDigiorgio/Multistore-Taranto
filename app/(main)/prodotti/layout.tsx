@@ -10,19 +10,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <>
       <Head>
         <title>Multistore Taranto</title>
         <meta name="description" content="Showcase site" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <body className={`flex flex-col ${styles.main}`}>
+      <div className={`flex flex-col ${styles.main}`}>
         <ProvidersWrapper>
           <Header />
           {children}
         </ProvidersWrapper>
         <Analytics />
-      </body>
-    </html>
+      </div>
+    </>
   );
 }
