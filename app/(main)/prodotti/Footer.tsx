@@ -10,6 +10,7 @@ import React from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../slices/store";
+import { selectGoogleValue } from "@/slices/googleSlice";
 
 interface GoogleData {
   result?: {
@@ -21,9 +22,8 @@ interface GoogleData {
 }
 
 export default function Footer() {
-  const googleData: GoogleData = useSelector(
-    (state: RootState) => state.google.value
-  );
+  const googleData: GoogleData = useSelector(selectGoogleValue);
+  console.log(googleData);
   return (
     <div className="relative">
       <div className="flex z-10 mt-5 text-gray-300 backdrop-blur-md bg-black/30 rounded-t-2xl">

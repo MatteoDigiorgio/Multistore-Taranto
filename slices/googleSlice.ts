@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "./store";
 
 export interface GoogleDataState {
   value: object;
@@ -21,5 +22,7 @@ export const googleSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { update } = googleSlice.actions;
+
+export const selectGoogleValue = (state: RootState) => state.google.value;
 
 export default googleSlice.reducer;

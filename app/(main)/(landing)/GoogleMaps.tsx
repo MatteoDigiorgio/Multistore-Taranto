@@ -8,6 +8,7 @@ import Pin from "../../../public/Pin.json";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../slices/store";
 import { ClockIcon } from "@heroicons/react/20/solid";
+import { selectGoogleValue } from "@/slices/googleSlice";
 
 interface GoogleData {
   result?: {
@@ -19,9 +20,7 @@ interface GoogleData {
 
 function GoogleMaps({ locationRef }: { locationRef: any }) {
   const router = useRouter();
-  const googleData: GoogleData = useSelector(
-    (state: RootState) => state.google.value
-  );
+  const googleData: GoogleData = useSelector(selectGoogleValue);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS!,
