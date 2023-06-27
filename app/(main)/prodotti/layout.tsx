@@ -4,6 +4,7 @@ import ProvidersWrapper from "../ProvidersWrapper";
 import Header from "../(header)/Header";
 import Head from "next/head";
 import styles from "../Main.module.css";
+import Footer from "./Footer";
 export default function RootLayout({
   children,
 }: {
@@ -20,6 +21,7 @@ export default function RootLayout({
         <ProvidersWrapper>
           <Header />
           {children}
+          <Footer />
         </ProvidersWrapper>
         <Analytics />
       </div>
