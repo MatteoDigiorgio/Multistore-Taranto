@@ -59,8 +59,8 @@ function Product({ product }: any) {
 
   return product ? (
     <div className="bg-white flex mb-10 mt-32 md:mt-6 z-0 mx-auto">
-      <div className="w-full max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 justify-center md:justify-end md:mt-20">
+      <div className="w-screen max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 min-w-[80%] justify-center md:justify-end md:mt-20">
           {/* Image */}
           <div className="flex justify-center p-5 md:pl-10">
             <Image
