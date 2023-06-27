@@ -5,11 +5,14 @@ import Header from "../(header)/Header";
 import Head from "next/head";
 import styles from "../Main.module.css";
 import Footer from "./Footer";
-export default function RootLayout({
+import getGoogleData from "../getGoogleData";
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const data: object = await getGoogleData();
+
   return (
     <>
       <Head>
@@ -19,7 +22,7 @@ export default function RootLayout({
       </Head>
       <div className={`flex flex-col ${styles.main}`}>
         <ProvidersWrapper>
-          <Header />
+          <Header data={data} />
           {children}
           <Footer />
         </ProvidersWrapper>

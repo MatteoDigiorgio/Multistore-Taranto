@@ -10,9 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import Lottie from "lottie-react";
 import Product404 from "../../../public/Product404.json";
-import type { RootState } from "../../../slices/store";
 import { clear, selectSearchValue } from "../../../slices/searchSlice";
-import getGoogleData from "../getGoogleData";
 
 function ProductsPage() {
   const inputValue = useSelector(selectSearchValue);

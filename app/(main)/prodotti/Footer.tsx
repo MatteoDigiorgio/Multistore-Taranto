@@ -23,7 +23,6 @@ interface GoogleData {
 
 export default function Footer() {
   const googleData: GoogleData = useSelector(selectGoogleValue);
-  console.log(googleData);
   return (
     <div className="relative">
       <div className="flex z-10 mt-5 text-gray-300 backdrop-blur-md bg-black/30 rounded-t-2xl">

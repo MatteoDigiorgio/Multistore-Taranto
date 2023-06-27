@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import styles from "./Header.module.css";
 import { HomeIcon } from "@heroicons/react/24/outline";
 import { update } from "../../../slices/searchSlice";
+import { update as googleUpdate } from "@/slices/googleSlice";
 
 export const MultistoreLogo = () => {
   return (
@@ -77,8 +78,11 @@ export const SearchBar = () => {
   );
 };
 
-function Header() {
+function Header({ data }: { data: {} }) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+
+  dispatch(googleUpdate(data));
   return (
     <header className="z-50 fixed w-full">
       {/* Top nav */}
