@@ -28,7 +28,7 @@ const Stars = ({ starsNumber }: { starsNumber: number }) => {
         stars.push(
           <Image
             key={i}
-            src="/star.png"
+            src="/Star.png"
             width={20}
             height={20}
             alt=""
