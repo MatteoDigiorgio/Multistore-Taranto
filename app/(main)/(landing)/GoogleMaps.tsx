@@ -5,9 +5,22 @@ import styles from "./Maps.module.css";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import Pin from "../../../public/Pin.json";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../slices/store";
+import { ClockIcon } from "@heroicons/react/20/solid";
+import { selectGoogleValue } from "@/slices/googleSlice";
+
+interface GoogleData {
+  result?: {
+    opening_hours: {
+      weekday_text: string[];
+    };
+  };
+}
 
 function GoogleMaps({ locationRef }: { locationRef: any }) {
   const router = useRouter();
+  const googleData: GoogleData = useSelector(selectGoogleValue);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS!,
@@ -19,23 +32,46 @@ function GoogleMaps({ locationRef }: { locationRef: any }) {
   const redirectToExternalPage = (page: string) => {
     router.push(page);
   };
-
   return (
     <>
       <div
         className="flex flex-col w-full max-w-7xl mx-auto gap-4 p-8"
         ref={locationRef}
       >
-        <div className="grid grid-cols-1 md:h-20 md:grid-cols-2 gap-4 md:gap-8 items-center">
-          <div className="flex flex-col-reverse md:flex-row items-center justify-center md:justify-end md:items-end gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-8 items-center">
+          <div className="flex flex-col-reverse md:flex-row items-center md:items-end justify-center md:justify-end gap-2">
             <h1 className="inline-block align-baseline items-end font-bold text-2xl md:text-4xl ">
               Dove Siamo
             </h1>
             <Lottie animationData={Pin} className="flex w-8 items-start" />
           </div>
-          <h2 className="flex justify-center md:justify-start items-end text-center text-sm md:text-xl whitespace-pre">
+          <h2 className="flex md:order-last xl:order-none items-end justify-center md:justify-end xl:justify-center md:pr-6 text-center text-sm md:text-xl whitespace-pre">
             Vienici a trovare in{"\n"}Viale Liguria 40 - Taranto
           </h2>
+          <div className="flex flex-col md:flex-row md:row-span-2 xl:row-span-1 items-center gap-3 justify-center md:justify-start">
+            <ClockIcon className="h-7" />
+            <div className="flex flex-col  text-sm capitalize items-center">
+              {googleData?.result?.opening_hours.weekday_text.map(
+                (
+                  day:
+                    | string
+                    | number
+                    | boolean
+                    | React.ReactElement<
+                        any,
+                        string | React.JSXElementConstructor<any>
+                      >
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined,
+                  index: React.Key | null | undefined
+                ) => (
+                  <p key={index}>{day}</p>
+                )
+              )}
+            </div>
+          </div>
         </div>
         <div className="h-80 m-4">
           <GoogleMap

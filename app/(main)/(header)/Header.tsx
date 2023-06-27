@@ -1,16 +1,15 @@
 "use client";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/outline";
-import AboutUs from "./AboutUs";
-import Contacts from "./Contacts";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Menu from "./Menu";
 import Image from "next/image";
-import { connect } from "react-redux";
-import { updateInputValue } from "../../../slices/actions";
+import { useDispatch } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import styles from "./Header.module.css";
 import { HomeIcon } from "@heroicons/react/24/outline";
+import { update } from "../../../slices/searchSlice";
+import { update as googleUpdate } from "@/slices/googleSlice";
 
 export const MultistoreLogo = () => {
   return (
@@ -29,21 +28,17 @@ export const MultistoreLogo = () => {
   );
 };
 
-export const SearchBar = ({
-  inputValue,
-  updateInputValue,
-}: {
-  inputValue: any;
-  updateInputValue: any;
-}) => {
+export const SearchBar = () => {
   const [input, setInput] = useState("");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const dispatch = useDispatch();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmedValue = input.replace(/\s+/g, " ").trim();
-    updateInputValue(trimmedValue);
+    dispatch(update(trimmedValue));
     setInput("");
     router.push("/prodotti");
     if (inputRef.current) {
@@ -83,29 +78,17 @@ export const SearchBar = ({
   );
 };
 
-const mapStateToProps = (state: { inputValue: any }) => {
-  return {
-    inputValue: state.inputValue,
-  };
-};
-
-const mapDispatchToProps = {
-  updateInputValue,
-};
-
-const ConnectedSearchBar = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchBar);
-
-function Header() {
+function Header({ data }: { data: {} }) {
   const pathname = usePathname();
+  const dispatch = useDispatch();
+
+  dispatch(googleUpdate(data));
   return (
     <header className="z-50 fixed w-full">
       {/* Top nav */}
       <div className="grid grid-rows-2 grid-flow-col gap-4 items-center mx-1 h-32 bg-[#F9F9F9] md:flex md:flex-row md:h-20 md:px-5 shadow-lg z-50">
         <MultistoreLogo />
-        <ConnectedSearchBar />
+        <SearchBar />
         <Link
           href={"/prodotti"}
           className={` ${

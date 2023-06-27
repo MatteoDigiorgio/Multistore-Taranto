@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Products from "./(products)/Products";
 import { Prodotto } from "@/types";
 import { getFilterProducts, getProducts } from "@/pages/api/auth/getProducts";
@@ -10,13 +10,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import Lottie from "lottie-react";
 import Product404 from "../../../public/Product404.json";
-
-interface RootState {
-  inputValue: string;
-}
+import { clear, selectSearchValue } from "../../../slices/searchSlice";
 
 function ProductsPage() {
-  const inputValue = useSelector((state: RootState) => state.inputValue);
+  const inputValue = useSelector(selectSearchValue);
   const dispatch = useDispatch();
 
   const [products, setProducts] = useState<Prodotto[]>();
@@ -41,10 +38,6 @@ function ProductsPage() {
     fetchData();
   }, [inputValue]);
 
-  const clearInputValue = () => {
-    dispatch({ type: "CLEAR_INPUT_VALUE" });
-  };
-
   return (
     <>
       <div className="fixed bg-[url('/waves_bottom.svg')] bg-cover h-screen w-screen z-0"></div>
@@ -55,7 +48,7 @@ function ProductsPage() {
               {inputValue && (
                 <div className="mt-40 md:mt-28 w-full flex justify-center">
                   <h1
-                    onClick={clearInputValue}
+                    onClick={() => dispatch(clear())}
                     className="flex items-center pl-4 pr-2 p-2 gap-1 rounded-full bg-zinc-300 border border-gray-400 font-medium text-xl cursor-pointer"
                   >
                     {inputValue}

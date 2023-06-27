@@ -21,8 +21,8 @@ import styles from "./Header.module.css";
 
 import { useRouter } from "next/navigation";
 import { Transition } from "@headlessui/react";
-import { connect } from "react-redux";
-import { updateInputValue } from "../../../slices/actions";
+import { useDispatch } from "react-redux";
+import { update } from "../../../slices/searchSlice";
 
 const everything: Array<any> = [
   { page: "/", text: "Frigoriferi" },
@@ -215,14 +215,9 @@ function Menu() {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [thisWhichMenu, setWhichMenu] = useState("");
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const NavMenu = ({
-    inputValue,
-    updateInputValue,
-  }: {
-    inputValue: any;
-    updateInputValue: any;
-  }) => {
+  const NavMenu = () => {
     //  When menu is open, the page in the background doesn't scroll
     if (isMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -232,7 +227,7 @@ function Menu() {
 
     const setInputFromMenu = (input: string) => {
       const trimmedValue = input.replace(/\s+/g, " ").trim();
-      updateInputValue(trimmedValue);
+      dispatch(update(trimmedValue));
       router.push("/prodotti");
     };
 
@@ -336,21 +331,6 @@ function Menu() {
     );
   };
 
-  const mapStateToProps = (state: { inputValue: any }) => {
-    return {
-      inputValue: state.inputValue,
-    };
-  };
-
-  const mapDispatchToProps = {
-    updateInputValue,
-  };
-
-  const ConnectedNavMenu = connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(NavMenu);
-
   return (
     <>
       <div
@@ -374,7 +354,7 @@ function Menu() {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <ConnectedNavMenu />
+        <NavMenu />
       </Transition>
     </>
   );

@@ -4,25 +4,30 @@ import ProvidersWrapper from "../ProvidersWrapper";
 import Header from "../(header)/Header";
 import Head from "next/head";
 import styles from "../Main.module.css";
-export default function RootLayout({
+import Footer from "./Footer";
+import getGoogleData from "../getGoogleData";
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const data: object = await getGoogleData();
+
   return (
-    <html>
+    <>
       <Head>
         <title>Multistore Taranto</title>
         <meta name="description" content="Showcase site" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <body className={`flex flex-col ${styles.main}`}>
+      <div className={`flex flex-col ${styles.main}`}>
         <ProvidersWrapper>
-          <Header />
+          <Header data={data} />
           {children}
+          <Footer />
         </ProvidersWrapper>
         <Analytics />
-      </body>
-    </html>
+      </div>
+    </>
   );
 }

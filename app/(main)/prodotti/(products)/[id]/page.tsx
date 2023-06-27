@@ -13,7 +13,7 @@ async function ProductPage({ params }: any) {
   }
 
   return (
-    <>
+    <div className="flex flex-grow">
       {product ? (
         <Product product={product} />
       ) : (
@@ -23,7 +23,7 @@ async function ProductPage({ params }: any) {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }
 
