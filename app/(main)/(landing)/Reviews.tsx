@@ -3,18 +3,19 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { selectGoogleValue } from "@/slices/googleSlice";
+import Lottie from "lottie-react";
+import Review from "../../../public/Review.json";
 
 interface GoogleData {
   result?: {
-    reviews: [
-      {
-        rating: number;
-        text: string;
-        profile_photo_url: string;
-        author_name: string;
-        relative_time_description: string;
-      }
-    ];
+    rating: number;
+    reviews: Array<{
+      rating: number;
+      text: string;
+      profile_photo_url: string;
+      author_name: string;
+      relative_time_description: string;
+    }>;
   };
 }
 
@@ -58,8 +59,10 @@ const Stars = ({ starsNumber }: { starsNumber: number }) => {
 
 function Reviews() {
   const googleData: GoogleData = useSelector(selectGoogleValue);
-  const ReviewsData = googleData?.result?.reviews;
+  let ReviewsData = googleData?.result?.reviews;
   const [currentReview, setCurrentReview] = useState(0);
+
+  ReviewsData = ReviewsData?.filter((review) => review.rating >= 4);
 
   const handleNextReview = () => {
     setCurrentReview((prevReview) => {
@@ -78,12 +81,35 @@ function Reviews() {
   const review = ReviewsData![currentReview];
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 mx-auto my-12 md:my-24 max-w-2xl xl:max-w-7xl gap-14">
-      <div className="flex flex-col gap-8 mx-6 xl:mx-0 xl:gap-12 justify-center">
+    <div className="flex flex-col mx-auto my-12 md:my-24 max-w-2xl xl:max-w-7xl gap-8">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <Image
+            src="/google.png"
+            width={20}
+            height={20}
+            alt=""
+            unoptimized={true}
+            className="h-14 w-auto"
+          />
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-2xl">{googleData.result?.rating}</h2>
+            <Stars starsNumber={googleData.result?.rating!} />
+          </div>
+        </div>
+        <Lottie
+          animationData={Review}
+          className="flex w-64 md:w-96 items-start"
+        />
+        <h1 className="inline-block align-baseline font-bold text-2xl md:text-4xl">
+          Cosa ne pensano i nostri clienti
+        </h1>
+      </div>
+      <div className="flex flex-col gap-4 mx-6 xl:mx-0 xl:gap-12 justify-center">
         <Stars starsNumber={review.rating} />
         {/* Testimonial Review */}
         <div>
-          <h1 className="font-semibold text-2xl leading-7 xl:text-4xl xl:leading-[44px]">
+          <h1 className="font-normal text-lg leading-7 lg:text-3xl xl:leading-[44px]">
             {review.text}
           </h1>
         </div>
@@ -99,7 +125,7 @@ function Reviews() {
               className="rounded-full h-9 w-9 xl:h-14 xl:w-14"
             />
             <div className="flex flex-col gap-[2px] xl:gap-1">
-              <p className="font-semibold text-base xl:text-lg">
+              <p className="font-semibold text-sm xl:text-lg">
                 {review.author_name}
               </p>
               <p className="font-medium text-xs xl:text-base text-gray-500">
@@ -138,17 +164,6 @@ function Reviews() {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="hidden xl:flex h-[585px] w-[585px]">
-        <Image
-          src={review.profile_photo_url}
-          alt=""
-          width={38}
-          height={38}
-          unoptimized={true}
-          className="w-full rounded-[10px]"
-        />
       </div>
     </div>
   );
