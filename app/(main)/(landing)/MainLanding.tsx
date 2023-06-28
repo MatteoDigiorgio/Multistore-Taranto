@@ -8,6 +8,7 @@ import Story from "./Story";
 import Welcome from "./Welcome";
 import { useDispatch } from "react-redux";
 import { update } from "../../../slices/googleSlice";
+import Reviews from "./Reviews";
 
 export default function MainLanding({ data }: { data: {} }) {
   const storyRef = useRef<HTMLDivElement>(null);
@@ -103,6 +104,7 @@ export default function MainLanding({ data }: { data: {} }) {
           <div>
             <GoogleMaps locationRef={locationRef} />
           </div>
+          <Reviews />
           <Socials socialRef={socialRef} />
         </div>
       </div>

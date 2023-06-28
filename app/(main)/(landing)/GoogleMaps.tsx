@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
 import Pin from "../../../public/Pin.json";
 import { useSelector } from "react-redux";
-import type { RootState } from "../../../slices/store";
 import { ClockIcon } from "@heroicons/react/20/solid";
 import { selectGoogleValue } from "@/slices/googleSlice";
 
