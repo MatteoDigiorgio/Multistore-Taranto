@@ -220,20 +220,7 @@ const Field = ({
 };
 
 function AddProduct() {
-  const [inputs, setInputs] = useState<Prodotto>({
-    id: '',
-    nome: null,
-    marca: null,
-    categoria: null,
-    descrizione: null,
-    immagine: null,
-    dual_Sim: false,
-    _5G: false,
-    nFC: false,
-    prezzo: null,
-    sconto: null,
-    percentuale: null,
-  });
+  const [inputs, setInputs] = useState<Prodotto>();
   const [image, setImage] = useState();
   const [imageUrl, setImageUrl] = useState('');
   const router = useRouter();
@@ -245,8 +232,8 @@ function AddProduct() {
   let inputRefCategory = useRef<HTMLInputElement | null>(null);
   let inputRefImage = useRef<HTMLInputElement | null>(null);
 
-  let categoria = inputs.categoria;
-  let immagine = inputs.immagine;
+  let categoria = inputs?.categoria;
+  let immagine = inputs?.immagine;
 
   useEffect(() => {
     if (inputRefCategory.current !== null) {
@@ -308,8 +295,8 @@ function AddProduct() {
     console.log(inputs);
     if (
       e.target.name === 'Prezzo' &&
-      inputs.percentuale !== null &&
-      inputs.percentuale !== undefined
+      inputs?.percentuale !== null &&
+      inputs?.percentuale !== undefined
     ) {
       setInputs((prevState: any) => ({
         ...prevState,
@@ -324,8 +311,8 @@ function AddProduct() {
       }));
     } else if (
       e.target.name === 'Prezzo' &&
-      inputs.sconto !== null &&
-      inputs.sconto !== undefined
+      inputs?.sconto !== null &&
+      inputs?.sconto !== undefined
     ) {
       setInputs((prevState: any) => ({
         ...prevState,
@@ -338,7 +325,7 @@ function AddProduct() {
             100
         ).toString(),
       }));
-    } else if (e.target.name === 'Sconto' && inputs.prezzo !== null) {
+    } else if (e.target.name === 'Sconto' && inputs?.prezzo !== null) {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -350,7 +337,7 @@ function AddProduct() {
             100
         ).toString(),
       }));
-    } else if (e.target.name === 'Percentuale' && inputs.prezzo !== null) {
+    } else if (e.target.name === 'Percentuale' && inputs?.prezzo !== null) {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -383,21 +370,23 @@ function AddProduct() {
 
     setSuccessOpen(true);
 
-    const imgref = ref(storage, `immagini/${inputs.immagine}`);
+    const imgref = ref(storage, `immagini/${inputs?.immagine}`);
 
     image && (await uploadBytes(imgref, image));
-    let adjustedInputs = Object.fromEntries(
-      Object.entries(inputs)
-        .filter(([_, value]) =>
-          typeof value === 'string'
-            ? (value as string).trim() !== ''
-            : typeof value === 'boolean'
-        )
-        .map(([key, value]) => [
-          key.startsWith('_') ? key.slice(1) : key,
-          typeof value === 'string' ? (value as string).trim() : value,
-        ])
-    );
+    let adjustedInputs =
+      inputs &&
+      Object.fromEntries(
+        Object.entries(inputs)
+          .filter(([_, value]) =>
+            typeof value === 'string'
+              ? (value as string).trim() !== ''
+              : typeof value === 'boolean'
+          )
+          .map(([key, value]) => [
+            key.startsWith('_') ? key.slice(1) : key,
+            typeof value === 'string' ? (value as string).trim() : value,
+          ])
+      );
     await setDoc(doc(db, 'prodotti', `${uuidv4()}`), adjustedInputs);
     router.push('/auth/admin/gestisci');
   };
@@ -418,7 +407,7 @@ function AddProduct() {
             <ArrowBackIcon />
           </Link>
           {/* Image field */}
-          {!inputs.immagine ? (
+          {!inputs?.immagine ? (
             <div className='flex flex-row w-full items-center justify-center mb-4 lg:mb-0'>
               <div className='w-3/5'>
                 <label className={`flex flex-row ${styles.drop_container}`}>
