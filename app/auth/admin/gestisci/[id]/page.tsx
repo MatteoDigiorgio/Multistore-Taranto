@@ -7,19 +7,18 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { getProduct } from '@/pages/api/auth/getProducts';
 import styles from './Prodotto.module.css';
 import Link from 'next/link';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import db, { storage } from '@/firebase';
 import { doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Snackbar from '@mui/material/Snackbar';
 import Alert, { AlertColor } from '@mui/material/Alert';
 import Image from 'next/image';
+import { Switch } from '@headlessui/react';
+import { optionalInputs } from '../../../../../global_data';
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ');
+}
 
 const Field = ({
   productKey,
@@ -27,13 +26,12 @@ const Field = ({
   handleChange,
 }: {
   productKey: string;
-  value: string;
+  value: any;
   handleChange: any;
 }) => {
   productKey = productKey.charAt(0).toUpperCase() + productKey.slice(1);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     if (inputRef.current !== null) {
       inputRef.current.setCustomValidity(
@@ -59,25 +57,57 @@ const Field = ({
       {productKey !== 'Prezzo' &&
       productKey !== 'Sconto' &&
       productKey !== 'Percentuale' ? (
-        <div className='flex flex-row w-full items-center justify-center'>
+        productKey === 'Nome' ||
+        productKey === 'Marca' ||
+        productKey === 'Descrizione' ? (
+          // Required field
+          <div className='flex flex-row w-full items-center justify-center'>
+            <div className='relative flex flex-row w-full items-center justify-center py-4'>
+              <label
+                htmlFor={productKey}
+                className='absolute top-2 inline-block bg-white px-1 text-xs font-medium text-gray-900'
+              >
+                {productKey}
+              </label>
+              <textarea
+                required
+                name={productKey}
+                value={value}
+                onChange={handleChange}
+                id={productKey}
+                className='block w-[70%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                placeholder=''
+              />
+            </div>
+          </div>
+        ) : (
+          // Optional field
           <div className='relative flex flex-row w-full items-center justify-center py-4'>
             <label
               htmlFor={productKey}
-              className='absolute top-2 inline-block bg-white px-1 text-xs font-medium text-gray-900'
+              className='absolute top-2 bg-white px-1 text-xs font-medium text-gray-900'
             >
-              {productKey}
+              <p className='flex items-start gap-1'>
+                {productKey}
+                <span
+                  className='flex text-[8px] h-2 leading-6 text-gray-500 items-start'
+                  id='optional'
+                >
+                  (Opzionale)
+                </span>
+              </p>
             </label>
+
             <textarea
-              required
               name={productKey}
-              value={value}
               onChange={handleChange}
               id={productKey}
-              className='block w-[70%] rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+              value={value}
+              className='block w-[70%] rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               placeholder=''
             />
           </div>
-        </div>
+        )
       ) : (
         <div className='flex flex-row w-full items-center justify-center'>
           <div className='relative flex flex-row w-full items-center justify-center py-4'>
@@ -166,10 +196,15 @@ function Product({ params }: any) {
   interface Product {
     [key: string]: string | boolean;
   }
-  const [initialProdotto, setInitialProdotto] = useState();
+  const [initialProdotto, setInitialProdotto] = useState<Product>();
   const [prodotto, setProdotto] = useState<Prodotto>();
 
   const [immagineUrl, setImmagineUrl] = useState();
+  const [isDualSim, setIsDualSim] = useState(
+    prodotto?.dual_sim ? prodotto?.dual_sim : false
+  );
+  const [is5G, setIs5G] = useState(prodotto?.five_g ? prodotto?.five_g : false);
+  const [isNFC, setIsNFC] = useState(prodotto?.nfc ? prodotto?.nfc : false);
 
   const excludeKeys = [
     'nome',
@@ -191,9 +226,33 @@ function Product({ params }: any) {
       delete prodottiData.immagineUrl;
       prodottiData ? setProdotto(prodottiData) : null;
       prodottiData ? setInitialProdotto(prodottiData) : null;
+      prodottiData ? setIs5G(prodottiData.five_g) : null;
+      prodottiData ? setIsNFC(prodottiData.nfc) : null;
+      prodottiData ? setIsDualSim(prodottiData.dual_sim) : null;
     }
     fetchData(params);
   }, []);
+
+  useEffect(() => {
+    setProdotto((prevState: any) => ({
+      ...prevState,
+      dual_sim: isDualSim,
+    }));
+  }, [isDualSim]);
+
+  useEffect(() => {
+    setProdotto((prevState: any) => ({
+      ...prevState,
+      five_g: is5G,
+    }));
+  }, [is5G]);
+
+  useEffect(() => {
+    setProdotto((prevState: any) => ({
+      ...prevState,
+      nfc: isNFC,
+    }));
+  }, [isNFC]);
 
   const handleChange = (e: any) => {
     if (
@@ -284,12 +343,12 @@ function Product({ params }: any) {
       setSeverity('success');
       setOpen(true);
       if (prodotto) {
-        let adjustedInputs = Object.fromEntries(
+        let adjustedInputs: any = Object.fromEntries(
           Object.entries(prodotto)
             .filter(([_, value]) =>
               typeof value === 'string'
                 ? (value as string).trim() !== ''
-                : typeof value === 'boolean'
+                : typeof value === 'boolean' && value === true
             )
             .map(([key, value]) => [
               key.startsWith('_') ? key.slice(1) : key,
@@ -324,7 +383,7 @@ function Product({ params }: any) {
 
     setOpen(false);
   };
-
+  console.log(prodotto);
   return (
     <div className='relative m-auto flex flex-col'>
       <form onSubmit={handleEditProduct}>
@@ -377,68 +436,84 @@ function Product({ params }: any) {
             handleChange={handleChange}
           />
 
-          <div className='flex flex-row w-full items-center justify-center'>
-            <FormControl
-              key={'Categoria'}
-              sx={{ m: 1, maxWidth: '70%' }}
-              size='small'
+          <div className='relative flex flex-row w-full items-center justify-center py-4'>
+            <label
+              htmlFor='Categoria'
+              className='absolute z-50 top-2 inline-block bg-white px-1 text-xs font-medium text-gray-900'
             >
-              <InputLabel htmlFor='grouped-native-select'>Categoria</InputLabel>
-              <Select
-                native
-                value={prodotto?.categoria ? prodotto.categoria : ''}
-                multiline
-                id='grouped-native-select'
-                label='Categoria'
-                name='Categoria'
-                onChange={handleChange}
-              >
-                <option aria-label='None' value='' />
-                <optgroup label='Elettrodomestici'>
-                  <option value={'Frigoriferi'}>Frigoriferi</option>
-                  <option value={'Congelatori'}>Congelatori</option>
-                  <option value={'Lavatrici'}>Lavatrici</option>
-                  <option value={'Asciugatrici'}>Asciugatrici</option>
-                  <option value={'Lavastoviglie'}>Lavastoviglie</option>
-                  <option value={'Forni'}>Forni</option>
-                  <option value={'Climatizzatori'}>Climatizzatori</option>
-                  <option value={'Ventilatori'}>Ventilatori</option>
-                  <option value={'Stufe'}>Stufe</option>
-                  <option value={'Asciugatrici'}>Asciugatrici</option>
-                </optgroup>
-
-                <optgroup label='Telefonia'>
-                  <option value={'Smartphone e Cellulari'}>
-                    Smartphone e Cellulari
-                  </option>
-                  <option value={'Cordless'}>Cordless</option>
-                  <option value={'Accessori Telefonia'}>
-                    Accessori Telefonia
-                  </option>
-                </optgroup>
-                <optgroup label='Televisori'>
-                  <option value={'Televisori'}>Televisori</option>
-                  <option value={'DVD e Blu-ray'}>DVD e Blu-ray</option>
-                  <option value={'Accessori Televisori'}>
-                    Accessori Televisori
-                  </option>
-                </optgroup>
-                <optgroup label='Informatica'>
-                  <option value={'Notebook'}>Notebook</option>
-                  <option value={'Tablet'}>Tablet</option>
-                  <option value={'Accessori Informatica'}>
-                    Accessori Informatica
-                  </option>
-                </optgroup>
-                <optgroup label='Console e Videogiochi'>
-                  <option value={'Console'}>Console</option>
-                  <option value={'Videogiochi'}>Videogiochi</option>
-                </optgroup>
-                <optgroup label='Monopattini'>
-                  <option value={'Monopattini'}>Monopattini</option>
-                </optgroup>
-              </Select>
-            </FormControl>
+              Categoria
+            </label>
+            <select
+              required
+              value={prodotto?.categoria}
+              id='grouped-native-select'
+              name='Categoria'
+              onChange={handleChange}
+              autoComplete='country-name'
+              className='relative block w-[70%] rounded-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+            >
+              <option aria-label='None' value='' />
+              <optgroup label='Elettrodomestici'>
+                <option value={'Elettrodomestici/Frigoriferi'}>
+                  Frigoriferi
+                </option>
+                <option value={'Elettrodomestici/Congelatori'}>
+                  Congelatori
+                </option>
+                <option value={'Elettrodomestici/Lavatrici'}>Lavatrici</option>
+                <option value={'Elettrodomestici/Asciugatrici'}>
+                  Asciugatrici
+                </option>
+                <option value={'Elettrodomestici/Lavastoviglie'}>
+                  Lavastoviglie
+                </option>
+                <option value={'Elettrodomestici/Forni'}>Forni</option>
+                <option value={'Elettrodomestici/Climatizzatori'}>
+                  Climatizzatori
+                </option>
+                <option value={'Elettrodomestici/Ventilatori'}>
+                  Ventilatori
+                </option>
+                <option value={'Elettrodomestici/Stufe'}>Stufe</option>
+                <option value={'Elettrodomestici/Asciugatrici'}>
+                  Asciugatrici
+                </option>
+              </optgroup>
+              <optgroup label='Telefonia'>
+                <option value={'Telefonia/Smartphone e Cellulari'}>
+                  Smartphone e Cellulari
+                </option>
+                <option value={'Cordless'}>Cordless</option>
+                <option value={'Cordless/Accessori Telefonia'}>
+                  Accessori Telefonia
+                </option>
+              </optgroup>
+              <optgroup label='Televisori'>
+                <option value={'Televisori/Televisori'}>Televisori</option>
+                <option value={'Televisori/DVD e Blu-ray'}>
+                  DVD e Blu-ray
+                </option>
+                <option value={'Televisori/Accessori Televisori'}>
+                  Accessori Televisori
+                </option>
+              </optgroup>
+              <optgroup label='Informatica'>
+                <option value={'Informatica/Notebook'}>Notebook</option>
+                <option value={'Informatica/Tablet'}>Tablet</option>
+                <option value={'Informatica/Accessori Informatica'}>
+                  Accessori Informatica
+                </option>
+              </optgroup>
+              <optgroup label='Console e Videogiochi'>
+                <option value={'Console e Videogiochi/Console'}>Console</option>
+                <option value={'Console e Videogiochi/Videogiochi'}>
+                  Videogiochi
+                </option>
+              </optgroup>
+              <optgroup label='Monopattini'>
+                <option value={'Monopattini/Monopattini'}>Monopattini</option>
+              </optgroup>
+            </select>
           </div>
 
           <div className='md:hidden'>
@@ -454,38 +529,241 @@ function Product({ params }: any) {
             />
           </div>
 
-          {prodotto &&
-            Object.entries(prodotto).map(([key, value], i) => (
-              <>
-                {!excludeKeys.includes(key) ? (
-                  typeof value === 'string' ? (
-                    <Field
-                      productKey={key}
-                      value={value}
-                      key={i}
-                      handleChange={handleChange}
-                    />
-                  ) : (
-                    <div className='flex flex-row w-full items-center justify-center'>
-                      <FormControlLabel
-                        control={<Checkbox />}
-                        checked={value}
-                        label={key
-                          .replace('_', ' ')
-                          .split(' ')
-                          .map(
-                            (word) =>
-                              word.charAt(0).toUpperCase() + word.slice(1)
-                          )
-                          .join(' ')}
-                        name={key}
-                        onChange={handleChange}
+          {/* Switches */}
+          <div className='flex flex-row w-full items-center justify-center py-4'>
+            <div className='flex items-center justify-left gap-3'>
+              <Switch.Group as='div' className='flex flex-col items-center'>
+                <Switch
+                  checked={isDualSim}
+                  onChange={setIsDualSim}
+                  name='dual_sim'
+                  className={classNames(
+                    isDualSim ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                  )}
+                >
+                  <span className='sr-only'>Use setting</span>
+                  <span
+                    className={classNames(
+                      isDualSim ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        isDualSim
+                          ? 'opacity-0 duration-100 ease-out'
+                          : 'opacity-100 duration-200 ease-in',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-gray-400'
+                        fill='none'
+                        viewBox='0 0 12 12'
+                      >
+                        <path
+                          d='M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2'
+                          stroke='currentColor'
+                          strokeWidth={2}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      className={classNames(
+                        isDualSim
+                          ? 'opacity-100 duration-200 ease-in'
+                          : 'opacity-0 duration-100 ease-out',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-indigo-600'
+                        fill='currentColor'
+                        viewBox='0 0 12 12'
+                      >
+                        <path d='M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z' />
+                      </svg>
+                    </span>
+                  </span>
+                </Switch>
+                <Switch.Label as='p' className='text-sm'>
+                  <span className='font-medium text-xs text-gray-900'>
+                    Dual Sim
+                  </span>
+                </Switch.Label>
+              </Switch.Group>
+
+              <Switch.Group as='div' className='flex flex-col items-center'>
+                <Switch
+                  checked={is5G}
+                  onChange={setIs5G}
+                  name='dual_sim'
+                  className={classNames(
+                    is5G ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                  )}
+                >
+                  <span className='sr-only'>Use setting</span>
+                  <span
+                    className={classNames(
+                      is5G ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        is5G
+                          ? 'opacity-0 duration-100 ease-out'
+                          : 'opacity-100 duration-200 ease-in',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-gray-400'
+                        fill='none'
+                        viewBox='0 0 12 12'
+                      >
+                        <path
+                          d='M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2'
+                          stroke='currentColor'
+                          strokeWidth={2}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      className={classNames(
+                        is5G
+                          ? 'opacity-100 duration-200 ease-in'
+                          : 'opacity-0 duration-100 ease-out',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-indigo-600'
+                        fill='currentColor'
+                        viewBox='0 0 12 12'
+                      >
+                        <path d='M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z' />
+                      </svg>
+                    </span>
+                  </span>
+                </Switch>
+                <Switch.Label as='p' className='text-sm'>
+                  <span className='font-medium text-xs text-gray-900'>5G</span>
+                </Switch.Label>
+              </Switch.Group>
+
+              <Switch.Group as='div' className='flex flex-col items-center'>
+                <Switch
+                  checked={isNFC}
+                  onChange={setIsNFC}
+                  name='dual_sim'
+                  className={classNames(
+                    isNFC ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                  )}
+                >
+                  <span className='sr-only'>Use setting</span>
+                  <span
+                    className={classNames(
+                      isNFC ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        isNFC
+                          ? 'opacity-0 duration-100 ease-out'
+                          : 'opacity-100 duration-200 ease-in',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-gray-400'
+                        fill='none'
+                        viewBox='0 0 12 12'
+                      >
+                        <path
+                          d='M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2'
+                          stroke='currentColor'
+                          strokeWidth={2}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      className={classNames(
+                        isNFC
+                          ? 'opacity-100 duration-200 ease-in'
+                          : 'opacity-0 duration-100 ease-out',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-indigo-600'
+                        fill='currentColor'
+                        viewBox='0 0 12 12'
+                      >
+                        <path d='M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z' />
+                      </svg>
+                    </span>
+                  </span>
+                </Switch>
+                <Switch.Label as='p' className='text-sm'>
+                  <span className='font-medium text-xs text-gray-900'>NFC</span>
+                </Switch.Label>
+              </Switch.Group>
+            </div>
+          </div>
+
+          {initialProdotto && (
+            <>
+              {Object.entries(initialProdotto).map(([key, value]) => (
+                <>
+                  <React.Fragment key={key}>
+                    {!excludeKeys.includes(key) && typeof value === 'string' ? (
+                      <>
+                        <Field
+                          productKey={key}
+                          handleChange={handleChange}
+                          value={
+                            prodotto && prodotto[key as keyof typeof prodotto]
+                          }
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </React.Fragment>
+                </>
+              ))}
+              {optionalInputs.map((key) => (
+                <>
+                  <React.Fragment key={key.toLowerCase()}>
+                    {!initialProdotto.hasOwnProperty(key.toLowerCase()) && (
+                      <Field
+                        productKey={key.toLowerCase()}
+                        handleChange={handleChange}
+                        value={undefined}
                       />
-                    </div>
-                  )
-                ) : null}
-              </>
-            ))}
+                    )}
+                  </React.Fragment>
+                </>
+              ))}
+            </>
+          )}
 
           <Field
             key={'Prezzo'}

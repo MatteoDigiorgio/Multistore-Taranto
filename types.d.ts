@@ -5,9 +5,9 @@ export interface Prodotto {
   categoria: string;
   descrizione: string;
   immagine: string;
-  dual_Sim: boolean;
-  _5G: boolean;
-  nFC: boolean;
+  dual_sim: boolean;
+  five_g: boolean;
+  nfc: boolean;
   prezzo: string;
   sconto?: string;
   percentuale?: string;

@@ -17,6 +17,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Image from 'next/image';
 import { Switch } from '@headlessui/react';
+import { optionalInputs } from '../../../../../global_data';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -33,22 +34,25 @@ const Field = ({
 }) => {
   let productKeyLowerCase =
     productKey.charAt(0).toLowerCase() + productKey.slice(1);
-  let value = inputs[productKeyLowerCase];
+  let value = inputs[productKeyLowerCase] ? inputs[productKeyLowerCase] : '';
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputRef.current !== null) {
-      inputRef.current.setCustomValidity(
-        value === '' || value === undefined || value === null
-          ? productKey === 'Sconto'
-            ? ''
-            : productKey === 'Percentuale'
-            ? ''
-            : 'Campo necessario!'
-          : ''
-      );
-    }
+    let input = document.querySelector(
+      `[name="${productKey}"]`
+    ) as HTMLInputElement | null;
+
+    input?.setCustomValidity(
+      value === '' || value === undefined || value === null
+        ? productKey === 'Sconto' ||
+          productKey === 'Percentuale' ||
+          productKey === 'Percentuale'
+          ? ''
+          : 'Campo necessario!'
+        : ''
+    );
+
     if (productKey === 'Prezzo' || productKey === 'Sconto') {
       if (
         inputRef.current !== null &&
@@ -70,27 +74,9 @@ const Field = ({
       {productKey !== 'Prezzo' &&
       productKey !== 'Sconto' &&
       productKey !== 'Percentuale' ? (
-        productKey === 'Nome' || productKey === 'Marca' ? (
-          // Required field
-          <div className='relative flex flex-row w-full items-center justify-center py-4'>
-            <label
-              htmlFor={productKey}
-              className='absolute top-2 inline-block bg-white px-1 text-xs font-medium text-gray-900'
-            >
-              {productKey}
-            </label>
-            <input
-              ref={inputRef}
-              required
-              name={productKey}
-              type='text'
-              onChange={handleChange}
-              id={productKey}
-              className='block w-[70%] rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
-              placeholder=''
-            />
-          </div>
-        ) : productKey === 'Descrizione' ? (
+        productKey === 'Nome' ||
+        productKey === 'Marca' ||
+        productKey === 'Descrizione' ? (
           // Required field
           <div className='relative flex flex-row w-full items-center justify-center py-4'>
             <label
@@ -118,7 +104,7 @@ const Field = ({
               <p className='flex items-start gap-1'>
                 {productKey}
                 <span
-                  className='flex text-[8px] leading-6 text-gray-500 items-start'
+                  className='flex text-[8px] h-2 leading-6 text-gray-500 items-start'
                   id='optional'
                 >
                   (Opzionale)
@@ -126,9 +112,8 @@ const Field = ({
               </p>
             </label>
 
-            <input
-              name={productKey}
-              type='text'
+            <textarea
+              name={`${productKey}(Opzionale)`}
               onChange={handleChange}
               id={productKey}
               className='block w-[70%] rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
@@ -195,13 +180,7 @@ const Field = ({
                   ? 'Sconto'
                   : 'Percentuale'
               }
-              id={
-                productKey === 'Prezzo'
-                  ? 'Prezzo di listino'
-                  : productKey === 'Sconto'
-                  ? 'Prezzo scontato'
-                  : 'Percentuale sconto'
-              }
+              id={productKey}
               className='block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
               placeholder={`${
                 productKey === 'Prezzo' || productKey === 'Sconto'
@@ -220,7 +199,21 @@ const Field = ({
 };
 
 function AddProduct() {
-  const [inputs, setInputs] = useState<Prodotto>();
+  const [inputs, setInputs] = useState<Prodotto>({
+    id: '',
+    nome: '',
+    marca: '',
+    categoria: '',
+    descrizione: '',
+    immagine: '',
+    dual_sim: false,
+    five_g: false,
+    nfc: false,
+    prezzo: '',
+    sconto: '',
+    percentuale: '',
+  });
+
   const [image, setImage] = useState();
   const [imageUrl, setImageUrl] = useState('');
   const router = useRouter();
@@ -229,20 +222,21 @@ function AddProduct() {
   const [is5G, setIs5G] = useState(false);
   const [isNFC, setIsNFC] = useState(false);
 
-  let inputRefCategory = useRef<HTMLInputElement | null>(null);
   let inputRefImage = useRef<HTMLInputElement | null>(null);
 
   let categoria = inputs?.categoria;
   let immagine = inputs?.immagine;
 
   useEffect(() => {
-    if (inputRefCategory.current !== null) {
-      inputRefCategory.current.setCustomValidity(
-        categoria === '' || categoria === undefined || categoria === null
-          ? 'Campo necessario!'
-          : ''
-      );
-    }
+    let input = document.querySelector(
+      `[name="Categoria"]`
+    ) as HTMLInputElement | null;
+
+    input?.setCustomValidity(
+      categoria === '' || categoria === undefined || categoria === null
+        ? 'Campo necessario!'
+        : ''
+    );
   }, [categoria]);
 
   useEffect(() => {
@@ -258,14 +252,14 @@ function AddProduct() {
   useEffect(() => {
     setInputs((prevState: any) => ({
       ...prevState,
-      dual_Sim: isDualSim,
+      dual_sim: isDualSim,
     }));
   }, [isDualSim]);
 
   useEffect(() => {
     setInputs((prevState: any) => ({
       ...prevState,
-      _5G: is5G,
+      five_g: is5G,
     }));
   }, [is5G]);
 
@@ -292,12 +286,7 @@ function AddProduct() {
 
   // Inputs handler
   const handleChange = (e: any) => {
-    console.log(inputs);
-    if (
-      e.target.name === 'Prezzo' &&
-      inputs?.percentuale !== null &&
-      inputs?.percentuale !== undefined
-    ) {
+    if (e.target.name === 'Prezzo' && inputs?.percentuale !== '') {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -309,11 +298,7 @@ function AddProduct() {
               100
         ).toString(),
       }));
-    } else if (
-      e.target.name === 'Prezzo' &&
-      inputs?.sconto !== null &&
-      inputs?.sconto !== undefined
-    ) {
+    } else if (e.target.name === 'Prezzo' && inputs?.sconto !== '') {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -325,7 +310,7 @@ function AddProduct() {
             100
         ).toString(),
       }));
-    } else if (e.target.name === 'Sconto' && inputs?.prezzo !== null) {
+    } else if (e.target.name === 'Sconto' && inputs?.prezzo !== '') {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -337,7 +322,7 @@ function AddProduct() {
             100
         ).toString(),
       }));
-    } else if (e.target.name === 'Percentuale' && inputs?.prezzo !== null) {
+    } else if (e.target.name === 'Percentuale' && inputs?.prezzo !== '') {
       setInputs((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
@@ -380,7 +365,7 @@ function AddProduct() {
           .filter(([_, value]) =>
             typeof value === 'string'
               ? (value as string).trim() !== ''
-              : typeof value === 'boolean'
+              : typeof value === 'boolean' && value === true
           )
           .map(([key, value]) => [
             key.startsWith('_') ? key.slice(1) : key,
@@ -455,6 +440,15 @@ function AddProduct() {
               }
             </>
           )}
+
+          {/* Description field */}
+          <div className='hidden md:flex lg:col-span-2'>
+            <Field
+              productKey='Descrizione'
+              handleChange={handleChange}
+              inputs={inputs}
+            />
+          </div>
 
           {/* Name field */}
           <Field
@@ -552,11 +546,13 @@ function AddProduct() {
           </div>
 
           {/* Description field */}
-          <Field
-            productKey='Descrizione'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
+          <div className='md:hidden'>
+            <Field
+              productKey='Descrizione'
+              handleChange={handleChange}
+              inputs={inputs}
+            />
+          </div>
 
           {/* Checkboxes */}
           <div className='flex flex-row w-full items-center justify-center py-4'>
@@ -758,81 +754,14 @@ function AddProduct() {
           </div>
 
           {/* Optional fields */}
-          <Field
-            productKey='Processore'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Display'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Fotocamera'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Webcam'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Sistema Operativo'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field productKey='RAM' handleChange={handleChange} inputs={inputs} />
-
-          <Field productKey='ROM' handleChange={handleChange} inputs={inputs} />
-
-          <Field
-            productKey='Batteria'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Memoria'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Scheda Video'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Colore'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Peso'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Dimensioni'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
-
-          <Field
-            productKey='Giri'
-            handleChange={handleChange}
-            inputs={inputs}
-          />
+          {optionalInputs.map((key) => (
+            <Field
+              key={key}
+              productKey={key}
+              handleChange={handleChange}
+              inputs={inputs}
+            />
+          ))}
 
           <Field
             productKey='Prezzo'
