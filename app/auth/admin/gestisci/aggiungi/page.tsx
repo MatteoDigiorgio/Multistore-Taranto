@@ -377,7 +377,7 @@ function AddProduct() {
   };
 
   return (
-    <div className='relative w-full flex flex-col px-6 bg-white'>
+    <div className='relative w-full flex flex-col px-6'>
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div
