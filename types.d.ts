@@ -12,3 +12,11 @@ export interface Prodotto {
   sconto?: string;
   percentuale?: string;
 }
+
+type MainMenu = {
+  page: string | null;
+  text: string;
+  color: string;
+  icon: any;
+  subMenu: { page: string; text: string }[] | null;
+};
