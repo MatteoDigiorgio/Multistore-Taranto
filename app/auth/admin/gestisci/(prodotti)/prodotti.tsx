@@ -96,7 +96,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
               animationData={Product404}
               className='flex w-full sm:w-1/2 lg:w-1/3 z-10'
             />
-            <p className='text-base font-mono font-light text-center md:mx-40 md:text-lg xl:mx-80'>
+            <p className='text-base font-mono font-light text-center md:mx-40 md:text-lg'>
               La ricerca del prodotto non è andata a buon fine. Tuttavia,
               potrebbe essersi verificato un errore nella digitazione del nome
               del prodotto.
