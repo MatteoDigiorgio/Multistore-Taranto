@@ -1,7 +1,7 @@
-import React from "react";
-import SubHeader from "./(adminHeader)/SubHeader";
-import ProvidersWrapper from "@/app/(main)/ProvidersWrapper";
-import styles from "./Profile.module.css";
+import React from 'react';
+import SubHeader from './(adminHeader)/SubHeader';
+import ProvidersWrapper from '@/app/(main)/ProvidersWrapper';
+import styles from './Profile.module.css';
 
 export default function RootLayout({
   children,
@@ -10,7 +10,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body className={`flex flex-col ${styles.main}`}>
+      <body className={`flex flex-col bg-slate-50 ${styles.main}`}>
         <ProvidersWrapper>
           <SubHeader />
           {children}
