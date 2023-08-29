@@ -1,11 +1,13 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import styles from './Gestisci.module.css';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
 import { getProducts } from '@/pages/api/auth/getProducts';
 import { Prodotto } from '@/types';
 import Prodotti from './(prodotti)/prodotti';
+import { useDispatch } from 'react-redux';
+import { usePathname, useRouter } from 'next/navigation';
+import { update } from '../../../../slices/searchSlice';
 
 function Gestisci() {
   const [prodotti, setProdotti] = useState<Prodotto[]>();
@@ -18,19 +20,41 @@ function Gestisci() {
     fetchData();
   }, []);
 
-  return (
-    <div className='relative m-auto flex flex-col gap-4'>
-      <div className='mb-2 mx-auto w-full md:w-5/6'>
-        <input
-          type='text'
-          placeholder='Cerca prodotto...'
-          className='bg-gray-200 py-2 px-4 drop-shadow-lg w-full rounded-lg ring-2 ring-green-300 ring-offset-4 ring-offset-slate-50 focus:ring-0 focus:outline-green-500 placeholder:italic'
-        ></input>
-      </div>
+  const [input, setInput] = useState('');
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-      <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto items-center justify-center bg-white h-[28rem] w-80 content-start md:w-5/6 md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
-      >
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const trimmedValue = input.replace(/\s+/g, ' ').trim();
+    dispatch(update(trimmedValue));
+    setInput('');
+    if (inputRef.current) {
+      inputRef.current.blur(); // Hide the keyboard
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
+
+  return (
+    <div className='relative m-auto flex flex-col gap-4 px-6'>
+      <form onSubmit={handleSubmit} className='mb-2 mx-auto w-full md:w-1/2'>
+        <input
+          ref={inputRef}
+          type='text'
+          name='search'
+          placeholder='Cerca prodotto...'
+          className='bg-gray-200 py-2 px-4 drop-shadow-lg w-full rounded-lg ring-2 ring-green-300 ring-offset-4 ring-offset-slate-50 focus:ring-0 focus:outline-green-500 placeholder:italic border-0'
+          value={input}
+          onChange={handleChange}
+        />
+      </form>
+
+      <div className='relative w-full flex flex-col'>
         <Prodotti prodotti={prodotti} />
       </div>
 
