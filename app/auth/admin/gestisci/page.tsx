@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import styles from './Gestisci.module.css';
 import Link from 'next/link';
 import AddIcon from '@mui/icons-material/Add';
 import { getProducts } from '@/pages/api/auth/getProducts';
@@ -56,11 +55,7 @@ function Gestisci() {
       </form>
 
       <div className='relative w-full flex flex-col'>
-        <div
-          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto items-center justify-center bg-white h-[28rem] content-start max-w-4xl md:w-full md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
-        >
-          <Prodotti prodotti={prodotti} />
-        </div>
+        <Prodotti prodotti={prodotti} />
       </div>
 
       <div className='flex flex-col items-center gap-2'>
