@@ -14,8 +14,17 @@ import { Transition } from '@headlessui/react';
 import { useDispatch } from 'react-redux';
 import { update } from '../../../slices/searchSlice';
 import { getProducts } from '@/pages/api/auth/getProducts';
-import { Prodotto } from '@/types';
-import { mainMenu } from '@/global_data';
+import { orderedCategories } from '../../../global_data';
+import { Menu, Prodotto, SubMenuItem } from '@/types';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import MicrowaveIcon from '@mui/icons-material/Microwave';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import ComputerIcon from '@mui/icons-material/Computer';
+import GamepadIcon from '@mui/icons-material/Gamepad';
+import ElectricScooterIcon from '@mui/icons-material/ElectricScooter';
+import PrintIcon from '@mui/icons-material/Print';
+import SellIcon from '@mui/icons-material/Sell';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export const MultistoreLogo = ({
   setIsSubMenuOpenAndIsMenuOpen,
@@ -76,7 +85,7 @@ export const TopNavMenu = ({
 };
 
 function Menu() {
-  const [brands, setBrands] = useState<string[]>();
+  const [menu, setMenu] = useState<Menu[]>();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [thisWhichMenu, setWhichMenu] = useState('');
@@ -85,21 +94,98 @@ function Menu() {
 
   useEffect(() => {
     async function fetchData() {
-      const productsData = await getProducts();
+      const res = await getProducts();
+      const productsData = await res;
+      const uniqueBrands: SubMenuItem[] = [];
 
-      const uniqueBrands: any[] | React.SetStateAction<undefined> = [];
+      const categoryMap: { [category: string]: SubMenuItem[] } = {};
 
       for (const product of productsData) {
-        if (!uniqueBrands.includes(product.marca)) {
-          uniqueBrands.push(product.marca);
+        const categoriaSub = product.categoria.split('/');
+        const text = categoriaSub[0].trim();
+
+        const subMenu = categoriaSub[1].trim();
+        const existingSubMenuItem = categoryMap[text]?.find(
+          (item) => item.text === subMenu
+        );
+        if (!categoryMap['Marche']) {
+          categoryMap['Marche'] = [];
+        } else if (!categoryMap['Admin']) {
+          categoryMap['Admin'] = [];
         }
+
+        if (!categoryMap[text]) {
+          categoryMap[text] = [];
+        }
+
+        if (!uniqueBrands.includes(product.marca)) {
+          categoryMap['Marche'].push({
+            page: '/prodotti',
+            text: product.marca,
+          });
+        }
+        if (subMenu && !existingSubMenuItem) {
+          categoryMap[text].push({ page: '/prodotti', text: subMenu });
+        }
+        console.log(text, subMenu, categoryMap[text]);
       }
 
-      setBrands(uniqueBrands);
+      const uniqueMenuItem = orderedCategories
+        .filter((category) => categoryMap[category])
+        .map((category) => ({
+          page: category === 'Admin' ? '/auth/admin' : '/prodotti',
+          text: category,
+          color:
+            category === 'Elettrodomestici'
+              ? '#f43f5e'
+              : category === 'Telefonia'
+              ? '#38bdf8'
+              : category === 'Televisori'
+              ? '#c084fc'
+              : category === 'Informatica'
+              ? '#f97316'
+              : category === 'Console e Videogiochi'
+              ? '#84cc16'
+              : category === 'Monopattini'
+              ? '#a1a1aa'
+              : category === 'Fotocopie e Fax'
+              ? '#ef4444'
+              : category === 'Marche'
+              ? '#eab308'
+              : category === 'Admin'
+              ? '#d1d5db'
+              : '',
+          icon:
+            category === 'Elettrodomestici' ? (
+              <MicrowaveIcon />
+            ) : category === 'Telefonia' ? (
+              <SmartphoneIcon />
+            ) : category === 'Televisori' ? (
+              <LiveTvIcon />
+            ) : category === 'Informatica' ? (
+              <ComputerIcon />
+            ) : category === 'Console e Videogiochi' ? (
+              <GamepadIcon />
+            ) : category === 'Monopattini' ? (
+              <ElectricScooterIcon />
+            ) : category === 'Fotocopie e Fax' ? (
+              <PrintIcon />
+            ) : category === 'Marche' ? (
+              <SellIcon />
+            ) : category === 'Admin' ? (
+              <AdminPanelSettingsIcon />
+            ) : (
+              ''
+            ),
+          subMenu:
+            categoryMap[category]?.length > 0 ? categoryMap[category] : null,
+        }));
+      setMenu(uniqueMenuItem);
     }
     fetchData();
   }, []);
 
+  console.log(menu);
   const NavMenu = () => {
     //  When menu is open, the page in the background doesn't scroll
     if (isMenuOpen) {
@@ -131,7 +217,7 @@ function Menu() {
               />
 
               <div className='grid grid-cols-3 gap-y-8 justify-items-center'>
-                {mainMenu.map((item) => (
+                {menu?.map((item) => (
                   <>
                     <div className='h-24 justify-items-center'>
                       <div>
@@ -168,71 +254,37 @@ function Menu() {
                                 <h1 className='text-xl font-semibold'>
                                   {item.text}
                                 </h1>
-                                {item.text !== 'Marche' ? (
-                                  <ul className='divide-y'>
-                                    {item.subMenu &&
-                                      item.subMenu.map((subMenuItem) => (
-                                        <>
-                                          <li
-                                            className='text-sm p-4'
-                                            onClick={void 0}
+                                <ul className='divide-y'>
+                                  {item.subMenu &&
+                                    item.subMenu.map((subMenuItem) => (
+                                      <>
+                                        <li
+                                          className='text-sm p-4'
+                                          onClick={void 0}
+                                        >
+                                          <Link
+                                            onClick={() => {
+                                              setIsMenuOpen(false);
+                                              setIsSubMenuOpen(false);
+                                              setInputFromMenu(
+                                                `${subMenuItem.text}`
+                                              );
+                                            }}
+                                            title={`${subMenuItem.text}`}
+                                            passHref
+                                            href={`/prodotti`}
+                                            className='flex justify-between items-center'
                                           >
-                                            <Link
-                                              onClick={() => {
-                                                setIsMenuOpen(false);
-                                                setIsSubMenuOpen(false);
-                                                setInputFromMenu(
-                                                  `${subMenuItem.text}`
-                                                );
-                                              }}
-                                              title={`${subMenuItem.text}`}
-                                              passHref
-                                              href={`/prodotti`}
-                                              className='flex justify-between items-center'
-                                            >
-                                              {subMenuItem.text}
-                                              <ChevronRightIcon
-                                                height={24}
-                                                className='stroke-blue-500 justify-item-end'
-                                              />
-                                            </Link>
-                                          </li>
-                                        </>
-                                      ))}
-                                  </ul>
-                                ) : (
-                                  <ul className='divide-y'>
-                                    {brands &&
-                                      brands.map((subMenuItem) => (
-                                        <>
-                                          <li
-                                            className='text-sm p-4'
-                                            onClick={void 0}
-                                          >
-                                            <Link
-                                              onClick={() => {
-                                                setIsMenuOpen(false);
-                                                setIsSubMenuOpen(false);
-                                                setInputFromMenu(
-                                                  `${subMenuItem}`
-                                                );
-                                              }}
-                                              title={`${subMenuItem}`}
-                                              passHref
-                                              href={`/prodotti`}
-                                              className='flex justify-between items-center'
-                                            >
-                                              {subMenuItem}
-                                              <ChevronRightIcon
-                                                height={24}
-                                                className='stroke-blue-500 justify-item-end'
-                                              />
-                                            </Link>
-                                          </li>
-                                        </>
-                                      ))}
-                                  </ul>
-                                )}
+                                            {subMenuItem.text}
+                                            <ChevronRightIcon
+                                              height={24}
+                                              className='stroke-blue-500 justify-item-end'
+                                            />
+                                          </Link>
+                                        </li>
+                                      </>
+                                    ))}
+                                </ul>
                               </div>
                             )}
                         </button>

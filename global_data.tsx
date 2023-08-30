@@ -1,4 +1,4 @@
-import { MainMenu } from './types';
+import { Menu } from './types';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import MicrowaveIcon from '@mui/icons-material/Microwave';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
@@ -9,7 +9,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import SellIcon from '@mui/icons-material/Sell';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-export const mainMenu: Array<MainMenu> = [
+const mainMenu: Array<Menu> = [
   {
     page: null,
     text: 'Elettrodomestici',
@@ -106,6 +106,18 @@ export const mainMenu: Array<MainMenu> = [
     icon: <AdminPanelSettingsIcon />,
     subMenu: null,
   },
+];
+
+export const orderedCategories = [
+  'Elettrodomestici',
+  'Telefonia',
+  'Televisori',
+  'Informatica',
+  'Console e Videogiochi',
+  'Monopattini',
+  'Fotocopie e Fax',
+  'Marche',
+  'Admin',
 ];
 
 export const optionalInputs = [
