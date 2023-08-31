@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from './Gestisci.module.css';
 import Lottie from 'lottie-react';
 import Product404 from '../../../../../public/Product404.json';
+import MyLoading from '@/app/(main)/MyLoading';
 
 function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
   const inputValue = useSelector(selectSearchValue);
@@ -40,10 +41,9 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
     }
     fetchData();
   }, [inputValue]);
-  console.log(products);
   return (
     <>
-      {products && products?.length > 0 ? (
+      {products != undefined && products?.length > 0 ? (
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto items-center justify-center bg-white h-[28rem] content-start max-w-4xl md:w-full md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
@@ -87,9 +87,9 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
             </div>
           ))}
         </div>
-      ) : (
+      ) : products != undefined ? (
         <div
-          className={`flex m-auto items-center justify-center bg-white h-[28rem] content-start max-w-4xl md:w-full md:h-2/3 border-[1px] rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
+          className={`flex m-auto items-center justify-center bg-white h-[28rem] content-start max-w-4xl md:w-full md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
           <div className='flex flex-col justify-center items-center mx-10 -mt-20 py-10 px-5 z-10'>
             <Lottie
@@ -102,6 +102,12 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
               del prodotto.
             </p>
           </div>
+        </div>
+      ) : (
+        <div
+          className={`flex m-auto items-center justify-center bg-white h-96 w-96 content-start max-w-4xl rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
+        >
+          <MyLoading />
         </div>
       )}
     </>

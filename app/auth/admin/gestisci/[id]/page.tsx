@@ -15,6 +15,7 @@ import Alert, { AlertColor } from '@mui/material/Alert';
 import Image from 'next/image';
 import { Switch } from '@headlessui/react';
 import { optionalInputs } from '../../../../../global_data';
+import { ref, uploadBytes } from 'firebase/storage';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -199,7 +200,8 @@ function Product({ params }: any) {
   const [initialProdotto, setInitialProdotto] = useState<Product>();
   const [prodotto, setProdotto] = useState<Prodotto>();
 
-  const [immagineUrl, setImmagineUrl] = useState();
+  const [image, setImage] = useState();
+  const [immagineUrl, setImmagineUrl] = useState('');
   const [isDualSim, setIsDualSim] = useState(
     prodotto?.dual_sim ? prodotto?.dual_sim : false
   );
@@ -320,6 +322,10 @@ function Product({ params }: any) {
             : e.target.value.replace(/\n/g, ''),
       }));
     }
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+      setImmagineUrl(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
   const handleDeleteProduct = async (e: any) => {
@@ -343,6 +349,9 @@ function Product({ params }: any) {
       setSeverity('success');
       setOpen(true);
       if (prodotto) {
+        const imgref = ref(storage, `immagini/${prodotto?.immagine}`);
+
+        image && (await uploadBytes(imgref, image));
         let adjustedInputs: any = Object.fromEntries(
           Object.entries(prodotto)
             .filter(([_, value]) =>
@@ -383,7 +392,6 @@ function Product({ params }: any) {
 
     setOpen(false);
   };
-  console.log(prodotto);
   return (
     <div className='relative m-auto flex flex-col'>
       <form onSubmit={handleEditProduct}>
@@ -398,7 +406,7 @@ function Product({ params }: any) {
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto p-4 items-center justify-center bg-white h-[28rem] w-80 content-start md:w-full md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
-          <div className='flex flex-row w-full items-center justify-center'>
+          <div className='flex flex-col w-full items-center justify-center'>
             <Image
               key={'Image'}
               src={typeof immagineUrl === 'string' ? immagineUrl : ''}
@@ -408,6 +416,27 @@ function Product({ params }: any) {
               height={64}
               unoptimized={true}
             />
+
+            <label
+              className={`flex flex-row items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-yellow-400 cursor-pointer text-sm ${styles.drop_container}`}
+            >
+              <span className={styles.drop_title}>Cambia foto</span>
+              <input
+                accept='image/*'
+                type='file'
+                name='immagine'
+                onChange={handleChange}
+                style={{
+                  position: 'absolute',
+                  clip: 'rect(1px, 1px, 1px, 1px)',
+                  padding: 0,
+                  border: 0,
+                  height: '1px',
+                  width: '1px',
+                  overflow: 'hidden',
+                }}
+              />
+            </label>
           </div>
 
           <div className='hidden md:flex lg:col-span-2'>
