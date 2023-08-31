@@ -427,7 +427,7 @@ function AddProduct() {
           ) : (
             <>
               {
-                <div className='flex flex-row w-full items-center justify-center'>
+                <div className='flex flex-col w-full items-center justify-center'>
                   <Image
                     src={imageUrl}
                     alt=''
@@ -436,13 +436,25 @@ function AddProduct() {
                     height={128}
                     unoptimized={true}
                   />
+                  <button
+                    type='button'
+                    onClick={() =>
+                      setInputs((prevState: any) => ({
+                        ...prevState,
+                        immagine: '',
+                      }))
+                    }
+                    className='flex items-center gap-1 p-2 px-4 my-4 rounded-full ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-red-400 cursor-pointer'
+                  >
+                    Rimuovi Immagine
+                  </button>
                 </div>
               }
             </>
           )}
 
           {/* Description field */}
-          <div className='hidden md:flex lg:col-span-2'>
+          <div className='flex lg:col-span-2'>
             <Field
               productKey='Descrizione'
               handleChange={handleChange}
@@ -543,15 +555,6 @@ function AddProduct() {
                 <option value={'Monopattini/Monopattini'}>Monopattini</option>
               </optgroup>
             </select>
-          </div>
-
-          {/* Description field */}
-          <div className='md:hidden'>
-            <Field
-              productKey='Descrizione'
-              handleChange={handleChange}
-              inputs={inputs}
-            />
           </div>
 
           {/* Checkboxes */}
