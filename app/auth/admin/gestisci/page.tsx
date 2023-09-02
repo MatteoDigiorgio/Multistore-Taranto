@@ -5,16 +5,14 @@ import AddIcon from '@mui/icons-material/Add';
 import { getProducts } from '@/pages/api/auth/getProducts';
 import { Prodotto } from '@/types';
 import Prodotti from './(prodotti)/prodotti';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { usePathname, useRouter } from 'next/navigation';
-import { update } from '../../../../slices/searchSlice';
-import { Fragment } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
+import {
+  clear,
+  selectSearchValue,
+  update,
+} from '../../../../slices/searchSlice';
+import { XMarkIcon } from '@heroicons/react/20/solid';
 
 function Gestisci() {
   const [prodotti, setProdotti] = useState<Prodotto[]>();
@@ -31,6 +29,7 @@ function Gestisci() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const inputValue = useSelector(selectSearchValue);
   const dispatch = useDispatch();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +56,7 @@ function Gestisci() {
     <div className='relative m-auto flex flex-col gap-4 px-6'>
       <form
         onSubmit={handleSubmit}
-        className='mb-7 mx-auto w-full gap-8 flex flex-col sm:flex-row'
+        className='mb-2 mx-auto w-full gap-8 flex flex-col sm:flex-row'
       >
         <input
           ref={inputRef}
@@ -76,7 +75,6 @@ function Gestisci() {
             Filtra Prodotti
           </label>
           <select
-            required
             defaultValue=''
             id='grouped-native-select'
             name='Categoria'
@@ -170,7 +168,17 @@ function Gestisci() {
           </select>
         </div>
       </form>
-
+      {inputValue && (
+        <div className=' w-full flex justify-center'>
+          <h1
+            onClick={() => dispatch(clear())}
+            className='flex items-center pl-4 pr-2 p-1 md:p-2 gap-1 rounded-full bg-zinc-300 border border-gray-400 font-medium text-sm md:text-xl cursor-pointer'
+          >
+            {inputValue}
+            <XMarkIcon height={24} />
+          </h1>
+        </div>
+      )}
       <div className='relative w-full flex flex-col'>
         <Prodotti prodotti={prodotti} />
       </div>

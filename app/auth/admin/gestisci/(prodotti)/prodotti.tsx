@@ -105,7 +105,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
         </div>
       ) : (
         <div
-          className={`flex m-auto items-center justify-center bg-white h-96 w-96 content-start max-w-4xl rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
+          className={`flex m-auto items-center justify-center bg-white h-96 w-80 md:w-96 content-start max-w-4xl rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
           <MyLoading />
         </div>
