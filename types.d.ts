@@ -5,6 +5,8 @@ export interface Prodotto {
   categoria: string;
   descrizione: string;
   immagine: string;
+  usato: boolean;
+  ricondizionato: boolean;
   dual_sim: boolean;
   five_g: boolean;
   nfc: boolean;
