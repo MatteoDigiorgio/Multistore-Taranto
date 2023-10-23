@@ -216,7 +216,7 @@ function AddProduct() {
     percentuale: '',
   });
 
-  const images: any[] = [];
+  const [images, setImages] = useState<any>([]);
   const [imagesUrls, setImagesUrls] = useState<string[]>([]);
   const router = useRouter();
 
@@ -359,7 +359,7 @@ function AddProduct() {
         }));
       if (e.target.files && e.target.files[0]) {
         inputs.immagini.push(e.target.files[0].name);
-        images.push(e.target.files[0]);
+        setImages((prevImage: any) => [...prevImage, e.target.files[0]]);
         setImagesUrls((prevImageUrls) => [
           ...prevImageUrls,
           URL.createObjectURL(e.target.files[0]),
@@ -373,7 +373,7 @@ function AddProduct() {
 
     setSuccessOpen(true);
 
-    images.map(async (imageData, index) => {
+    images.map(async (imageData: any, index: number) => {
       const immagine = inputs.immagini[index]; // Get the corresponding immagine at the same index
       const imgref = ref(storage, `immagini/${immagine}`);
       await uploadBytes(imgref, imageData);

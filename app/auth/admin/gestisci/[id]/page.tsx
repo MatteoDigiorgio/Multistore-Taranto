@@ -201,7 +201,7 @@ function Product({ params }: any) {
   const [prodotto, setProdotto] = useState<Prodotto>();
 
   const [image, setImage] = useState();
-  const [immaginiUrl, setImmaginiUrl] = useState();
+  const [imagesUrls, setImagesUrls] = useState<string[]>([]);
   const [isDualSim, setIsDualSim] = useState(
     prodotto?.dual_sim ? prodotto?.dual_sim : false
   );
@@ -230,7 +230,7 @@ function Product({ params }: any) {
   useEffect(() => {
     async function fetchData(params: any) {
       const prodottiData = await getProduct(params.id);
-      prodottiData ? setImmaginiUrl(prodottiData.immaginiUrl) : null;
+      prodottiData ? setImagesUrls(prodottiData.immaginiUrl) : null;
       delete prodottiData.immaginiUrl;
       prodottiData ? setProdotto(prodottiData) : null;
       prodottiData ? setInitialProdotto(prodottiData) : null;
@@ -436,7 +436,7 @@ function Product({ params }: any) {
               >
                 <Image
                   key={'Image'}
-                  src={immaginiUrl ? immaginiUrl[index] : ''}
+                  src={imagesUrls ? imagesUrls[index] : ''}
                   alt={imageName}
                   className='w-40 max-h-40 p-2 aspect-auto object-contain bg-white rounded-xl'
                   width={64}
