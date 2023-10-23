@@ -205,7 +205,7 @@ function AddProduct() {
     marca: '',
     categoria: '',
     descrizione: '',
-    immagine: '',
+    immagini: [],
     usato: false,
     ricondizionato: false,
     dual_sim: false,
@@ -216,8 +216,8 @@ function AddProduct() {
     percentuale: '',
   });
 
-  const [image, setImage] = useState();
-  const [imageUrl, setImageUrl] = useState('');
+  const images: any[] = [];
+  const [imagesUrls, setImagesUrls] = useState<string[]>([]);
   const router = useRouter();
 
   const [isSecondHand, setIsSecondHand] = useState(false);
@@ -229,7 +229,7 @@ function AddProduct() {
   let inputRefImage = useRef<HTMLInputElement | null>(null);
 
   let categoria = inputs?.categoria;
-  let immagine = inputs?.immagine;
+  let immagini = inputs?.immagini;
 
   useEffect(() => {
     let input = document.querySelector(
@@ -244,14 +244,12 @@ function AddProduct() {
   }, [categoria]);
 
   useEffect(() => {
-    if (inputRefImage.current !== null) {
-      inputRefImage.current.setCustomValidity(
-        immagine === '' || immagine === undefined || immagine === null
-          ? 'Campo necessario!'
-          : ''
-      );
-    }
-  }, [immagine]);
+    let input = document.querySelector(
+      `[name="Immagine"]`
+    ) as HTMLInputElement | null;
+
+    input?.setCustomValidity(immagini.length === 0 ? 'Campo necessario!' : '');
+  }, [immagini]);
 
   useEffect(() => {
     setInputs((prevState: any) => ({
@@ -353,38 +351,49 @@ function AddProduct() {
         ).toString(),
       }));
     } else {
-      setInputs((prevState: any) => ({
-        ...prevState,
-        [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
-          e.target.type === 'file'
-            ? e.target.files[0].name
-            : e.target.value.replace(/\n/g, ''),
-      }));
+      e.target.type !== 'file' &&
+        setInputs((prevState: any) => ({
+          ...prevState,
+          [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
+            e.target.value.replace(/\n/g, ''),
+        }));
       if (e.target.files && e.target.files[0]) {
-        setImage(e.target.files[0]);
-        setImageUrl(URL.createObjectURL(e.target.files[0]));
+        inputs.immagini.push(e.target.files[0].name);
+        images.push(e.target.files[0]);
+        setImagesUrls((prevImageUrls) => [
+          ...prevImageUrls,
+          URL.createObjectURL(e.target.files[0]),
+        ]);
       }
     }
   };
-
   // Submit Handler
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     setSuccessOpen(true);
 
-    const imgref = ref(storage, `immagini/${inputs?.immagine}`);
-
-    image && (await uploadBytes(imgref, image));
+    images.map(async (imageData, index) => {
+      const immagine = inputs.immagini[index]; // Get the corresponding immagine at the same index
+      const imgref = ref(storage, `immagini/${immagine}`);
+      await uploadBytes(imgref, imageData);
+    });
     let adjustedInputs =
       inputs &&
       Object.fromEntries(
         Object.entries(inputs)
-          .filter(([_, value]) =>
-            typeof value === 'string'
-              ? (value as string).trim() !== ''
-              : typeof value === 'boolean' && value === true
-          )
+          .filter(([key, value]) => {
+            if (key === 'immagini' && Array.isArray(value)) {
+              return true; // Keep the "immagine" key with an array value
+            } else if (
+              typeof value === 'string'
+                ? (value as string).trim() !== ''
+                : typeof value === 'boolean' && value === true
+            ) {
+              return true;
+            }
+            return false;
+          })
           .map(([key, value]) => [
             key.startsWith('_') ? key.slice(1) : key,
             typeof value === 'string' ? (value as string).trim() : value,
@@ -394,6 +403,64 @@ function AddProduct() {
     router.push('/auth/admin/gestisci');
   };
 
+  const handleRemoveImage = (index: number) => {
+    setInputs((prevState) => {
+      const updatedImages = [...prevState.immagini];
+      updatedImages.splice(index, 1);
+      return { ...prevState, immagini: updatedImages };
+    });
+    imagesUrls.splice(index, 1);
+  };
+
+  const renderImage = (src: string, label: string, index: number) => (
+    <div
+      key={index}
+      className='flex flex-col w-full items-center justify-center'
+    >
+      <Image
+        src={src}
+        alt=''
+        className='rounded-xl mb-1 mt-10 shadow-lg shrink-0'
+        width={128}
+        height={128}
+        unoptimized={true}
+      />
+      <p>{label}</p>
+      <button
+        type='button'
+        onClick={() => handleRemoveImage(index)}
+        className='flex items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-red-400 cursor-pointer text-sm'
+      >
+        Rimuovi Immagine
+      </button>
+    </div>
+  );
+
+  const renderImageUploader = () => (
+    <label className={`flex flex-row w-3/5 mx-auto ${styles.drop_container}`}>
+      <span className={styles.drop_title}>Carica una foto</span>
+      <IconButton color='primary' aria-label='upload picture' component='label'>
+        <input
+          required={inputs.immagini.length === 0}
+          ref={inputRefImage}
+          accept='image/*'
+          type='file'
+          name='Immagine'
+          onChange={handleChange}
+          style={{
+            position: 'absolute',
+            clip: 'rect(1px, 1px, 1px, 1px)',
+            padding: 0,
+            border: 0,
+            height: '1px',
+            width: '1px',
+            overflow: 'hidden',
+          }}
+        />
+        <PhotoCamera />
+      </IconButton>
+    </label>
+  );
   return (
     <div className='relative w-full flex flex-col px-6'>
       {/* Form */}
@@ -410,66 +477,36 @@ function AddProduct() {
             <ArrowBackIcon />
           </Link>
           {/* Image field */}
-          {!inputs?.immagine ? (
-            <div className='flex flex-row w-full items-center justify-center mb-4 lg:mb-0'>
-              <div className='w-3/5'>
-                <label className={`flex flex-row ${styles.drop_container}`}>
-                  <span className={styles.drop_title}>Carica una foto</span>
-                  <IconButton
-                    color='primary'
-                    aria-label='upload picture'
-                    component='label'
-                  >
-                    <input
-                      required
-                      ref={inputRefImage}
-                      accept='image/*'
-                      type='file'
-                      name='immagine'
-                      onChange={handleChange}
-                      style={{
-                        position: 'absolute',
-                        clip: 'rect(1px, 1px, 1px, 1px)',
-                        padding: 0,
-                        border: 0,
-                        height: '1px',
-                        width: '1px',
-                        overflow: 'hidden',
-                      }}
-                    />
-                    <PhotoCamera />
-                  </IconButton>
-                </label>
-              </div>
-            </div>
-          ) : (
-            <>
-              {
-                <div className='flex flex-col w-full items-center justify-center'>
-                  <Image
-                    src={imageUrl}
-                    alt=''
-                    className='rounded-xl mb-1 mt-10 shadow-lg shrink-0'
-                    width={128}
-                    height={128}
-                    unoptimized={true}
-                  />
-                  <button
-                    type='button'
-                    onClick={() =>
-                      setInputs((prevState: any) => ({
-                        ...prevState,
-                        immagine: '',
-                      }))
-                    }
-                    className='flex items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-red-400 cursor-pointer text-sm'
-                  >
-                    Rimuovi Immagine
-                  </button>
-                </div>
-              }
-            </>
-          )}
+          <>
+            {inputs.immagini.length === 0 && (
+              <>
+                {renderImageUploader()}
+                {renderImageUploader()}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length === 1 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImageUploader()}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length === 2 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImage(imagesUrls[1], 'Seconda immagine', 1)}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length >= 3 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImage(imagesUrls[1], 'Seconda immagine', 1)}
+                {renderImage(imagesUrls[2], 'Terza immagine', 2)}
+              </>
+            )}
+          </>
 
           {/* Description field */}
           <div className='flex lg:col-span-2'>

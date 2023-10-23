@@ -7,6 +7,8 @@ import {
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import styles from './Product.module.css';
 
 const excludeKeys = [
@@ -56,22 +58,53 @@ function Product({ product }: any) {
       }
     }
   }, []);
-
   return product ? (
     <div className='bg-white flex mb-10 mt-32 md:mt-6 z-0 mx-auto'>
       <div className='w-screen max-w-7xl'>
         <div className='grid grid-cols-1 md:grid-cols-2 min-w-[80%] justify-center md:justify-end md:mt-20'>
           {/* Image */}
           <div className='flex justify-center p-5 md:pl-10'>
-            <Image
-              src={product.immagineUrl}
-              alt=''
-              className={`rounded-xl shadow-xl md:shadow-none aspect-auto object-contain h-64 md:h-96 w-auto p-2`}
-              width={128}
-              height={80}
-              unoptimized={true}
-              priority={true}
-            />
+            <Carousel
+              statusFormatter={(current, total) => `${current} di ${total}`}
+              renderArrowPrev={(onClickHandler, hasPrev, label) =>
+                hasPrev && (
+                  <button
+                    type='button'
+                    onClick={onClickHandler}
+                    title={label}
+                    className='absolute rounded-full bg-gray-200 z-10 h-6 w-6 cursor-pointer top-1/2 left-2 hover:bg-gray-300'
+                  >
+                    {'<'}
+                  </button>
+                )
+              }
+              renderArrowNext={(onClickHandler, hasPrev, label) =>
+                hasPrev && (
+                  <button
+                    type='button'
+                    onClick={onClickHandler}
+                    title={label}
+                    className='absolute rounded-full bg-gray-200 z-10 h-6 w-6 cursor-pointer top-1/2 right-2 hover:bg-gray-300'
+                  >
+                    {'>'}
+                  </button>
+                )
+              }
+            >
+              {product.immaginiUrl.map((immagineUrl: string, index: number) => (
+                <div key={index}>
+                  <Image
+                    src={immagineUrl}
+                    alt=''
+                    className={`rounded-xl shadow-xl md:shadow-none aspect-auto object-contain h-64 md:h-96 w-auto p-2`}
+                    width={128}
+                    height={80}
+                    unoptimized={true}
+                    priority={true}
+                  />
+                </div>
+              ))}
+            </Carousel>
           </div>
           {/* Price (Mobile View) */}
           <div className='flex md:hidden font-medium text-2xl justify-center items-center p-5 w-full'>

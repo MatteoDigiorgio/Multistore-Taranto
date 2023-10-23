@@ -25,7 +25,7 @@ function Products({ products }: { products: Array<Prodotto> | undefined }) {
           <div className='flex justify-center'>
             <Link href={`/prodotti/${product.id}`}>
               <Image
-                src={product.immagine}
+                src={product.immagini[0]}
                 alt=''
                 className={`rounded-xl shadow-xl aspect-auto object-contain h-36 w-auto ${styles.card_img} cursor-pointer`}
                 width={128}

@@ -201,7 +201,7 @@ function Product({ params }: any) {
   const [prodotto, setProdotto] = useState<Prodotto>();
 
   const [image, setImage] = useState();
-  const [immagineUrl, setImmagineUrl] = useState('');
+  const [immaginiUrl, setImmaginiUrl] = useState();
   const [isDualSim, setIsDualSim] = useState(
     prodotto?.dual_sim ? prodotto?.dual_sim : false
   );
@@ -219,7 +219,7 @@ function Product({ params }: any) {
     'marca',
     'categoria',
     'descrizione',
-    'immagine',
+    'immagini',
     'prezzo',
     'sconto',
     'percentuale',
@@ -230,8 +230,8 @@ function Product({ params }: any) {
   useEffect(() => {
     async function fetchData(params: any) {
       const prodottiData = await getProduct(params.id);
-      prodottiData ? setImmagineUrl(prodottiData.immagineUrl) : null;
-      delete prodottiData.immagineUrl;
+      prodottiData ? setImmaginiUrl(prodottiData.immaginiUrl) : null;
+      delete prodottiData.immaginiUrl;
       prodottiData ? setProdotto(prodottiData) : null;
       prodottiData ? setInitialProdotto(prodottiData) : null;
       prodottiData ? setIsSecondHand(prodottiData.secondHand) : null;
@@ -346,7 +346,7 @@ function Product({ params }: any) {
     }
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
-      setImmagineUrl(URL.createObjectURL(e.target.files[0]));
+      // setImmaginiUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -371,7 +371,7 @@ function Product({ params }: any) {
       setSeverity('success');
       setOpen(true);
       if (prodotto) {
-        const imgref = ref(storage, `immagini/${prodotto?.immagine}`);
+        const imgref = ref(storage, `immagini/${prodotto?.immagini}`);
 
         image && (await uploadBytes(imgref, image));
         let adjustedInputs: any = Object.fromEntries(
@@ -428,38 +428,51 @@ function Product({ params }: any) {
         <div
           className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 m-auto p-4 items-center justify-center bg-white h-[28rem] w-80 content-start md:w-full md:h-2/3 rounded-3xl shadow-lg bg-clip-padding bg-opacity-60 border border-gray-200 overflow-y-scroll ${styles.card}`}
         >
-          <div className='flex flex-col w-full items-center justify-center'>
-            <Image
-              key={'Image'}
-              src={typeof immagineUrl === 'string' ? immagineUrl : ''}
-              alt='Prodotto'
-              className='w-40 max-h-40 p-2 aspect-auto object-contain bg-white rounded-xl'
-              width={64}
-              height={64}
-              unoptimized={true}
-            />
-
-            <label
-              className={`flex flex-row items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-yellow-400 cursor-pointer text-sm ${styles.drop_container}`}
-            >
-              <span className={styles.drop_title}>Cambia foto</span>
-              <input
-                accept='image/*'
-                type='file'
-                name='immagine'
-                onChange={handleChange}
-                style={{
-                  position: 'absolute',
-                  clip: 'rect(1px, 1px, 1px, 1px)',
-                  padding: 0,
-                  border: 0,
-                  height: '1px',
-                  width: '1px',
-                  overflow: 'hidden',
-                }}
-              />
-            </label>
-          </div>
+          {prodotto?.immagini?.map((imageName, index) => (
+            <>
+              <div
+                key={index}
+                className='flex flex-col w-full items-center justify-center'
+              >
+                <Image
+                  key={'Image'}
+                  src={immaginiUrl ? immaginiUrl[index] : ''}
+                  alt={imageName}
+                  className='w-40 max-h-40 p-2 aspect-auto object-contain bg-white rounded-xl'
+                  width={64}
+                  height={64}
+                  unoptimized={true}
+                />
+                {index === 0 ? (
+                  <p>Prima Immagine</p>
+                ) : index === 1 ? (
+                  <p>Seconda Immagine</p>
+                ) : index === 2 ? (
+                  <p>Terza Immagine</p>
+                ) : null}
+                <label
+                  className={`flex flex-row items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-yellow-400 cursor-pointer text-sm ${styles.drop_container}`}
+                >
+                  <span className={styles.drop_title}>Cambia Immagine</span>
+                  <input
+                    accept='image/*'
+                    type='file'
+                    name='immagine'
+                    onChange={handleChange}
+                    style={{
+                      position: 'absolute',
+                      clip: 'rect(1px, 1px, 1px, 1px)',
+                      padding: 0,
+                      border: 0,
+                      height: '1px',
+                      width: '1px',
+                      overflow: 'hidden',
+                    }}
+                  />
+                </label>
+              </div>
+            </>
+          ))}
 
           <div className='hidden md:flex lg:col-span-2'>
             <Field
