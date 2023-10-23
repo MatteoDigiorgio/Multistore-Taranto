@@ -4,7 +4,9 @@ export interface Prodotto {
   marca: string;
   categoria: string;
   descrizione: string;
-  immagine: string;
+  immagini: string[];
+  usato: boolean;
+  ricondizionato: boolean;
   dual_sim: boolean;
   five_g: boolean;
   nfc: boolean;

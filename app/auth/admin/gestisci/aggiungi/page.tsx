@@ -205,7 +205,9 @@ function AddProduct() {
     marca: '',
     categoria: '',
     descrizione: '',
-    immagine: '',
+    immagini: [],
+    usato: false,
+    ricondizionato: false,
     dual_sim: false,
     five_g: false,
     nfc: false,
@@ -214,10 +216,12 @@ function AddProduct() {
     percentuale: '',
   });
 
-  const [image, setImage] = useState();
-  const [imageUrl, setImageUrl] = useState('');
+  const images: any[] = [];
+  const [imagesUrls, setImagesUrls] = useState<string[]>([]);
   const router = useRouter();
 
+  const [isSecondHand, setIsSecondHand] = useState(false);
+  const [isRefurbished, setIsRefurbished] = useState(false);
   const [isDualSim, setIsDualSim] = useState(false);
   const [is5G, setIs5G] = useState(false);
   const [isNFC, setIsNFC] = useState(false);
@@ -225,7 +229,7 @@ function AddProduct() {
   let inputRefImage = useRef<HTMLInputElement | null>(null);
 
   let categoria = inputs?.categoria;
-  let immagine = inputs?.immagine;
+  let immagini = inputs?.immagini;
 
   useEffect(() => {
     let input = document.querySelector(
@@ -240,14 +244,12 @@ function AddProduct() {
   }, [categoria]);
 
   useEffect(() => {
-    if (inputRefImage.current !== null) {
-      inputRefImage.current.setCustomValidity(
-        immagine === '' || immagine === undefined || immagine === null
-          ? 'Campo necessario!'
-          : ''
-      );
-    }
-  }, [immagine]);
+    let input = document.querySelector(
+      `[name="Immagine"]`
+    ) as HTMLInputElement | null;
+
+    input?.setCustomValidity(immagini.length === 0 ? 'Campo necessario!' : '');
+  }, [immagini]);
 
   useEffect(() => {
     setInputs((prevState: any) => ({
@@ -269,6 +271,20 @@ function AddProduct() {
       nFC: isNFC,
     }));
   }, [isNFC]);
+
+  useEffect(() => {
+    setInputs((prevState: any) => ({
+      ...prevState,
+      usato: isSecondHand,
+    }));
+  }, [isSecondHand]);
+
+  useEffect(() => {
+    setInputs((prevState: any) => ({
+      ...prevState,
+      ricondizionato: isRefurbished,
+    }));
+  }, [isRefurbished]);
 
   // Snackbar
   const [successOpen, setSuccessOpen] = React.useState(false);
@@ -335,38 +351,49 @@ function AddProduct() {
         ).toString(),
       }));
     } else {
-      setInputs((prevState: any) => ({
-        ...prevState,
-        [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
-          e.target.type === 'file'
-            ? e.target.files[0].name
-            : e.target.value.replace(/\n/g, ''),
-      }));
+      e.target.type !== 'file' &&
+        setInputs((prevState: any) => ({
+          ...prevState,
+          [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
+            e.target.value.replace(/\n/g, ''),
+        }));
       if (e.target.files && e.target.files[0]) {
-        setImage(e.target.files[0]);
-        setImageUrl(URL.createObjectURL(e.target.files[0]));
+        inputs.immagini.push(e.target.files[0].name);
+        images.push(e.target.files[0]);
+        setImagesUrls((prevImageUrls) => [
+          ...prevImageUrls,
+          URL.createObjectURL(e.target.files[0]),
+        ]);
       }
     }
   };
-
   // Submit Handler
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     setSuccessOpen(true);
 
-    const imgref = ref(storage, `immagini/${inputs?.immagine}`);
-
-    image && (await uploadBytes(imgref, image));
+    images.map(async (imageData, index) => {
+      const immagine = inputs.immagini[index]; // Get the corresponding immagine at the same index
+      const imgref = ref(storage, `immagini/${immagine}`);
+      await uploadBytes(imgref, imageData);
+    });
     let adjustedInputs =
       inputs &&
       Object.fromEntries(
         Object.entries(inputs)
-          .filter(([_, value]) =>
-            typeof value === 'string'
-              ? (value as string).trim() !== ''
-              : typeof value === 'boolean' && value === true
-          )
+          .filter(([key, value]) => {
+            if (key === 'immagini' && Array.isArray(value)) {
+              return true; // Keep the "immagine" key with an array value
+            } else if (
+              typeof value === 'string'
+                ? (value as string).trim() !== ''
+                : typeof value === 'boolean' && value === true
+            ) {
+              return true;
+            }
+            return false;
+          })
           .map(([key, value]) => [
             key.startsWith('_') ? key.slice(1) : key,
             typeof value === 'string' ? (value as string).trim() : value,
@@ -376,6 +403,64 @@ function AddProduct() {
     router.push('/auth/admin/gestisci');
   };
 
+  const handleRemoveImage = (index: number) => {
+    setInputs((prevState) => {
+      const updatedImages = [...prevState.immagini];
+      updatedImages.splice(index, 1);
+      return { ...prevState, immagini: updatedImages };
+    });
+    imagesUrls.splice(index, 1);
+  };
+
+  const renderImage = (src: string, label: string, index: number) => (
+    <div
+      key={index}
+      className='flex flex-col w-full items-center justify-center'
+    >
+      <Image
+        src={src}
+        alt=''
+        className='rounded-xl mb-1 mt-10 shadow-lg shrink-0'
+        width={128}
+        height={128}
+        unoptimized={true}
+      />
+      <p>{label}</p>
+      <button
+        type='button'
+        onClick={() => handleRemoveImage(index)}
+        className='flex items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-red-400 cursor-pointer text-sm'
+      >
+        Rimuovi Immagine
+      </button>
+    </div>
+  );
+
+  const renderImageUploader = () => (
+    <label className={`flex flex-row w-3/5 mx-auto ${styles.drop_container}`}>
+      <span className={styles.drop_title}>Carica una foto</span>
+      <IconButton color='primary' aria-label='upload picture' component='label'>
+        <input
+          required={inputs.immagini.length === 0}
+          ref={inputRefImage}
+          accept='image/*'
+          type='file'
+          name='Immagine'
+          onChange={handleChange}
+          style={{
+            position: 'absolute',
+            clip: 'rect(1px, 1px, 1px, 1px)',
+            padding: 0,
+            border: 0,
+            height: '1px',
+            width: '1px',
+            overflow: 'hidden',
+          }}
+        />
+        <PhotoCamera />
+      </IconButton>
+    </label>
+  );
   return (
     <div className='relative w-full flex flex-col px-6'>
       {/* Form */}
@@ -392,66 +477,36 @@ function AddProduct() {
             <ArrowBackIcon />
           </Link>
           {/* Image field */}
-          {!inputs?.immagine ? (
-            <div className='flex flex-row w-full items-center justify-center mb-4 lg:mb-0'>
-              <div className='w-3/5'>
-                <label className={`flex flex-row ${styles.drop_container}`}>
-                  <span className={styles.drop_title}>Carica una foto</span>
-                  <IconButton
-                    color='primary'
-                    aria-label='upload picture'
-                    component='label'
-                  >
-                    <input
-                      required
-                      ref={inputRefImage}
-                      accept='image/*'
-                      type='file'
-                      name='immagine'
-                      onChange={handleChange}
-                      style={{
-                        position: 'absolute',
-                        clip: 'rect(1px, 1px, 1px, 1px)',
-                        padding: 0,
-                        border: 0,
-                        height: '1px',
-                        width: '1px',
-                        overflow: 'hidden',
-                      }}
-                    />
-                    <PhotoCamera />
-                  </IconButton>
-                </label>
-              </div>
-            </div>
-          ) : (
-            <>
-              {
-                <div className='flex flex-col w-full items-center justify-center'>
-                  <Image
-                    src={imageUrl}
-                    alt=''
-                    className='rounded-xl mb-1 mt-10 shadow-lg shrink-0'
-                    width={128}
-                    height={128}
-                    unoptimized={true}
-                  />
-                  <button
-                    type='button'
-                    onClick={() =>
-                      setInputs((prevState: any) => ({
-                        ...prevState,
-                        immagine: '',
-                      }))
-                    }
-                    className='flex items-center gap-1 p-2 px-4 my-4 rounded-xl ring-2 ring-gray-400 bg-gray-200 shadow-lg hover:ring-2 hover:ring-black hover:bg-red-400 cursor-pointer text-sm'
-                  >
-                    Rimuovi Immagine
-                  </button>
-                </div>
-              }
-            </>
-          )}
+          <>
+            {inputs.immagini.length === 0 && (
+              <>
+                {renderImageUploader()}
+                {renderImageUploader()}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length === 1 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImageUploader()}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length === 2 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImage(imagesUrls[1], 'Seconda immagine', 1)}
+                {renderImageUploader()}
+              </>
+            )}
+            {inputs.immagini.length >= 3 && (
+              <>
+                {renderImage(imagesUrls[0], 'Prima immagine', 0)}
+                {renderImage(imagesUrls[1], 'Seconda immagine', 1)}
+                {renderImage(imagesUrls[2], 'Terza immagine', 2)}
+              </>
+            )}
+          </>
 
           {/* Description field */}
           <div className='flex lg:col-span-2'>
@@ -558,8 +613,140 @@ function AddProduct() {
           </div>
 
           {/* Checkboxes */}
-          <div className='flex flex-row w-full items-center justify-center py-4'>
-            <div className='flex items-center justify-left gap-3'>
+          <div className='flex flex-row items-center justify-center py-4'>
+            <div className='flex flex-wrap max-w-[200px] items-center justify-center gap-3'>
+              <Switch.Group as='div' className='flex flex-col items-center'>
+                <Switch
+                  checked={isSecondHand}
+                  onChange={setIsSecondHand}
+                  name='usato'
+                  className={classNames(
+                    isSecondHand ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                  )}
+                >
+                  <span className='sr-only'>Use setting</span>
+                  <span
+                    className={classNames(
+                      isSecondHand ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        isSecondHand
+                          ? 'opacity-0 duration-100 ease-out'
+                          : 'opacity-100 duration-200 ease-in',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-gray-400'
+                        fill='none'
+                        viewBox='0 0 12 12'
+                      >
+                        <path
+                          d='M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2'
+                          stroke='currentColor'
+                          strokeWidth={2}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      className={classNames(
+                        isSecondHand
+                          ? 'opacity-100 duration-200 ease-in'
+                          : 'opacity-0 duration-100 ease-out',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-indigo-600'
+                        fill='currentColor'
+                        viewBox='0 0 12 12'
+                      >
+                        <path d='M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z' />
+                      </svg>
+                    </span>
+                  </span>
+                </Switch>
+                <Switch.Label as='p' className='text-sm'>
+                  <span className='font-medium text-xs text-gray-900'>
+                    Usato
+                  </span>
+                </Switch.Label>
+              </Switch.Group>
+
+              <Switch.Group as='div' className='flex flex-col items-center'>
+                <Switch
+                  checked={isRefurbished}
+                  onChange={setIsRefurbished}
+                  name='usato'
+                  className={classNames(
+                    isRefurbished ? 'bg-indigo-600' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                  )}
+                >
+                  <span className='sr-only'>Use setting</span>
+                  <span
+                    className={classNames(
+                      isRefurbished ? 'translate-x-5' : 'translate-x-0',
+                      'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                    )}
+                  >
+                    <span
+                      className={classNames(
+                        isRefurbished
+                          ? 'opacity-0 duration-100 ease-out'
+                          : 'opacity-100 duration-200 ease-in',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-gray-400'
+                        fill='none'
+                        viewBox='0 0 12 12'
+                      >
+                        <path
+                          d='M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2'
+                          stroke='currentColor'
+                          strokeWidth={2}
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                        />
+                      </svg>
+                    </span>
+                    <span
+                      className={classNames(
+                        isRefurbished
+                          ? 'opacity-100 duration-200 ease-in'
+                          : 'opacity-0 duration-100 ease-out',
+                        'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity'
+                      )}
+                      aria-hidden='true'
+                    >
+                      <svg
+                        className='h-3 w-3 text-indigo-600'
+                        fill='currentColor'
+                        viewBox='0 0 12 12'
+                      >
+                        <path d='M3.707 5.293a1 1 0 00-1.414 1.414l1.414-1.414zM5 8l-.707.707a1 1 0 001.414 0L5 8zm4.707-3.293a1 1 0 00-1.414-1.414l1.414 1.414zm-7.414 2l2 2 1.414-1.414-2-2-1.414 1.414zm3.414 2l4-4-1.414-1.414-4 4 1.414 1.414z' />
+                      </svg>
+                    </span>
+                  </span>
+                </Switch>
+                <Switch.Label as='p' className='text-sm'>
+                  <span className='font-medium text-xs text-gray-900'>
+                    Ricondizionato
+                  </span>
+                </Switch.Label>
+              </Switch.Group>
+
               <Switch.Group as='div' className='flex flex-col items-center'>
                 <Switch
                   checked={isDualSim}

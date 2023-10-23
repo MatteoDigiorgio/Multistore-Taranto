@@ -55,7 +55,7 @@ function Prodotti({ prodotti }: { prodotti: Array<Prodotto> | undefined }) {
               >
                 <div className='h-16 w-16 bg-white rounded-xl shadow-lg shrink-0'>
                   <Image
-                    src={product.immagine}
+                    src={product.immagini[0]}
                     alt='Prodotto'
                     className='h-16 p-2 aspect-auto object-contain bg-white rounded-xl '
                     width={64}

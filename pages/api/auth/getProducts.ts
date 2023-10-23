@@ -1,10 +1,10 @@
-import { getDownloadURL, ref } from "firebase/storage";
-import db, { storage } from "../../../firebase";
+import { getDownloadURL, ref } from 'firebase/storage';
+import db, { storage } from '../../../firebase';
 
 export async function getProducts() {
   const dbProdotti = await db
-    .collection("prodotti")
-    .orderBy("nome", "asc")
+    .collection('prodotti')
+    .orderBy('nome', 'asc')
     .get();
 
   const prodotti = await Promise.all(
@@ -14,11 +14,16 @@ export async function getProducts() {
       const myObject: any = await myarray.reduce(
         async (objPromise, [key, value]) => {
           const obj = await objPromise;
-          if (key === "immagine") {
-            const downloadURL = await getDownloadURL(
-              ref(storage, `immagini/${value}`)
-            );
-            return { ...obj, [key]: downloadURL };
+
+          if (key === 'immagini') {
+            const downloadURLs = [];
+            for (let i = 0; i < value.length; i++) {
+              const downloadURL = await getDownloadURL(
+                ref(storage, `immagini/${value[i]}`)
+              );
+              downloadURLs.push(downloadURL);
+            }
+            return { ...obj, [key]: downloadURLs };
           } else {
             return { ...obj, [key]: value };
           }
@@ -34,7 +39,7 @@ export async function getProducts() {
 }
 
 export async function getProduct(id: any) {
-  const prodotto = await db.collection("prodotti").doc(id).get();
+  const prodotto = await db.collection('prodotti').doc(id).get();
   const data = prodotto.data();
 
   if (data) {
@@ -43,11 +48,15 @@ export async function getProduct(id: any) {
     const myObject: any = await myarray.reduce(
       async (objPromise, [key, value]) => {
         const obj = await objPromise;
-        if (key === "immagine") {
-          const downloadURL = await getDownloadURL(
-            ref(storage, `immagini/${value}`)
-          );
-          return { ...obj, [key]: value, immagineUrl: downloadURL };
+        if (key === 'immagini') {
+          const downloadURLs = [];
+          for (let i = 0; i < value.length; i++) {
+            const downloadURL = await getDownloadURL(
+              ref(storage, `immagini/${value[i]}`)
+            );
+            downloadURLs.push(downloadURL);
+          }
+          return { ...obj, [key]: value, immaginiUrl: downloadURLs };
         } else {
           return { ...obj, [key]: value };
         }
@@ -66,10 +75,10 @@ export async function getFilterProducts(filter: any) {
   const lowercaseFilter = filter.toLowerCase();
 
   // Construct a reference to the "prodotti" collection
-  const prodottiRef = db.collection("prodotti");
+  const prodottiRef = db.collection('prodotti');
 
   // Perform the query
-  const querySnapshot = await prodottiRef.orderBy("nome").get();
+  const querySnapshot = await prodottiRef.orderBy('nome').get();
 
   const prodotti = await Promise.all(
     querySnapshot.docs.map(async (doc) => {
@@ -78,7 +87,7 @@ export async function getFilterProducts(filter: any) {
 
       // Process each field of the product
       for (const [key, value] of Object.entries(prodotto)) {
-        if (key === "immagine") {
+        if (key === 'immagine') {
           const downloadURL = await getDownloadURL(
             ref(storage, `immagini/${value}`)
           );
@@ -121,20 +130,20 @@ function calculateSearchScore(
   let score = 0;
   let matchedFields = 0;
   const objectEntries = Object.entries(object);
-  const keywords = filter.split(" "); // Split the search term into keywords
+  const keywords = filter.split(' '); // Split the search term into keywords
 
   for (const entries of objectEntries) {
     if (
-      !["id", "immagine", "prezzo", "sconto", "percentuale"].includes(
+      !['id', 'immagine', 'prezzo', 'sconto', 'percentuale'].includes(
         entries[0]
       )
     ) {
       const value = entries[1];
       const lowercasedValue =
-        typeof value === "string" ? value.toLowerCase() : "";
+        typeof value === 'string' ? value.toLowerCase() : '';
 
       for (const keyword of keywords) {
-        const keywordWords = keyword.split(" "); // Split the keyword into individual words
+        const keywordWords = keyword.split(' '); // Split the keyword into individual words
 
         for (const keywordWord of keywordWords) {
           const keywordDistance = calculateLevenshteinDistance(
@@ -153,7 +162,7 @@ function calculateSearchScore(
 
       if (
         keywords.some((keyword) => {
-          const keywordWords = keyword.split(" "); // Split the keyword into individual words
+          const keywordWords = keyword.split(' '); // Split the keyword into individual words
           return keywordWords.some((keywordWord) =>
             lowercasedValue.includes(keywordWord)
           );
