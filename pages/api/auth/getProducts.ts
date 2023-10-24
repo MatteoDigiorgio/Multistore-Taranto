@@ -87,11 +87,15 @@ export async function getFilterProducts(filter: any) {
 
       // Process each field of the product
       for (const [key, value] of Object.entries(prodotto)) {
-        if (key === 'immagine') {
-          const downloadURL = await getDownloadURL(
-            ref(storage, `immagini/${value}`)
-          );
-          myObject[key] = downloadURL;
+        if (key === 'immagini') {
+          const downloadURLs = [];
+          for (let i = 0; i < value.length; i++) {
+            const downloadURL = await getDownloadURL(
+              ref(storage, `immagini/${value[i]}`)
+            );
+            downloadURLs.push(downloadURL);
+          }
+          myObject[key] = downloadURLs;
         } else {
           myObject[key] = value;
         }
