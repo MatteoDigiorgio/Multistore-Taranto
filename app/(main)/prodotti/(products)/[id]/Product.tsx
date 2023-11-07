@@ -16,8 +16,8 @@ const excludeKeys = [
   'marca',
   'categoria',
   'descrizione',
-  'immagine',
-  'immagineUrl',
+  'immagini',
+  'immaginiUrl',
   'prezzo',
   'sconto',
   'percentuale',
@@ -348,25 +348,53 @@ function Product({ product }: any) {
                                 ([key, value], i) => (
                                   <>
                                     {!excludeKeys.includes(key) ? (
-                                      typeof value === 'string' ? (
-                                        <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
-                                          <span className='font-medium capitalize'>
-                                            {key}
-                                          </span>
-                                          <span className='text-gray-500 text-sm'>
-                                            {value}
-                                          </span>
-                                        </Disclosure.Panel>
-                                      ) : (
-                                        <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
-                                          <span className='font-medium capitalize'>
-                                            {key}
-                                          </span>
-                                          <span className='text-gray-500 text-sm'>
-                                            {value ? 'Si' : 'No'}
-                                          </span>
-                                        </Disclosure.Panel>
-                                      )
+                                      <>
+                                        {typeof value === 'string' ? (
+                                          <>
+                                            {key === 'sistema_Operativo' ? (
+                                              <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
+                                                <span className='font-medium capitalize'>
+                                                  Sistema Operativo
+                                                </span>
+                                                <span className='text-gray-500 text-sm'>
+                                                  {value}
+                                                </span>
+                                              </Disclosure.Panel>
+                                            ) : (
+                                              <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
+                                                <span className='font-medium capitalize'>
+                                                  {key}
+                                                </span>
+                                                <span className='text-gray-500 text-sm'>
+                                                  {value}
+                                                </span>
+                                              </Disclosure.Panel>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <>
+                                            {key === 'five_g' ? (
+                                              <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
+                                                <span className='font-medium capitalize'>
+                                                  5G
+                                                </span>
+                                                <span className='text-gray-500 text-sm'>
+                                                  {value ? 'Si' : 'No'}
+                                                </span>
+                                              </Disclosure.Panel>
+                                            ) : (
+                                              <Disclosure.Panel className='grid grid-cols-2 text-sm py-2'>
+                                                <span className='font-medium capitalize'>
+                                                  {key}
+                                                </span>
+                                                <span className='text-gray-500 text-sm'>
+                                                  {value ? 'Si' : 'No'}
+                                                </span>
+                                              </Disclosure.Panel>
+                                            )}
+                                          </>
+                                        )}
+                                      </>
                                     ) : null}
                                   </>
                                 )
