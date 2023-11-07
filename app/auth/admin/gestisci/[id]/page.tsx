@@ -200,8 +200,8 @@ function Product({ params }: any) {
   const [initialProdotto, setInitialProdotto] = useState<Product>();
   const [prodotto, setProdotto] = useState<Prodotto>();
 
-  const [image, setImage] = useState();
-  const [immaginiUrl, setImmaginiUrl] = useState();
+  const [images, setImages] = useState<any>([]);
+  const [imagesUrls, setImagesUrls] = useState<string[]>([]);
   const [isDualSim, setIsDualSim] = useState(
     prodotto?.dual_sim ? prodotto?.dual_sim : false
   );
@@ -230,7 +230,7 @@ function Product({ params }: any) {
   useEffect(() => {
     async function fetchData(params: any) {
       const prodottiData = await getProduct(params.id);
-      prodottiData ? setImmaginiUrl(prodottiData.immaginiUrl) : null;
+      prodottiData ? setImagesUrls(prodottiData.immaginiUrl) : null;
       delete prodottiData.immaginiUrl;
       prodottiData ? setProdotto(prodottiData) : null;
       prodottiData ? setInitialProdotto(prodottiData) : null;
@@ -335,18 +335,39 @@ function Product({ params }: any) {
               100
         ).toString(),
       }));
-    } else {
+    } else if (e.target.type !== 'file') {
       setProdotto((prevState: any) => ({
         ...prevState,
         [e.target.name.charAt(0).toLowerCase() + e.target.name.slice(1)]:
-          e.target.type === 'file'
-            ? e.target.files[0].name
-            : e.target.value.replace(/\n/g, ''),
+          e.target.value.replace(/\n/g, ''),
       }));
     }
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
-      // setImmaginiUrl(URL.createObjectURL(e.target.files[0]));
+    if (e.target.files && e.target.files[0] && prodotto) {
+      // Update the image name in the 'immagini' array
+      const updatedImages = [...prodotto.immagini];
+      updatedImages[parseInt(e.target.name)] = e.target.files[0].name;
+
+      // Update the 'images' state by creating a new array with the updated image
+      setImages((prevImages: any) => {
+        const updatedImages = [...prevImages];
+        updatedImages[parseInt(e.target.name)] = e.target.files[0];
+        return updatedImages;
+      });
+
+      // Update the 'imagesUrls' state by creating a new array with the updated image URL
+      setImagesUrls((prevImageUrls: any) => {
+        const updatedUrls = [...prevImageUrls];
+        updatedUrls[parseInt(e.target.name)] = URL.createObjectURL(
+          e.target.files[0]
+        );
+        return updatedUrls;
+      });
+
+      // Update the 'immagini' state with the updated image names
+      setProdotto((prevInputs: any) => ({
+        ...prevInputs,
+        immagini: updatedImages,
+      }));
     }
   };
 
@@ -371,16 +392,26 @@ function Product({ params }: any) {
       setSeverity('success');
       setOpen(true);
       if (prodotto) {
-        const imgref = ref(storage, `immagini/${prodotto?.immagini}`);
+        images.map(async (imageData: any, index: number) => {
+          const immagine = prodotto.immagini[index]; // Get the corresponding immagine at the same index
+          const imgref = ref(storage, `immagini/${immagine}`);
+          await uploadBytes(imgref, imageData);
+        });
 
-        image && (await uploadBytes(imgref, image));
         let adjustedInputs: any = Object.fromEntries(
           Object.entries(prodotto)
-            .filter(([_, value]) =>
-              typeof value === 'string'
-                ? (value as string).trim() !== ''
-                : typeof value === 'boolean' && value === true
-            )
+            .filter(([key, value]) => {
+              if (key === 'immagini' && Array.isArray(value)) {
+                return true; // Keep the "immagine" key with an array value
+              } else if (
+                typeof value === 'string'
+                  ? (value as string).trim() !== ''
+                  : typeof value === 'boolean' && value === true
+              ) {
+                return true;
+              }
+              return false;
+            })
             .map(([key, value]) => [
               key.startsWith('_') ? key.slice(1) : key,
               typeof value === 'string' ? (value as string).trim() : value,
@@ -414,6 +445,7 @@ function Product({ params }: any) {
 
     setOpen(false);
   };
+
   return (
     <div className='relative m-auto flex flex-col'>
       <form onSubmit={handleEditProduct}>
@@ -436,7 +468,7 @@ function Product({ params }: any) {
               >
                 <Image
                   key={'Image'}
-                  src={immaginiUrl ? immaginiUrl[index] : ''}
+                  src={imagesUrls ? imagesUrls[index] : ''}
                   alt={imageName}
                   className='w-40 max-h-40 p-2 aspect-auto object-contain bg-white rounded-xl'
                   width={64}
@@ -457,7 +489,7 @@ function Product({ params }: any) {
                   <input
                     accept='image/*'
                     type='file'
-                    name='immagine'
+                    name={`${index}`}
                     onChange={handleChange}
                     style={{
                       position: 'absolute',

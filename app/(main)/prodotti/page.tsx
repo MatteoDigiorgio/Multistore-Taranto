@@ -37,7 +37,7 @@ function ProductsPage() {
     }
     fetchData();
   }, [inputValue]);
-
+  console.log(products);
   return (
     <>
       <div className="fixed bg-[url('/waves_bottom.svg')] bg-cover h-screen w-screen z-0"></div>
